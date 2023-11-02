@@ -10,14 +10,13 @@ type Server struct {
 	srv *http.Server
 }
 
-func New(cfg *config.HTTPconfig, handler http.Handler) *Server {
+func New(cfg *config.Config, handler http.Handler) *Server {
 	return &Server{
 		srv: &http.Server{
-			Addr:           ":" + cfg.Port,
-			Handler:        handler,
-			ReadTimeout:    cfg.ReadTimeout,
-			WriteTimeout:   cfg.WriteTimeout,
-			MaxHeaderBytes: cfg.MaxHeaderMegabytes << 20,
+			Addr:         ":" + cfg.Server.Port,
+			Handler:      handler,
+			ReadTimeout:  cfg.Server.ReadTimeout,
+			WriteTimeout: cfg.Server.WriteTimeout,
 		},
 	}
 }
