@@ -24,7 +24,7 @@ func New() Config {
 
 func unmarshal() Config {
 	var cfg Config
-	buff, err := os.ReadFile("../config.yaml")
+	buff, err := os.ReadFile("config.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}
