@@ -1,0 +1,4 @@
+server:
+  port: 8081
+  readTimeout: 15s
+  writeTimeout: 15s
