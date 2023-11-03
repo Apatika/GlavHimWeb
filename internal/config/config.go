@@ -8,23 +8,27 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var Config config
+
+func init() {
+	Config = unmarshal()
+}
+
 type (
-	Config struct {
-		Server struct {
-			Port         string        `yaml:"port"`
-			ReadTimeout  time.Duration `yaml:"readTimeout"`
-			WriteTimeout time.Duration `yaml:"writeTimeout"`
-		}
+	config struct {
+		Server server
+	}
+
+	server struct {
+		Port         string        `yaml:"port"`
+		ReadTimeout  time.Duration `yaml:"readTimeout"`
+		WriteTimeout time.Duration `yaml:"writeTimeout"`
 	}
 )
 
-func New() Config {
-	return unmarshal()
-}
-
-func unmarshal() Config {
-	var cfg Config
-	buff, err := os.ReadFile("config.yaml")
+func unmarshal() config {
+	var cfg config
+	buff, err := os.ReadFile("config/config.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}
