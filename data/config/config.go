@@ -16,13 +16,18 @@ func init() {
 
 type (
 	config struct {
-		Server server
+		Server  server
+		Mongodb mongodb
 	}
 
 	server struct {
 		Port         string        `yaml:"port"`
 		ReadTimeout  time.Duration `yaml:"readTimeout"`
 		WriteTimeout time.Duration `yaml:"writeTimeout"`
+	}
+
+	mongodb struct {
+		Name string `yaml:"name"`
 	}
 )
 

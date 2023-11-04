@@ -1,8 +1,7 @@
 package server
 
 import (
-	"apatikaWebServer/internal/config"
-	"apatikaWebServer/pkg/router"
+	"apatikaWebServer/data/config"
 	"context"
 	"log"
 	"net/http"
@@ -13,11 +12,10 @@ type Server struct {
 }
 
 func New() *Server {
-	handler := router.New()
 	return &Server{
 		server: &http.Server{
 			Addr:         ":" + config.Config.Server.Port,
-			Handler:      handler,
+			Handler:      nil,
 			ReadTimeout:  config.Config.Server.ReadTimeout,
 			WriteTimeout: config.Config.Server.WriteTimeout,
 		},
@@ -25,7 +23,7 @@ func New() *Server {
 }
 
 func (s *Server) Run() error {
-	log.Println("server started")
+	log.Println("start server")
 	return s.server.ListenAndServe()
 }
 
