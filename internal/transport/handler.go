@@ -4,8 +4,11 @@ import (
 	"net/http"
 )
 
-func init() {
-	http.HandleFunc("/", index)
+func New() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", index)
+
+	return mux
 }
 
 func index(w http.ResponseWriter, r *http.Request) {

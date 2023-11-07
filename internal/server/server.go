@@ -1,9 +1,8 @@
 package server
 
 import (
-	"apatikaWebServer/data/config"
 	"context"
-	"log"
+	"glavhim-app/internal/config"
 	"net/http"
 )
 
@@ -11,19 +10,18 @@ type Server struct {
 	server *http.Server
 }
 
-func New() *Server {
+func New(config config.Config, handler http.Handler) *Server {
 	return &Server{
 		server: &http.Server{
-			Addr:         ":" + config.Config.Server.Port,
-			Handler:      nil,
-			ReadTimeout:  config.Config.Server.ReadTimeout,
-			WriteTimeout: config.Config.Server.WriteTimeout,
+			Addr:         ":" + config.Server.Port,
+			Handler:      handler,
+			ReadTimeout:  config.Server.ReadTimeout,
+			WriteTimeout: config.Server.WriteTimeout,
 		},
 	}
 }
 
 func (s *Server) Run() error {
-	log.Println("start server")
 	return s.server.ListenAndServe()
 }
 
