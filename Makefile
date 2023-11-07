@@ -1,7 +1,11 @@
+include .env
+
+APP_NAME=glavhim
+
 build:
-	@cp ./.env ./bin/config/.env
-	@cp ./config.yaml ./bin/config/config.yaml
-	@cd cmd; go build -o ../bin/glavhim
+	@cp ./.env ${BUILD_PATH}/config/.env
+	@cp ${CONFIG_PATH} ${BUILD_PATH}/${CONFIG_PATH}
+	@cd cmd; go build -o ../bin/${APP_NAME}
 
 run: build
-	@cd bin; ./glavhim
+	@cd ${BUILD_PATH}; ./${APP_NAME}

@@ -53,12 +53,12 @@ func main() {
 		signal.Notify(sigint, os.Interrupt)
 		<-sigint
 
-		log.Println("run server")
 		if err := srv.Stop(context.Background()); err != nil {
 			log.Printf("HTTP server Shutdown: %v", err)
 		}
 		close(idleConnsClosed)
 	}()
+	log.Println("run server")
 	if err = srv.Run(); err != http.ErrServerClosed {
 		log.Fatalln("http server:", err)
 	}
