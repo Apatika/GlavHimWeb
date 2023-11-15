@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -32,5 +33,25 @@ func (s *SQLite) Ping() error {
 		return err
 	}
 	defer db.Close()
+	return nil
+}
+
+func (s *SQLite) Prepare() error {
+	db, err := sql.Open(s.driver, s.path)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	buf, err := os.ReadFile("./storage/schema.sql")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, s := range strings.Split(string(buf), "$") {
+		_, err = db.Exec(s)
+		if err != nil {
+
+			return err
+		}
+	}
 	return nil
 }

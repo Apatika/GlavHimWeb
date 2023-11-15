@@ -25,13 +25,13 @@ func main() {
 
 	log.Println("load environment variables")
 	if err := godotenv.Load("./config/.env"); err != nil {
-		log.Fatalln(".env:", err)
+		log.Fatalln("ERROR:", err)
 	}
 
 	log.Println("load config")
 	config, err := config.New()
 	if err != nil {
-		log.Fatalln("failed loading config file")
+		log.Fatalln("ERROR: ", err)
 	}
 
 	log.Println("get http handler")
@@ -41,7 +41,12 @@ func main() {
 	log.Println("ping database")
 	err = db.Ping()
 	if err != nil {
-		log.Fatal("failed connect to db")
+		log.Fatalln("ERROR: ", err)
+	}
+	log.Println("prepare database")
+	err = db.Prepare()
+	if err != nil {
+		log.Fatalln("ERROR: ", err)
 	}
 
 	log.Println("set server settings")
@@ -60,7 +65,7 @@ func main() {
 	}()
 	log.Println("run server")
 	if err = srv.Run(); err != http.ErrServerClosed {
-		log.Fatalln("http server:", err)
+		log.Fatalln("ERROR:", err)
 	}
 	<-idleConnsClosed
 }
