@@ -1,25 +1,20 @@
 package service
 
-type Contact struct {
-	Name string
-	Tel  string
-}
-
-type Adress struct {
-	City   string
-	Adress string
-}
+import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type Client struct {
-	Type           string
+	ID             primitive.ObjectID `json:"id" bson:"_id"`
+	Type           int
 	Manager        User
 	Inn            int64
-	PassportSerial int
-	PassportNum    int
+	PassportSerial int `json:"passportSerial" bson:"passport_serial"`
+	PassportNum    int `json:"passportNum" bson:"passport_num"`
 	Name           string
 	Surname        string
-	SecondName     string
-	Adress         []Adress
-	Contact        []Contact
+	SecondName     string `json:"secondName" bson:"second_name"`
+	City           string
+	Adress         string
+	Contact        string
+	Tel            string
 	Email          string
 }

@@ -1,5 +1,7 @@
 package service
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type Pvd struct {
 	Weight float32
 	Count  int
@@ -18,15 +20,16 @@ type ShipmentDate struct {
 }
 
 type Order struct {
-	CreationDate CreationDate
-	LastDate     string
-	Cargo        string
-	ClientID     int
+	ID           primitive.ObjectID `json:"id" bson:"_id"`
+	CreationDate CreationDate       `json:"creationDate" bson:"creation_date"`
+	LastDate     string             `json:"lastDate" bson:"last_date"`
+	Cargo        string             `json:"cargo" bson:"cargo"`
+	ClientID     int                `json:"clientId" bson:"client_id"`
 	Invoice      []int
 	Comment      string
 	Probes       []Chemistry
 	Pvd          []Pvd
 	Payment      bool
-	ShipmentDate ShipmentDate
+	ShipmentDate ShipmentDate `json:"shipmentDate" bson:"shipment_date"`
 	Status       int
 }

@@ -19,7 +19,7 @@
 
 <style>
   .nav{
-    flex-basis: 15%;
+    flex-basis: 10%;
     background-color: darkblue;
     border-right: 2px solid black;
   }

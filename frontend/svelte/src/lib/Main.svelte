@@ -90,7 +90,7 @@
     height: 90%;
   }
   #info{
-    flex-basis: 30%;
+    flex-basis: 25%;
   }
   #refresh{
     margin-left: 10px;
