@@ -11,6 +11,7 @@ import (
 type (
 	Config struct {
 		Server server
+		DB     database
 	}
 
 	server struct {
@@ -18,18 +19,24 @@ type (
 		ReadTimeout  time.Duration `yaml:"readTimeout"`
 		WriteTimeout time.Duration `yaml:"writeTimeout"`
 	}
+
+	database struct {
+		URI string
+	}
 )
 
-func New() (Config, error) {
-	var cfg Config
+var Cfg Config
+
+func New() error {
 	buff, err := os.ReadFile(os.Getenv("CONFIG_PATH"))
 	if err != nil {
 		log.Println(err)
-		return Config{}, err
+		return err
 	}
-	if err := yaml.Unmarshal(buff, &cfg); err != nil {
+	if err := yaml.Unmarshal(buff, &Cfg); err != nil {
 		log.Println(err)
-		return Config{}, err
+		return err
 	}
-	return cfg, nil
+	Cfg.DB.URI = os.Getenv("DB_PATH")
+	return nil
 }

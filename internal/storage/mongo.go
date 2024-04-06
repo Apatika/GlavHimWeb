@@ -3,17 +3,15 @@ package storage
 import (
 	"context"
 	"fmt"
+	"glavhim-app/internal/config"
 	"glavhim-app/internal/service"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// var uri string = os.Getenv("MONGODB_URI")
-var uri string = "mongodb://localhost:27017"
-
 func HealthCheck() error {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
 	if err != nil {
 		return err
 	}
@@ -24,7 +22,7 @@ func HealthCheck() error {
 }
 
 func PushOrder(order service.Order) (err error) {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
 	if err != nil {
 		return err
 	}

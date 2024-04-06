@@ -5,20 +5,28 @@ type Pvd struct {
 	Count  int
 }
 
+type CreationDate struct {
+	Day   int
+	Month int
+	Year  int
+}
+
+type ShipmentDate struct {
+	Day   int
+	Month int
+	Year  int
+}
+
 type Order struct {
-	CreationDay   int
-	CreationMonth int
-	CreationYear  int
-	LastDate      string
-	Cargo         string
-	ClientID      int
-	Invoice       []int
-	Comment       string
-	Probes        []Chemistry
-	Pvd           []Pvd
-	Payment       bool
-	ShipmentDay   int
-	ShipmentMonth int
-	ShipmentYear  int
-	Status        int
+	CreationDate CreationDate
+	LastDate     string
+	Cargo        string
+	ClientID     int
+	Invoice      []int
+	Comment      string
+	Probes       []Chemistry
+	Pvd          []Pvd
+	Payment      bool
+	ShipmentDate ShipmentDate
+	Status       int
 }

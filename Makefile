@@ -11,7 +11,9 @@ all: build
 build:
 	@cp ./.env ${BUILD_PATH}/config/.env
 	@cp ${CONFIG_PATH} ${BUILD_PATH}/${CONFIG_PATH}
+	@cp ${STATIC_SOURCE_PATH}/index.html ${BUILD_PATH}/static/index.html
+	@cp ${STATIC_SOURCE_PATH}/assets/* ${BUILD_PATH}/static/assets
 	@cd cmd; go build -o .${BUILD_PATH}/${EXECUTABLE}
 
 run: build
-	@cd ${BUILD_PATH}; ./${APP_NAME}
+	@cd ${BUILD_PATH}; ./${EXECUTABLE}

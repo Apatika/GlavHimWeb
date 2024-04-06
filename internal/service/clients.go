@@ -5,14 +5,21 @@ type Contact struct {
 	Tel  string
 }
 
+type Adress struct {
+	City   string
+	Adress string
+}
+
 type Client struct {
-	Manager        string
+	Type           string
+	Manager        User
 	Inn            int64
 	PassportSerial int
 	PassportNum    int
 	Name           string
-	City           string
-	Adress         string
+	Surname        string
+	SecondName     string
+	Adress         []Adress
 	Contact        []Contact
 	Email          string
 }

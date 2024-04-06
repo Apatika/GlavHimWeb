@@ -14,6 +14,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var DB_URI string
+
 func main() {
 
 	file, err := os.OpenFile("log.txt", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
@@ -29,7 +31,7 @@ func main() {
 	}
 
 	log.Println("load config")
-	config, err := config.New()
+	err = config.New()
 	if err != nil {
 		log.Fatalln("ERROR: ", err)
 	}
@@ -43,7 +45,7 @@ func main() {
 	}
 
 	log.Println("set server settings")
-	srv := server.New(config, handler)
+	srv := server.New(config.Cfg, handler)
 
 	idleConnsClosed := make(chan struct{})
 	go func() {
