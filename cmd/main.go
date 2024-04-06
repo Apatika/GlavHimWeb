@@ -37,15 +37,8 @@ func main() {
 	log.Println("get http handler")
 	handler := handler.New()
 
-	db := storage.New()
 	log.Println("ping database")
-	err = db.Ping()
-	if err != nil {
-		log.Fatalln("ERROR: ", err)
-	}
-	log.Println("prepare database")
-	err = db.Prepare()
-	if err != nil {
+	if err = storage.HealthCheck(); err != nil {
 		log.Fatalln("ERROR: ", err)
 	}
 
