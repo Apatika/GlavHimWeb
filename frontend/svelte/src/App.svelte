@@ -1,7 +1,7 @@
 <script>
   import Main from "./lib/Main.svelte";
   import NewOrder from "./lib/NewOrder.svelte";
-  import Add from "./lib/Add.svelte";
+  import Data from "./lib/Data.svelte";
 
   let currentPage = Main
 </script>
@@ -14,7 +14,7 @@
     <a href="#top" on:click={() => currentPage = NewOrder}>Новый Заказ</a>
   </div>
   <div>
-    <a href="#top" on:click={() => currentPage = Add}>Добавить</a>
+    <a href="#top" on:click={() => currentPage = Data}>База Данных</a>
   </div>
 </div>
 <div class="content">

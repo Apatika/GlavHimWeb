@@ -23,7 +23,7 @@ type Client struct {
 	Name           string             `json:"name" bson:"name"`
 	Surname        string             `json:"surname" bson:"surname"`
 	SecondName     string             `json:"secondName" bson:"second_name"`
-	Adress         []Adress           `json:"adress" bson:"adress"`
+	Adress         Adress             `json:"adress" bson:"adress"`
 	Contact        []Contact          `json:"contact" bson:"contact"`
 	Email          string             `json:"email" bson:"email"`
 }
