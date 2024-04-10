@@ -1,17 +1,12 @@
 package service
 
-import "encoding/json"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type User struct {
-	Name  string
-	Tel   string
-	Email string
-}
-
-func marshalUsers(users []User) ([]byte, error) {
-	result, err := json.Marshal(users)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
+	ID    primitive.ObjectID `json:"id" bson:"_id"`
+	Name  string             `json:"name" bson:"name"`
+	Tel   string             `json:"tel" bson:"tel"`
+	Email string             `json:"email" bson:"email"`
 }
