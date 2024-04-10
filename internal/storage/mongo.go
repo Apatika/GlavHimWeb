@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"glavhim-app/internal/config"
 	"glavhim-app/internal/service"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -57,4 +58,21 @@ func GetUsers() ([]service.User, error) {
 		return nil, err
 	}
 	return results, nil
+}
+
+func AddUser(user service.User) error {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = client.Disconnect(context.TODO())
+	}()
+	coll := client.Database("glavhim").Collection("users")
+	_, err = coll.InsertOne(context.TODO(), user)
+	if err != nil {
+		log.Println("insert to database(new user) failed")
+		return err
+	}
+	return nil
 }

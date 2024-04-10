@@ -4,4 +4,5 @@ type IDataBase interface {
 	HealthCheck() error
 	PushOrder() error
 	GetUsers() error
+	AddUser() error
 }
