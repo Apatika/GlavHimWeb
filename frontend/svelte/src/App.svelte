@@ -25,7 +25,7 @@
   }
   .nav div{
     display: flex;
-    height: 60px;
+    height: 40px;
     justify-content: center;
     align-items: center;
     cursor: pointer;

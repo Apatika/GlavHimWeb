@@ -13,6 +13,12 @@
     contact: [{name: "", tel: ""}],
     tel: "",
     email: "",
+    payment: null,
+    city: "",
+    adress: "",
+    invoice: null,
+    cargo: "",
+    comment: "",
   }
 
   const addContact = () => data.contact = data.contact.concat({name: "", tel: ""})
@@ -47,9 +53,7 @@
       <div class="flex">
         <div class="lables">Менеджер:</div>
         <div>
-          <select bind:value={data.manager}>
-          
-          </select>
+          <select bind:value={data.manager}></select>
         </div>
       </div>
       <div class="flex">
@@ -91,15 +95,35 @@
     </div>
   </div>
   <div class="flex underline">
-    <div>
-      <div>ТК: </div>
-      <div>За Наш Счет: </div>
-      <div>Город: </div>
-      <div>Адрес: </div>
-      <div>Счет: </div>
-    </div>
-    <div>
-
+    <div class="lables">
+      <div class="flex">
+        <div class="lables">ТК:</div>
+        <div>
+          <select bind:value={data.cargo}></select>
+        </div>
+      </div>
+      <div class="flex">
+        <div class="lables">За Наш Счет:</div>
+        <input type="checkbox" bind:checked={data.payment}>
+      </div>
+      <div class="flex">
+        <div class="lables">Город:</div>
+        <input type="text" bind:value={data.city} placeholder="Город">
+      </div>
+      <div class="flex">
+        <div class="lables">Адрес:</div>
+        <input type="text" bind:value={data.adress} placeholder="Адрес">
+      </div>
+      <div class="flex">
+        <div class="lables">Счет:</div>
+        <input type="text" bind:value={data.invoice} placeholder="Счет">
+      </div>
+      <div class="flex">
+        <div class="lables">Комментарий</div>
+        <div>
+          <textarea  rows="4" bind:value={data.comment} placeholder="Комментарий"></textarea>
+        </div>
+      </div>
     </div>
   </div>
 </div>
