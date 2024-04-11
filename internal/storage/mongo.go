@@ -69,9 +69,40 @@ func AddUser(user service.User) error {
 		err = client.Disconnect(context.TODO())
 	}()
 	coll := client.Database("glavhim").Collection("users")
-	_, err = coll.InsertOne(context.TODO(), user)
-	if err != nil {
+	if _, err := coll.InsertOne(context.TODO(), user); err != nil {
 		log.Println("insert to database(new user) failed")
+		return err
+	}
+	return nil
+}
+
+func UpdateUser(user service.User) error {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = client.Disconnect(context.TODO())
+	}()
+	coll := client.Database("glavhim").Collection("users")
+	if _, err := coll.UpdateOne(context.TODO(), bson.M{"_id": user.ID}, bson.M{"$set": user}); err != nil {
+		log.Println("update user failed")
+		return err
+	}
+	return nil
+}
+
+func DeleteUser(user service.User) error {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = client.Disconnect(context.TODO())
+	}()
+	coll := client.Database("glavhim").Collection("users")
+	if _, err := coll.DeleteOne(context.TODO(), bson.M{"_id": user.ID}); err != nil {
+		log.Println("delete user failed")
 		return err
 	}
 	return nil

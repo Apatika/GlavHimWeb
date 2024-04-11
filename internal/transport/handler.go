@@ -18,6 +18,8 @@ func New() *http.ServeMux {
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("GET /users", getUsers)
 	mux.HandleFunc("POST /users", addUser)
+	mux.HandleFunc("PUT /users", updateUser)
+	mux.HandleFunc("DELETE /users", deleteUser)
 
 	return mux
 }
@@ -47,6 +49,34 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.ID = primitive.NewObjectID()
-	storage.AddUser(user)
+	if err := storage.AddUser(user); err != nil {
+		log.Panicln(err)
+	}
 	log.Printf("added new user: %v", user.Name)
+}
+
+func updateUser(w http.ResponseWriter, r *http.Request) {
+	var user service.User
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&user); err != nil {
+		log.Println("update user error")
+		return
+	}
+	if err := storage.UpdateUser(user); err != nil {
+		log.Panicln(err)
+	}
+	log.Printf("update user id: %v", user.ID)
+}
+
+func deleteUser(w http.ResponseWriter, r *http.Request) {
+	var user service.User
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&user); err != nil {
+		log.Println("delete user error")
+		return
+	}
+	if err := storage.DeleteUser(user); err != nil {
+		log.Panicln(err)
+	}
+	log.Printf("delete user id: %v", user.ID)
 }

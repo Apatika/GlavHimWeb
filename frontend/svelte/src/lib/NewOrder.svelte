@@ -42,9 +42,17 @@
   })
 
   const addContact = () => data.client.contact = data.client.contact.concat({name: "", tel: ""})
-  const removeContact = () => data.client.contact = data.client.contact.slice(0, -1)
+  const removeContact = () => {
+    if (data.client.contact.length > 1){
+      data.client.contact = data.client.contact.slice(0, -1)
+    }
+  }
   const addInvoice = () => data.order.invoice = data.order.invoice.concat(null)
-  const removeInvoice = () => data.order.invoice = data.order.invoice.slice(0, -1)
+  const removeInvoice = () => {
+    if (data.order.invoice.length > 1){
+      data.order.invoice = data.order.invoice.slice(0, -1)
+    }
+  }
 
 </script>
 

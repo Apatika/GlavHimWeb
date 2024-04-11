@@ -14,7 +14,7 @@
     <a href="#top" on:click={() => currentPage = NewOrder}>Новый Заказ</a>
   </div>
   <div>
-    <a href="#top" on:click={() => currentPage = Data}>База Данных</a>
+    <a href="#top" on:click={() => currentPage = Data}>Администратор</a>
   </div>
 </div>
 <div class="content">
