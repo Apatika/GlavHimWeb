@@ -26,12 +26,6 @@
       alert("Заполните пустые поля")
       return
     }
-    for (let i of managers){
-      if (i.name == user.name){
-        alert("Имя занято")
-        return
-      }
-    }
     fetch("http://localhost:8081/users", {
       method: "POST",
       body: JSON.stringify(user),
@@ -41,6 +35,8 @@
     }).then(() => {
       get()
       alert("Менедежер Добавлен")
+    }).catch((err) => {
+      alert(err)
     })
     user.id = null
     user.name = null
@@ -53,12 +49,6 @@
       alert("Заполните пустые поля")
       return
     }
-    for (let i of managers){
-      if (i.name == user.name && i.id != user.id){
-        alert("Имя занято")
-        return
-      }
-    }
     fetch("http://localhost:8081/users", {
       method: "PUT",
       body: JSON.stringify(user),
@@ -68,6 +58,8 @@
     }).then(() => {
       get()
       alert("Менедежер Обновлен")
+    }).catch((err) => {
+      alert(err)
     })
   }
 
@@ -85,6 +77,8 @@
     }).then(() => {
       get()
       alert("Менедежер Удален")
+    }).catch((err) => {
+      alert(err)
     })
     user.id = null
     user.name = null
@@ -114,7 +108,7 @@
 </script>
   
 
-<div class="block">
+<div class="container">
   <div>
     <span>Менеджеры</span>
   </div>
@@ -151,7 +145,7 @@
   
 <style>
 
-  .block{
+  .container{
     margin: 5px;
     padding: 5px;
     border: 1px solid black;

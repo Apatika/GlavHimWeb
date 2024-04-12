@@ -15,6 +15,7 @@ type (
 	}
 
 	server struct {
+		URI          string        `yaml:"uri"`
 		Port         string        `yaml:"port"`
 		ReadTimeout  time.Duration `yaml:"readTimeout"`
 		WriteTimeout time.Duration `yaml:"writeTimeout"`

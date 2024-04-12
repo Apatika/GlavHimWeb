@@ -31,12 +31,21 @@
   }
 
   let managers = []
+  let cargos = []
   let toAdress = false
 
   fetch('http://localhost:8081/users').then(function(response) {
     return response.json();
-  }).then(function(d) {
-    managers = d
+  }).then(function(data) {
+    managers = data
+  }).catch(function(err) {
+    alert(err);
+  })
+
+  fetch('http://localhost:8081/cargos').then(function(response) {
+    return response.json();
+  }).then(function(data) {
+    cargos = data
   }).catch(function(err) {
     alert(err);
   })
@@ -136,7 +145,14 @@
           <div class="flex">
             <div class="lables">ТК:</div>
             <div>
-              <select bind:value={data.order.cargo}></select>
+              <select bind:value={data.order.cargo}>
+                <option value="город">город</option>
+                <option value="самовывоз">самовывоз</option>
+                <option value="забрать заказ">забрать заказ</option>
+                {#each cargos as cargo}
+                  <option value={cargo.name}>{cargo.name}</option>
+                {/each}
+              </select>
             </div>
           </div>
           <div class="flex">
@@ -199,7 +215,6 @@
   }
   #main{
     padding: 5px;
-    border-right: 1px solid blue;
   }
   .flex{
     display: flex;

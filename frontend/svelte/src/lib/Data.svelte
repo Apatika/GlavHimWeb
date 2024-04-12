@@ -1,11 +1,13 @@
 <script>
 
-import DataManager from "./DataManager.svelte";
+  import DataCargo from "./DataCargo.svelte";
+  import DataManager from "./DataManager.svelte";
 
 </script>
 
 <div class="container">
   <DataManager></DataManager>
+  <DataCargo></DataCargo>
 </div>
 
 <style>

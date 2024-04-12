@@ -2,6 +2,7 @@ package storage
 
 import (
 	"glavhim-app/internal/service"
+	"glavhim-app/internal/storage/mongo"
 )
 
 type IDataBase interface {
@@ -11,12 +12,13 @@ type IDataBase interface {
 	AddUser(service.User) error
 	UpdateUser(service.User) error
 	DeleteUser(service.User) error
+	GetCargos() ([]service.Cargo, error)
 }
 
 var db IDataBase
 
 func DBInit() {
-	db = NewMongo()
+	db = mongo.NewMongo()
 }
 
 func HealthCheck() error {
@@ -61,4 +63,13 @@ func DeleteUser(user service.User) error {
 		return err
 	}
 	return nil
+}
+
+func GetCargos() ([]service.Cargo, error) {
+	var cargo []service.Cargo
+	cargo, err := db.GetCargos()
+	if err != nil {
+		return nil, err
+	}
+	return cargo, nil
 }
