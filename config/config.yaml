@@ -1,8 +1,0 @@
-server:
-  uri: http://localhost
-  port: 8081
-  readTimeout: 15s
-  writeTimeout: 15s
-
-database:
-  uri: mongodb://localhost:27017
