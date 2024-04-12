@@ -14,6 +14,7 @@
 
   let get = () => {
     fetch(`${uri}/users`).then(function(response) {
+      if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
       managers = d
@@ -35,16 +36,17 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then(() => {
+    }).then((response) => {
+      if (response.status != 200) throw new Error(response.statusText)
       get()
+      user.id = null
+      user.name = null
+      user.tel = null
+      user.email = null
       alert("Менедежер Добавлен")
     }).catch((err) => {
       alert(err)
     })
-    user.id = null
-    user.name = null
-    user.tel = null
-    user.email = null
   }
 
   let update = () => {
@@ -58,7 +60,8 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then(() => {
+    }).then((response) => {
+      if (response.status != 200) throw new Error(response.statusText)
       get()
       alert("Менедежер Обновлен")
     }).catch((err) => {
@@ -77,16 +80,17 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then(() => {
+    }).then((response) => {
+      if (response.status != 200) throw new Error(response.statusText)
       get()
+      user.id = null
+      user.name = null
+      user.tel = null
+      user.email = null
       alert("Менедежер Удален")
     }).catch((err) => {
       alert(err)
     })
-    user.id = null
-    user.name = null
-    user.tel = null
-    user.email = null
   }
   
   let select = () => {

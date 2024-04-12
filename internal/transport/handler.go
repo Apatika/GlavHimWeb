@@ -1,10 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
-	"fmt"
-	"glavhim-app/internal/storage"
-	"log"
 	"net/http"
 	"text/template"
 )
@@ -18,6 +14,9 @@ func New() *http.ServeMux {
 	mux.HandleFunc("PUT /users", updateUser)
 	mux.HandleFunc("DELETE /users", deleteUser)
 	mux.HandleFunc("GET /cargos", getCargos)
+	mux.HandleFunc("POST /cargos", addCargo)
+	mux.HandleFunc("PUT /cargos", updateCargo)
+	mux.HandleFunc("DELETE /cargos", deleteCargo)
 
 	return mux
 }
@@ -25,16 +24,7 @@ func New() *http.ServeMux {
 func index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("./static/index.html")
 	if err != nil {
-		fmt.Println("index.html parse error")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	t.ExecuteTemplate(w, "index.html", nil)
-}
-
-func getCargos(w http.ResponseWriter, r *http.Request) {
-	cargos, err := storage.GetCargos()
-	if err != nil {
-		log.Println("getting cargos error")
-		return
-	}
-	json.NewEncoder(w).Encode(cargos)
 }

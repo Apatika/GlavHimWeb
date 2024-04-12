@@ -14,6 +14,7 @@ import (
 func getUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := storage.GetUsers()
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println("getting users error")
 		return
 	}
@@ -23,12 +24,12 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 func checkUserName(name string) error {
 	users, err := storage.GetUsers()
 	if err != nil {
-		log.Println("getting users error")
+		log.Println(err)
 		return err
 	}
 	for _, value := range users {
 		if value.Name == name {
-			return fmt.Errorf("имя занято")
+			return fmt.Errorf("менеджеры: имя занято")
 		}
 	}
 	return nil
@@ -38,16 +39,19 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 	var user service.User
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&user); err != nil {
-		log.Println("add user error")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
-	if err := checkUserName(user.Name); err != nil {
-		log.Println("try to add user with existed name")
+	if err := checkUserName(user.Name); err != nil && user.ID == primitive.NilObjectID {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 	user.ID = primitive.NewObjectID()
 	if err := storage.AddUser(user); err != nil {
-		log.Panicln(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 	}
 	log.Printf("added new user: %v", user.Name)
 }
@@ -56,15 +60,18 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	var user service.User
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&user); err != nil {
-		log.Println("update user error")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
-	if err := checkUserName(user.Name); err != nil {
-		log.Println("try to update user with existed name")
+	if err := checkUserName(user.Name); err != nil && user.ID == primitive.NilObjectID {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 	if err := storage.UpdateUser(user); err != nil {
-		log.Panicln(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 	}
 	log.Printf("update user id: %v", user.ID)
 }
@@ -73,11 +80,13 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	var user service.User
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&user); err != nil {
-		log.Println("delete user error")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 	if err := storage.DeleteUser(user); err != nil {
-		log.Panicln(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 	}
 	log.Printf("delete user id %v, name %v", user.ID, user.Name)
 }

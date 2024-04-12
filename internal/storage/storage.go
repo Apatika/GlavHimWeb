@@ -13,6 +13,9 @@ type IDataBase interface {
 	UpdateUser(service.User) error
 	DeleteUser(service.User) error
 	GetCargos() ([]service.Cargo, error)
+	AddCargo(service.Cargo) error
+	UpdateCargo(service.Cargo) error
+	DeleteCargo(service.Cargo) error
 }
 
 var db IDataBase
@@ -72,4 +75,25 @@ func GetCargos() ([]service.Cargo, error) {
 		return nil, err
 	}
 	return cargo, nil
+}
+
+func AddCargo(cargo service.Cargo) error {
+	if err := db.AddCargo(cargo); err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateCargo(cargo service.Cargo) error {
+	if err := db.UpdateCargo(cargo); err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteCargo(cargo service.Cargo) error {
+	if err := db.DeleteCargo(cargo); err != nil {
+		return err
+	}
+	return nil
 }

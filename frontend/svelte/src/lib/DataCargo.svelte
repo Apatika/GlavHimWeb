@@ -15,6 +15,7 @@
 
   let get = () => {
     fetch(`${uri}/cargos`).then(function(response) {
+      if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
       cargos = d
@@ -26,7 +27,7 @@
   get()
 
   let add = () => {
-    if (cargo.name == null || cargo.tel == null || cargo.email == null){
+    if (cargo.name == null || cargo.uri == null || cargo.mainTel == null){
       alert("Заполните пустые поля")
       return
     }
@@ -36,20 +37,22 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then(() => {
+    }).then((response) => {
+      if (response.status != 200) throw new Error(response.statusText)
       get()
+      cargo.id = null
+      cargo.name = null
+      cargo.mainTel = null
+      cargo.managerTel = null
+      cargo.uri = null
       alert("Запись Добавлена")
     }).catch((err) => {
       alert(err)
     })
-    cargo.id = null
-    cargo.name = null
-    cargo.tel = null
-    cargo.email = null
   }
 
   let update = () => {
-    if (cargo.name == null || cargo.tel == null || cargo.email == null){
+    if (cargo.name == null || cargo.uri == null || cargo.mainTel == null){
       alert("Заполните пустые поля")
       return
     }
@@ -59,7 +62,8 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then(() => {
+    }).then((response) => {
+      if (response.status != 200) throw new Error(response.statusText)
       get()
       alert("Запись Обновлена")
     }).catch((err) => {
@@ -78,16 +82,18 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then(() => {
+    }).then((response) => {
+      if (response.status != 200) throw new Error(response.statusText)
       get()
+      cargo.id = null
+      cargo.name = null
+      cargo.mainTel = null
+      cargo.managerTel = null
+      cargo.uri = null
       alert("Запись удалена")
     }).catch((err) => {
       alert(err)
     })
-    cargo.id = null
-    cargo.name = null
-    cargo.tel = null
-    cargo.email = null
   }
 
   let select = () => {

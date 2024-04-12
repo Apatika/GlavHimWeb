@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"glavhim-app/internal/service"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -40,7 +39,6 @@ func (m *MongoDB) AddUser(user service.User) error {
 	}()
 	coll := client.Database("glavhim").Collection("users")
 	if _, err := coll.InsertOne(context.TODO(), user); err != nil {
-		log.Println("insert to database(new user) failed")
 		return err
 	}
 	return nil
@@ -56,7 +54,6 @@ func (m *MongoDB) UpdateUser(user service.User) error {
 	}()
 	coll := client.Database("glavhim").Collection("users")
 	if _, err := coll.UpdateOne(context.TODO(), bson.M{"_id": user.ID}, bson.M{"$set": user}); err != nil {
-		log.Println("update user failed")
 		return err
 	}
 	return nil
@@ -72,7 +69,6 @@ func (m *MongoDB) DeleteUser(user service.User) error {
 	}()
 	coll := client.Database("glavhim").Collection("users")
 	if _, err := coll.DeleteOne(context.TODO(), bson.M{"_id": user.ID}); err != nil {
-		log.Println("delete user failed")
 		return err
 	}
 	return nil
