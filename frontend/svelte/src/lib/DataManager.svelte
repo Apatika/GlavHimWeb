@@ -1,4 +1,7 @@
 <script>
+  import { getContext } from 'svelte'
+
+  const uri = getContext('uri')
 
   let user = {
     id: null,
@@ -10,7 +13,7 @@
   let managers = []
 
   let get = () => {
-    fetch('http://localhost:8081/users').then(function(response) {
+    fetch(`${uri}/users`).then(function(response) {
       return response.json();
     }).then(function(d) {
       managers = d
@@ -26,7 +29,7 @@
       alert("Заполните пустые поля")
       return
     }
-    fetch("http://localhost:8081/users", {
+    fetch(`${uri}/users`, {
       method: "POST",
       body: JSON.stringify(user),
       headers: {
@@ -49,7 +52,7 @@
       alert("Заполните пустые поля")
       return
     }
-    fetch("http://localhost:8081/users", {
+    fetch(`${uri}/users`, {
       method: "PUT",
       body: JSON.stringify(user),
       headers: {
@@ -68,7 +71,7 @@
       alert("Выберите пользователя")
       return
     }
-    fetch("http://localhost:8081/users", {
+    fetch(`${uri}/users`, {
       method: "DELETE",
       body: JSON.stringify(user),
       headers: {
@@ -150,4 +153,5 @@
     padding: 5px;
     border: 1px solid black;
   }
+  
 </style>

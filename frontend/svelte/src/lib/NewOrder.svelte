@@ -1,4 +1,7 @@
 <script>
+  import { getContext } from 'svelte'
+
+  const uri = getContext('uri')
 
   let data = {
     client: {
@@ -34,7 +37,7 @@
   let cargos = []
   let toAdress = false
 
-  fetch('http://localhost:8081/users').then(function(response) {
+  fetch(`${uri}/users`).then(function(response) {
     return response.json();
   }).then(function(data) {
     managers = data
@@ -42,7 +45,7 @@
     alert(err);
   })
 
-  fetch('http://localhost:8081/cargos').then(function(response) {
+  fetch(`${uri}/users`).then(function(response) {
     return response.json();
   }).then(function(data) {
     cargos = data

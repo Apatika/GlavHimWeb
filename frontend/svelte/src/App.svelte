@@ -2,8 +2,13 @@
   import Main from "./lib/Main.svelte";
   import NewOrder from "./lib/NewOrder.svelte";
   import Data from "./lib/Data.svelte";
+  import { setContext } from 'svelte'
+
+  let uri = "http://localhost:8081"
+  setContext('uri', uri)
 
   let currentPage = Main
+
 </script>
 
 <div class="nav">
@@ -18,7 +23,7 @@
   </div>
 </div>
 <div class="content">
-  <svelte:component this={currentPage}/>
+  <svelte:component this={currentPage} />
 </div>
 
 <style>
