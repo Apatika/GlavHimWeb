@@ -12,8 +12,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func HealthCheck() error {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+type MongoDB struct {
+	Uri string
+}
+
+func NewMongo() *MongoDB {
+	return &MongoDB{
+		Uri: config.Cfg.DB.URI,
+	}
+}
+
+func (m *MongoDB) HealthCheck() error {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
 	}
@@ -23,8 +33,8 @@ func HealthCheck() error {
 	return nil
 }
 
-func PushOrder(order service.Order) (err error) {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+func (m *MongoDB) PushOrder(order service.Order) (err error) {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
 	}
@@ -40,8 +50,8 @@ func PushOrder(order service.Order) (err error) {
 	return nil
 }
 
-func GetUsers() ([]service.User, error) {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+func (m *MongoDB) GetUsers() ([]service.User, error) {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +70,8 @@ func GetUsers() ([]service.User, error) {
 	return results, nil
 }
 
-func AddUser(user service.User) error {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+func (m *MongoDB) AddUser(user service.User) error {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
 	}
@@ -76,8 +86,8 @@ func AddUser(user service.User) error {
 	return nil
 }
 
-func UpdateUser(user service.User) error {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+func (m *MongoDB) UpdateUser(user service.User) error {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
 	}
@@ -92,8 +102,8 @@ func UpdateUser(user service.User) error {
 	return nil
 }
 
-func DeleteUser(user service.User) error {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
+func (m *MongoDB) DeleteUser(user service.User) error {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
 	}

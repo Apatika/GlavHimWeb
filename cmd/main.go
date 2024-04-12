@@ -39,6 +39,7 @@ func main() {
 	log.Println("get http handler")
 	handler := handler.New()
 
+	storage.DBInit()
 	log.Println("ping database")
 	if err = storage.HealthCheck(); err != nil {
 		log.Fatalln("ERROR: ", err)

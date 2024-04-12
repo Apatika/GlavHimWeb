@@ -10,8 +10,8 @@ import (
 
 type (
 	Config struct {
-		Server server
-		DB     database
+		Server server   `yaml:"server"`
+		DB     database `yaml:"database"`
 	}
 
 	server struct {
@@ -21,7 +21,7 @@ type (
 	}
 
 	database struct {
-		URI string
+		URI string `yaml:"uri"`
 	}
 )
 
@@ -37,6 +37,5 @@ func New() error {
 		log.Println(err)
 		return err
 	}
-	Cfg.DB.URI = os.Getenv("DB_PATH")
 	return nil
 }
