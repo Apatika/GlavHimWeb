@@ -2,26 +2,26 @@ package storage
 
 import (
 	"glavhim-app/internal/service"
-	"glavhim-app/internal/storage/mongo"
+	"glavhim-app/internal/storage/mongodb"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IDataBase interface {
 	HealthCheck() error
 	PushOrder(service.Order) error
-	GetUsers() ([]service.User, error)
-	AddUser(service.User) error
-	UpdateUser(service.User) error
-	DeleteUser(service.User) error
-	GetCargos() ([]service.Cargo, error)
-	AddCargo(service.Cargo) error
-	UpdateCargo(service.Cargo) error
-	DeleteCargo(service.Cargo) error
+	CheckNameOne(string, string, primitive.ObjectID) error
+	GetAll(string) ([]bson.M, error)
+	AddOne(string, interface{}) error
+	UpdateOne(string, interface{}, primitive.ObjectID) error
+	DeleteOne(string, primitive.ObjectID) error
 }
 
 var db IDataBase
 
 func DBInit() {
-	db = mongo.NewMongo()
+	db = mongodb.NewMongo()
 }
 
 func HealthCheck() error {
@@ -38,61 +38,38 @@ func PushOrder(order service.Order) error {
 	return nil
 }
 
-func GetUsers() ([]service.User, error) {
-	var user []service.User
-	user, err := db.GetUsers()
+func CheckNameOne(name string, collName string, id primitive.ObjectID) error {
+	if err := db.CheckNameOne(name, collName, id); err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetAll(path string) ([]bson.M, error) {
+	var data []bson.M
+	data, err := db.GetAll(path)
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
+	return data, nil
 }
 
-func AddUser(user service.User) error {
-	if err := db.AddUser(user); err != nil {
+func AddOne(collName string, obj interface{}) error {
+	if err := db.AddOne(collName, obj); err != nil {
 		return err
 	}
 	return nil
 }
 
-func UpdateUser(user service.User) error {
-	if err := db.UpdateUser(user); err != nil {
+func UpdateOne(collName string, obj interface{}, id primitive.ObjectID) error {
+	if err := db.UpdateOne(collName, obj, id); err != nil {
 		return err
 	}
 	return nil
 }
 
-func DeleteUser(user service.User) error {
-	if err := db.DeleteUser(user); err != nil {
-		return err
-	}
-	return nil
-}
-
-func GetCargos() ([]service.Cargo, error) {
-	var cargo []service.Cargo
-	cargo, err := db.GetCargos()
-	if err != nil {
-		return nil, err
-	}
-	return cargo, nil
-}
-
-func AddCargo(cargo service.Cargo) error {
-	if err := db.AddCargo(cargo); err != nil {
-		return err
-	}
-	return nil
-}
-
-func UpdateCargo(cargo service.Cargo) error {
-	if err := db.UpdateCargo(cargo); err != nil {
-		return err
-	}
-	return nil
-}
-
-func DeleteCargo(cargo service.Cargo) error {
-	if err := db.DeleteCargo(cargo); err != nil {
+func DeleteOne(collName string, id primitive.ObjectID) error {
+	if err := db.DeleteOne(collName, id); err != nil {
 		return err
 	}
 	return nil

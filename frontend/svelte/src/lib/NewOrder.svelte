@@ -45,7 +45,7 @@
     alert(err);
   })
 
-  fetch(`${uri}/users`).then(function(response) {
+  fetch(`${uri}/cargos`).then(function(response) {
     return response.json();
   }).then(function(data) {
     cargos = data

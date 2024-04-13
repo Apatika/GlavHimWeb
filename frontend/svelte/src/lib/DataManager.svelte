@@ -17,6 +17,10 @@
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
+      d.forEach(e => {
+        e.id = e["_id"]
+        delete e["_id"]
+      });
       managers = d
     }).catch(function(err) {
       alert(err);
@@ -37,7 +41,9 @@
         "Content-type": "application/json; charset=UTF-8"
       }
     }).then((response) => {
-      if (response.status != 200) throw new Error(response.statusText)
+      return response.json()
+    }).then(data => {
+      if (data.code != 200) throw new Error(data.message)
       get()
       user.id = null
       user.name = null
@@ -61,7 +67,9 @@
         "Content-type": "application/json; charset=UTF-8"
       }
     }).then((response) => {
-      if (response.status != 200) throw new Error(response.statusText)
+      return response.json()
+    }).then(data => {
+      if (data.code != 200) throw new Error(data.message)
       get()
       alert("Менедежер Обновлен")
     }).catch((err) => {
@@ -81,7 +89,9 @@
         "Content-type": "application/json; charset=UTF-8"
       }
     }).then((response) => {
-      if (response.status != 200) throw new Error(response.statusText)
+      return response.json()
+    }).then(data => {
+      if (data.code != 200) throw new Error(data.message)
       get()
       user.id = null
       user.name = null

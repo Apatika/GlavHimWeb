@@ -18,6 +18,10 @@
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
+      d.forEach(e => {
+        e.id = e["_id"]
+        delete e["_id"]
+      });
       cargos = d
     }).catch(function(err) {
       alert(err);
@@ -38,7 +42,9 @@
         "Content-type": "application/json; charset=UTF-8"
       }
     }).then((response) => {
-      if (response.status != 200) throw new Error(response.statusText)
+      return response.json()
+    }).then(data => {
+      if (data.code != 200) throw new Error(data.message)
       get()
       cargo.id = null
       cargo.name = null
@@ -63,7 +69,9 @@
         "Content-type": "application/json; charset=UTF-8"
       }
     }).then((response) => {
-      if (response.status != 200) throw new Error(response.statusText)
+      return response.json()
+    }).then(data => {
+      if (data.code != 200) throw new Error(data.message)
       get()
       alert("Запись Обновлена")
     }).catch((err) => {
@@ -83,7 +91,9 @@
         "Content-type": "application/json; charset=UTF-8"
       }
     }).then((response) => {
-      if (response.status != 200) throw new Error(response.statusText)
+      return response.json()
+    }).then(data => {
+      if (data.code != 200) throw new Error(data.message)
       get()
       cargo.id = null
       cargo.name = null

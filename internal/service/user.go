@@ -10,3 +10,15 @@ type User struct {
 	Tel   string             `json:"tel" bson:"tel"`
 	Email string             `json:"email" bson:"email"`
 }
+
+func (u *User) NewID() {
+	u.ID = primitive.NewObjectID()
+}
+
+func (u *User) GetID() primitive.ObjectID {
+	return u.ID
+}
+
+func (u *User) GetName() string {
+	return u.Name
+}
