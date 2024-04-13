@@ -172,6 +172,9 @@
     margin: 5px;
     padding: 5px;
     border: 1px solid black;
+    width: 250px;
+    height: 250px;
+    text-align: center;
   }
 
 </style>
