@@ -22,6 +22,10 @@ func New() *http.ServeMux {
 	mux.HandleFunc("POST /cargos", addOne)
 	mux.HandleFunc("PUT /cargos", updateOne)
 	mux.HandleFunc("DELETE /cargos", deleteOne)
+	mux.HandleFunc("GET /chems", getAll)
+	mux.HandleFunc("POST /chems", addOne)
+	mux.HandleFunc("PUT /chems", updateOne)
+	mux.HandleFunc("DELETE /chems", deleteOne)
 
 	return mux
 }
@@ -40,6 +44,8 @@ func getStruct(path string) service.IService {
 		return &service.User{}
 	case "cargos":
 		return &service.Cargo{}
+	case "chems":
+		return &service.Chemistry{}
 	default:
 		return nil
 	}
