@@ -2,17 +2,6 @@ package service
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type Contact struct {
-	Name string `json:"name" bson:"name"`
-	Tel  string `json:"tel" bson:"tel"`
-}
-
-type Adress struct {
-	City     string `json:"city" bson:"city"`
-	Adress   string `json:"adress" bson:"adress"`
-	Terminal string `json:"terminal" bson:"terminal"`
-}
-
 type Client struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id"`
 	Type           int                `json:"type" bson:"type"`

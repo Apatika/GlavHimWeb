@@ -2,17 +2,6 @@ package service
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type Pvd struct {
-	Weight float32 `json:"weight" bson:"weight"`
-	Count  int     `json:"count" bson:"count"`
-}
-
-type Date struct {
-	Day   int `json:"day" bson:"day"`
-	Month int `json:"month" bson:"month"`
-	Year  int `json:"year" bson:"year"`
-}
-
 type Order struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id"`
 	CreationDate Date               `json:"creationDate" bson:"creation_date"`

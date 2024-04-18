@@ -149,7 +149,7 @@
     }
   }
 
-  function validateUrl() {
+  const validateUrl = () => {
     return cargo.uri.match(/^(ftp|http|https):\/\/[^ "]+$/)
   }
 
