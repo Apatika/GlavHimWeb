@@ -13,7 +13,7 @@
 
   let cargos =[]
 
-  let get = () => {
+  const get = () => {
     fetch(`${uri}/cargos`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
@@ -30,9 +30,13 @@
 
   get()
 
-  let add = () => {
+  const add = () => {
     if (cargo.name == null || cargo.uri == null || cargo.mainTel == null){
       alert("Заполните пустые поля")
+      return
+    }
+    if (!validateUrl()){
+      alert("Неправильный формат адреса сайта")
       return
     }
     fetch(`${uri}/cargos`, {
@@ -57,9 +61,13 @@
     })
   }
 
-  let update = () => {
+  const update = () => {
     if (cargo.name == null || cargo.uri == null || cargo.mainTel == null){
       alert("Заполните пустые поля")
+      return
+    }
+    if (!validateUrl()){
+      alert("Неправильный формат адреса сайта")
       return
     }
     fetch(`${uri}/cargos`, {
@@ -79,7 +87,7 @@
     })
   }
 
-  let del = () => {
+  const del = () => {
     if (cargo.id == null){
       alert("Выберите транспортную")
       return
@@ -106,7 +114,7 @@
     })
   }
 
-  let select = () => {
+  const select = () => {
     if (cargo.name == ""){
       cargo.id = null
       cargo.name = null
@@ -125,6 +133,21 @@
         return
       }
     }
+  }
+
+  const telCheck = () => {
+    cargo.mainTel = cargo.mainTel.replace(/[^0-9]/g, "")
+    if (cargo.mainTel.length > 11){
+      cargo.mainTel = cargo.mainTel.slice(0, -1)
+    }
+    cargo.managerTel = cargo.managerTel.replace(/[^0-9]/g, "")
+    if (cargo.managerTel.length > 11){
+      cargo.managerTel = cargo.managerTel.slice(0, -1)
+    }
+  }
+
+  function validateUrl() {
+    return cargo.uri.match(/^(ftp|http|https):\/\/[^ "]+$/)
   }
 
 </script>
@@ -151,10 +174,10 @@
     <input type="text" bind:value={cargo.uri} placeholder="Сайт">
   </div>
   <div>
-    <input type="text" bind:value={cargo.mainTel} placeholder="Основной телефон">
+    <input type="text" bind:value={cargo.mainTel} on:keyup={telCheck} placeholder="Основной телефон">
   </div>
   <div>
-    <input type="text" bind:value={cargo.managerTel} placeholder="Телефон менеджера">
+    <input type="text" bind:value={cargo.managerTel} on:keyup={telCheck} placeholder="Телефон менеджера">
   </div>
   <div>
     {#if cargo.id == null}

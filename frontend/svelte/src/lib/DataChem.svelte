@@ -1,7 +1,6 @@
 <script>
 
   import { getContext } from 'svelte'
-    import Data from './Data.svelte';
 
   const uri = getContext('uri')
 
@@ -14,7 +13,7 @@
 
   let chems = []
 
-  let get = () => {
+  const get = () => {
     fetch(`${uri}/chems`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
@@ -31,7 +30,7 @@
 
   get()
 
-  let add = () => {
+  const add = () => {
     if (chem.name == null || chem.sellValue == null || chem.probeValue == null){
       alert("Заполните пустые поля")
       return
@@ -59,7 +58,7 @@
     })
   }
 
-  let update = () => {
+  const update = () => {
     if (chem.name == null || chem.sellValue == null || chem.probeValue == null){
       alert("Заполните пустые поля")
       return
@@ -83,7 +82,7 @@
     })
   }
 
-  let del = () => {
+  const del = () => {
     if (chem.id == null){
       alert("Выберите транспортную")
       return
@@ -109,7 +108,7 @@
     })
   }
 
-let select = () => {
+  const select = () => {
     if (chem.name == ""){
       chem.id = null
       chem.name = null

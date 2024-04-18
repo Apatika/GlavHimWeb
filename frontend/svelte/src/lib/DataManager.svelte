@@ -12,7 +12,7 @@
   
   let managers = []
 
-  let get = () => {
+  const get = () => {
     fetch(`${uri}/users`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
@@ -29,9 +29,13 @@
 
   get()
   
-  let add = () => {
+  const add = () => {
     if (user.name == null || user.tel == null || user.email == null){
       alert("Заполните пустые поля")
+      return
+    }
+    if (!validateEmail()){
+      alert("Неправильный формат почты")
       return
     }
     fetch(`${uri}/users`, {
@@ -55,9 +59,13 @@
     })
   }
 
-  let update = () => {
+  const update = () => {
     if (user.name == null || user.tel == null || user.email == null){
       alert("Заполните пустые поля")
+      return
+    }
+    if (!validateEmail()){
+      alert("Неправильный формат почты")
       return
     }
     fetch(`${uri}/users`, {
@@ -77,7 +85,7 @@
     })
   }
 
-  let del = () => {
+  const del = () => {
     if (user.id == null){
       alert("Выберите пользователя")
       return
@@ -103,7 +111,7 @@
     })
   }
   
-  let select = () => {
+  const select = () => {
     if (user.name == ""){
       user.id = null
       user.name = null
@@ -120,6 +128,19 @@
         return
       }
     }
+  }
+
+  const telCheck = () => {
+    user.tel = user.tel.replace(/[^0-9]/g, "")
+    if (user.tel.length > 11){
+      user.tel = user.tel.slice(0, -1)
+    }
+  }
+
+  const validateEmail = () => {
+    return user.email.match(
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    )
   }
   
 </script>
@@ -144,7 +165,7 @@
     <input type="text" bind:value={user.name} placeholder="Имя">
   </div>
   <div>
-    <input type="text" bind:value={user.tel} placeholder="Телефон">
+    <input type="text" bind:value={user.tel} on:keyup={telCheck} placeholder="Телефон">
   </div>
   <div>
     <input type="text" bind:value={user.email} placeholder="Email">
