@@ -14,7 +14,7 @@
   let cargos =[]
 
   const get = () => {
-    fetch(`${uri}/cargos`).then(function(response) {
+    fetch(`${uri}/db/cargos`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
@@ -39,7 +39,7 @@
       alert("Неправильный формат адреса сайта")
       return
     }
-    fetch(`${uri}/cargos`, {
+    fetch(`${uri}/db/cargos`, {
       method: "POST",
       body: JSON.stringify(cargo),
       headers: {
@@ -70,7 +70,7 @@
       alert("Неправильный формат адреса сайта")
       return
     }
-    fetch(`${uri}/cargos`, {
+    fetch(`${uri}/db/cargos`, {
       method: "PUT",
       body: JSON.stringify(cargo),
       headers: {
@@ -92,7 +92,7 @@
       alert("Выберите транспортную")
       return
     }
-    fetch(`${uri}/cargos`, {
+    fetch(`${uri}/db/cargos`, {
       method: "DELETE",
       body: JSON.stringify(cargo),
       headers: {

@@ -10,26 +10,21 @@ const (
 	checkName
 )
 
+type response struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 func New() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./static/assets/"))))
 
 	mux.HandleFunc("/", index)
 
-	mux.HandleFunc("GET /users", adminDBHandlerDefault)
-	mux.HandleFunc("POST /users", adminDBHandlerUniqueName)
-	mux.HandleFunc("PUT /users", adminDBHandlerUniqueName)
-	mux.HandleFunc("DELETE /users", adminDBHandlerDefault)
-
-	mux.HandleFunc("GET /cargos", adminDBHandlerDefault)
-	mux.HandleFunc("POST /cargos", adminDBHandlerUniqueName)
-	mux.HandleFunc("PUT /cargos", adminDBHandlerUniqueName)
-	mux.HandleFunc("DELETE /cargos", adminDBHandlerDefault)
-
-	mux.HandleFunc("GET /chems", adminDBHandlerDefault)
-	mux.HandleFunc("POST /chems", adminDBHandlerUniqueName)
-	mux.HandleFunc("PUT /chems", adminDBHandlerUniqueName)
-	mux.HandleFunc("DELETE /chems", adminDBHandlerDefault)
+	mux.HandleFunc("GET /db/{path}", adminDBHandlerDefault)
+	mux.HandleFunc("POST /db/{path}", adminDBHandlerUniqueName)
+	mux.HandleFunc("PUT /db/{path}", adminDBHandlerUniqueName)
+	mux.HandleFunc("DELETE /db/{path}", adminDBHandlerDefault)
 
 	return mux
 }

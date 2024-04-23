@@ -14,7 +14,7 @@
   let chems = []
 
   const get = () => {
-    fetch(`${uri}/chems`).then(function(response) {
+    fetch(`${uri}/db/chems`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
@@ -37,7 +37,7 @@
     }
     chem.sellValue = Number(chem.sellValue)
     chem.probeValue = Number(chem.probeValue)
-    fetch(`${uri}/chems`, {
+    fetch(`${uri}/db/chems`, {
       method: "POST",
       body: JSON.stringify(chem),
       headers: {
@@ -65,7 +65,7 @@
     }
     chem.sellValue = Number(chem.sellValue)
     chem.probeValue = Number(chem.probeValue)
-    fetch(`${uri}/chems`, {
+    fetch(`${uri}/db/chems`, {
       method: "PUT",
       body: JSON.stringify(chem),
       headers: {
@@ -87,7 +87,7 @@
       alert("Выберите транспортную")
       return
     }
-    fetch(`${uri}/chems`, {
+    fetch(`${uri}/db/chems`, {
       method: "DELETE",
       body: JSON.stringify(chem),
       headers: {

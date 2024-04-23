@@ -217,6 +217,7 @@
     margin: 30px 0px 5px 50px;
   }
   #main{
+    width: 40%;
     padding: 5px;
   }
   .flex{

@@ -7,7 +7,6 @@ import (
 	"glavhim-app/internal/storage"
 	"log"
 	"net/http"
-	"strings"
 )
 
 func adminDBHandlerDefault(w http.ResponseWriter, r *http.Request) {
@@ -29,10 +28,7 @@ func adminDBHandlerUniqueName(w http.ResponseWriter, r *http.Request) {
 }
 
 func adminDBHandler(w http.ResponseWriter, r *http.Request, flag int) (int, string) {
-	path, found := strings.CutPrefix(r.URL.Path, "/")
-	if !found {
-		return http.StatusInternalServerError, fmt.Sprintf("url path: prefix %v not found", path)
-	}
+	path := r.PathValue("path")
 	var data service.IService
 	if r.Method != "GET" {
 		switch path {

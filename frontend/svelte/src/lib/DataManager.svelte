@@ -13,7 +13,7 @@
   let managers = []
 
   const get = () => {
-    fetch(`${uri}/users`).then(function(response) {
+    fetch(`${uri}/db/users`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
@@ -38,7 +38,7 @@
       alert("Неправильный формат почты")
       return
     }
-    fetch(`${uri}/users`, {
+    fetch(`${uri}/db/users`, {
       method: "POST",
       body: JSON.stringify(user),
       headers: {
@@ -68,7 +68,7 @@
       alert("Неправильный формат почты")
       return
     }
-    fetch(`${uri}/users`, {
+    fetch(`${uri}/db/users`, {
       method: "PUT",
       body: JSON.stringify(user),
       headers: {
@@ -90,7 +90,7 @@
       alert("Выберите пользователя")
       return
     }
-    fetch(`${uri}/users`, {
+    fetch(`${uri}/db/users`, {
       method: "DELETE",
       body: JSON.stringify(user),
       headers: {
