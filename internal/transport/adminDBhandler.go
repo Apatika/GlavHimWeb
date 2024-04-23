@@ -2,75 +2,83 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage"
 	"log"
 	"net/http"
 )
 
-func adminDBHandlerDefault(w http.ResponseWriter, r *http.Request) {
-	code, err := adminDBHandler(w, r, def)
-	if r.Method != "GET" {
-		json.NewEncoder(w).Encode(response{code, fmt.Sprintf("%v (code %v)", err, code)})
-	}
-	if code != http.StatusOK {
-		log.Println(err)
-	}
-}
-
-func adminDBHandlerUniqueName(w http.ResponseWriter, r *http.Request) {
-	code, err := adminDBHandler(w, r, checkName)
-	json.NewEncoder(w).Encode(response{code, fmt.Sprintf("%v (code %v)", err, code)})
-	if code != http.StatusOK {
-		log.Println(err)
-	}
-}
-
-func adminDBHandler(w http.ResponseWriter, r *http.Request, flag int) (int, string) {
-	path := r.PathValue("path")
+func getStructByPath(path string) service.IService {
 	var data service.IService
+	switch path {
+	case "users":
+		data = &service.User{}
+	case "cargos":
+		data = &service.Cargo{}
+	case "chems":
+		data = &service.Chemistry{}
+	}
+	return data
+}
+
+func adminDBHandler(w http.ResponseWriter, r *http.Request) {
+	path := r.PathValue("path")
+	data := getStructByPath(path)
 	if r.Method != "GET" {
-		switch path {
-		case "users":
-			data = &service.User{}
-		case "cargos":
-			data = &service.Cargo{}
-		case "chems":
-			data = &service.Chemistry{}
-		}
 		decoder := json.NewDecoder(r.Body)
 		if err := decoder.Decode(&data); err != nil {
-			return http.StatusInternalServerError, err.Error()
-		}
-		if flag&checkName == checkName {
-			if err := storage.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
-				return http.StatusBadRequest, err.Error()
-			}
+			json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+			return
 		}
 	}
 	switch r.Method {
 	case http.MethodGet:
 		data, err := storage.GetAll(path)
 		if err != nil {
-			return http.StatusInternalServerError, err.Error()
+			log.Printf("read db failed, path /db/%v (%v)", path, err.Error())
+			json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+			return
 		}
+		log.Printf("read from \"%v\" collection", path)
 		json.NewEncoder(w).Encode(data)
+		return
 	case http.MethodPost:
 		data.NewID()
-		if err := storage.AddOne(path, data); err != nil {
-			return http.StatusInternalServerError, err.Error()
+		if err := storage.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+			log.Printf("write db failed, path /db/%v (%v)", path, "name already exists")
+			json.NewEncoder(w).Encode(response{http.StatusBadRequest, err.Error()})
+			return
+		} else {
+			if err := storage.AddOne(path, data); err != nil {
+				log.Printf("write db failed, path /db/%v (%v)", path, err.Error())
+				json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+				return
+			}
 		}
+		log.Printf("write to \"%v\" collection", path)
 	case http.MethodPut:
-		if err := storage.UpdateOne(path, data, data.GetID()); err != nil {
-			return http.StatusInternalServerError, err.Error()
+		if err := storage.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+			log.Printf("write db failed, path /db/%v (%v)", path, "name already exists")
+			json.NewEncoder(w).Encode(response{http.StatusBadRequest, err.Error()})
+			return
+		} else {
+			if err := storage.UpdateOne(path, data, data.GetID()); err != nil {
+				log.Printf("write db failed, path /db/%v (%v)", path, err.Error())
+				json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+				return
+			}
 		}
+		log.Printf("update to \"%v\" collection", path)
 	case http.MethodDelete:
 		if err := storage.DeleteOne(path, data.GetID()); err != nil {
-			return http.StatusInternalServerError, err.Error()
+			log.Printf("delete from db failed, path /db/%v (%v)", path, err.Error())
+			json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+			return
 		}
+		log.Printf("delete from \"%v\" collection", path)
 	default:
-		return http.StatusInternalServerError, "Method not allowed"
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, "Method not alowed"})
+		return
 	}
-	return http.StatusOK, ""
+	json.NewEncoder(w).Encode(response{http.StatusOK, ""})
 }

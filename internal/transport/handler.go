@@ -5,11 +5,6 @@ import (
 	"text/template"
 )
 
-const (
-	def = 1 << iota
-	checkName
-)
-
 type response struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -21,10 +16,7 @@ func New() *http.ServeMux {
 
 	mux.HandleFunc("/", index)
 
-	mux.HandleFunc("GET /db/{path}", adminDBHandlerDefault)
-	mux.HandleFunc("POST /db/{path}", adminDBHandlerUniqueName)
-	mux.HandleFunc("PUT /db/{path}", adminDBHandlerUniqueName)
-	mux.HandleFunc("DELETE /db/{path}", adminDBHandlerDefault)
+	mux.HandleFunc("/db/{path}", adminDBHandler)
 
 	return mux
 }

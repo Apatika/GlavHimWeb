@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage/mongodb"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,7 +9,6 @@ import (
 
 type IDataBase interface {
 	HealthCheck() error
-	PushOrder(service.Order) error
 	CheckNameOne(string, string, primitive.ObjectID) error
 	GetAll(string) ([]bson.M, error)
 	AddOne(string, interface{}) error
@@ -26,13 +24,6 @@ func DBInit() {
 
 func HealthCheck() error {
 	if err := db.HealthCheck(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func PushOrder(order service.Order) error {
-	if err := db.PushOrder(order); err != nil {
 		return err
 	}
 	return nil
