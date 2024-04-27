@@ -16,10 +16,7 @@
     <a href="#top" on:click={() => currentPage = Main}>Главная</a>
   </div>
   <div>
-    <a href="#top" on:click={() => currentPage = NewOrder}>Новый Заказ</a>
-  </div>
-  <div>
-    <a href="#top" on:click={() => currentPage = Data}>Администратор</a>
+    <a href="#top" on:click={() => currentPage = Data}>База Данных</a>
   </div>
 </div>
 <div class="content">

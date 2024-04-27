@@ -1,4 +1,6 @@
 <script>
+    import NewOrder from "./NewOrder.svelte";
+
   
   let orders = [{id: 2, cargo: "город", name: "ИП Стрельникова Дарья Владимировна", adress: "г Санкт-Петербург, Октябрьская набережная 6М", status: "Принят в работу"}]
 
@@ -32,8 +34,8 @@
       {/each}
     </div>
   </div>
-  <div id="info">
-
+  <div id="new-order">
+    <NewOrder></NewOrder>
   </div>
 </div>
 
@@ -89,7 +91,7 @@
     border: 1px solid black;
     height: 90%;
   }
-  #info{
+  #new-order{
     flex-basis: 25%;
   }
   #refresh{
