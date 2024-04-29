@@ -240,11 +240,11 @@
           <div class="flex">
             <div class="lables">До Адреса</div>
             <div>
-              <input type="checkbox" bind:checked={order.toAdress}>
+              <input type="checkbox" bind:checked={order.toadress}>
             </div>
           </div>
           <div class="flex">
-            {#if order.toAdress}
+            {#if order.toadress}
               <div class="lables">Адрес:</div>
               <div>
                 <input type="text" bind:value={order.adress.adress} placeholder="Адрес">
