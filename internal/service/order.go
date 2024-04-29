@@ -7,13 +7,18 @@ type Order struct {
 	CreationDate Date               `json:"creationDate" bson:"creation_date"`
 	LastDate     string             `json:"lastDate" bson:"last_date"`
 	Cargo        string             `json:"cargo" bson:"cargo"`
+	ToAdress     bool               `json:"toadress" bson:"toadress"`
 	Adress       Adress             `json:"adress" bson:"adress"`
-	ClientID     int                `json:"clientId" bson:"client_id"`
-	Invoice      []int              `json:"invoice" bson:"invoice"`
+	ClientID     primitive.ObjectID `json:"clientId" bson:"client_id"`
+	Invoice      []string           `json:"invoice" bson:"invoice"`
 	Comment      string             `json:"comment" bson:"comment"`
 	Probes       []Chemistry        `json:"probes" bson:"probes"`
 	Pvd          []Pvd              `json:"pvd" bson:"pvd"`
 	Payment      bool               `json:"payment" bson:"payment"`
 	ShipmentDate Date               `json:"shipmentDate" bson:"shipment_date"`
-	Status       int                `json:"status" bson:"status"`
+	Status       string             `json:"status" bson:"status"`
+}
+
+func (o *Order) NewID() {
+	o.ID = primitive.NewObjectID()
 }

@@ -22,6 +22,7 @@
     id: null,
     clientId: null,
     payment: null,
+    toadress: false,
     adress: {city: null, adress: null, terminal: "основной"},
     invoice: [null],
     cargo: null,
@@ -33,7 +34,6 @@
 
   let managers = []
   let cargos = []
-  let toAdress = false
 
   fetch(`${uri}/db/users`).then(function(response) {
     return response.json();
@@ -62,6 +62,67 @@
     if (order.invoice.length > 1){
       order.invoice = order.invoice.slice(0, -1)
     }
+  }
+
+  const pushOrder = (id) => {
+    order.clientId = id
+    fetch(`${uri}/orders`, {
+      method: "POST",
+      body: JSON.stringify(order),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    }).then((response) => {
+      return response.json()
+    }).then((data) => {
+      if (data.code != 200) throw new Error(data.message)
+      order.id = null
+      order.clientId = null
+      order.payment = null
+      order.adress = {city: null, adress: null, terminal: "основной"}
+      order.invoice = [null]
+      order.cargo = null
+      order.lastDate = null
+      order.comment = null
+      order.probes = []
+      order.pvd = []
+      order.toadress = false
+    }).catch((err) => {
+      alert(err)
+    })
+  }
+
+  const push = () => {
+    // @ts-ignore
+    client.type = Number(client.type)
+    client.adress = order.adress
+    fetch(`${uri}/clients`, {
+      method: "POST",
+      body: JSON.stringify(client),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    }).then((response) => {
+      return response.json()
+    }).then((data) => {
+      if (data.code != 200) throw new Error(data.message)
+      client.id = null
+      client.type = '0'
+      client.adress = null
+      client.name = null
+      client.surname = null
+      client.secondName = null
+      client.manager = null
+      client.inn = null
+      client.passportSerial = null
+      client.passportNum = null
+      client.contact = [{name: null, tel: null}]
+      client.tel = null
+      client.email = null
+      pushOrder(data.id)
+    }).catch((err) => {
+      alert(err)
+    })
   }
 
 </script>
@@ -179,11 +240,11 @@
           <div class="flex">
             <div class="lables">До Адреса</div>
             <div>
-              <input type="checkbox" bind:checked={toAdress}>
+              <input type="checkbox" bind:checked={order.toAdress}>
             </div>
           </div>
           <div class="flex">
-            {#if toAdress}
+            {#if order.toAdress}
               <div class="lables">Адрес:</div>
               <div>
                 <input type="text" bind:value={order.adress.adress} placeholder="Адрес">
@@ -224,6 +285,7 @@
       </div>
     </div>
   </div>
+  <button on:click={push}>Отправить</button>
 </div>
 
 <style>
