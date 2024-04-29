@@ -85,7 +85,6 @@
       order.lastDate = null
       order.comment = null
       order.probes = []
-      order.pvd = []
       order.toadress = false
     }).catch((err) => {
       alert(err)

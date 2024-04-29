@@ -13,7 +13,6 @@ type Order struct {
 	Invoice      []string           `json:"invoice" bson:"invoice"`
 	Comment      string             `json:"comment" bson:"comment"`
 	Probes       []Chemistry        `json:"probes" bson:"probes"`
-	Pvd          []Pvd              `json:"pvd" bson:"pvd"`
 	Payment      bool               `json:"payment" bson:"payment"`
 	ShipmentDate Date               `json:"shipmentDate" bson:"shipment_date"`
 	Status       string             `json:"status" bson:"status"`
