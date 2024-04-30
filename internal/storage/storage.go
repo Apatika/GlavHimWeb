@@ -14,6 +14,7 @@ type IDataBase interface {
 	AddOne(string, interface{}) error
 	UpdateOne(string, interface{}, primitive.ObjectID) error
 	DeleteOne(string, primitive.ObjectID) error
+	GetInWorkOrders() ([]mongodb.OrderFull, error)
 }
 
 var db IDataBase
@@ -64,4 +65,12 @@ func DeleteOne(collName string, id primitive.ObjectID) error {
 		return err
 	}
 	return nil
+}
+
+func GetInWorkOrders() ([]mongodb.OrderFull, error) {
+	data, err := db.GetInWorkOrders()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }

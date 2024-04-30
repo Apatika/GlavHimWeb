@@ -1,22 +1,37 @@
 <script>
-    import NewOrder from "./NewOrder.svelte";
+  import NewOrder from "./NewOrder.svelte";
+  import { getContext } from 'svelte'
+
+  const uri = getContext('uri')
 
   
-  let orders = [{id: 2, cargo: "город", name: "ИП Стрельникова Дарья Владимировна", adress: "г Санкт-Петербург, Октябрьская набережная 6М", status: "Принят в работу"}]
+  let orders = []
+
+  const getInWork = () => {
+    fetch(`${uri}/inwork`).then(function(response) {
+      if (response.status != 200) throw new Error(response.statusText)
+      return response.json();
+    }).then(function(d) {
+      orders = d
+    }).catch(function(err) {
+      alert(err);
+    })
+  }
+  getInWork()
 
 </script>
 
 <div id="container">
   <div id="content">
-    <button id="refresh">Обновить</button>
+    <button id="refresh" on:click={getInWork}>Обновить</button>
     <div id="table">
       {#each orders as order}
       <div class="order">
-        <div class="order-item cargo">{order.cargo}</div>
-        <div class="order-item name">{order.name}</div>
-        <div class="order-item adress">{order.adress}</div>
+        <div class="order-item cargo">{order.order.cargo}</div>
+        <div class="order-item name">{order.client.name}</div>
+        <div class="order-item adress">{order.order.adress.city}</div>
         <div class="order-item status">
-          <select value={order.status}>
+          <select value={order.order.status}>
             <option value=""></option>
             <option value="Принят В Работу">Принят В Работу</option>
             <option value="СТОП">СТОП</option>
@@ -24,7 +39,6 @@
             <option value="Забор ПЭК">Забор ПЭК</option>
             <option value="Заказан Забор">Заказан Забор</option>
             <option value="Развозка">Развозка</option>
-            <option value="В Маршрут">В Маршрут</option>
             <option value="Нет Товара">Нет Товара</option>
           </select>
         </div>

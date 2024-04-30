@@ -17,6 +17,7 @@ func New() *http.ServeMux {
 	mux.HandleFunc("/db/{path}", adminDBHandler)
 	mux.HandleFunc("POST /orders", pushOrder)
 	mux.HandleFunc("POST /clients", pushClient)
+	mux.HandleFunc("GET /inwork", inWorkOrders)
 
 	return mux
 }

@@ -11,6 +11,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+const (
+	StatusInWork  = "Принят В Работу"
+	StatusShipped = "Отгружен"
+	StatusPecom   = "Забор ПЭК"
+	StatusCalled  = "Заказан Забор"
+	StatusStop    = "СТОП"
+	StatusCity    = "Развозка"
+	StatusEmpty   = "Нет Товара"
+)
+
 func pushOrder(w http.ResponseWriter, r *http.Request) {
 	path := "orders"
 	var data service.Order
@@ -31,4 +41,13 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(response{http.StatusOK, ""})
+}
+
+func inWorkOrders(w http.ResponseWriter, r *http.Request) {
+	data, err := storage.GetInWorkOrders()
+	if err != nil {
+		log.Printf("read in work orders failed (%v)", err.Error())
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+	}
+	json.NewEncoder(w).Encode(data)
 }

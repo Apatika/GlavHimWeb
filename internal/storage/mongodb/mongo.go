@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"glavhim-app/internal/config"
+	"glavhim-app/internal/service"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,6 +15,11 @@ import (
 
 type MongoDB struct {
 	Uri string
+}
+
+type OrderFull struct {
+	Client service.Client `json:"client"`
+	Order  service.Order  `json:"order"`
 }
 
 func NewMongo() *MongoDB {
@@ -121,4 +127,43 @@ func (m *MongoDB) DeleteOne(collName string, id primitive.ObjectID) error {
 		return err
 	}
 	return nil
+}
+
+func (m *MongoDB) GetInWorkOrders() ([]OrderFull, error) {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		err = client.Disconnect(context.TODO())
+	}()
+	coll := client.Database("glavhim").Collection("orders")
+	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "status", Value: bson.D{{Key: "$ne", Value: "Отгружен"}}}})
+	if err != nil {
+		return nil, err
+	}
+	var orders []bson.M
+	if err = cursor.All(context.TODO(), &orders); err != nil {
+		return nil, err
+	}
+	coll = client.Database("glavhim").Collection("clients")
+	arr := make([]OrderFull, 0, 10)
+	for _, v := range orders {
+		doc, err := bson.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+		var order service.Order
+		bson.Unmarshal(doc, &order)
+		var client service.Client
+		err = coll.FindOne(
+			context.TODO(),
+			bson.D{{Key: "_id", Value: order.ClientID}},
+		).Decode(&client)
+		if err != nil {
+			return nil, err
+		}
+		arr = append(arr, OrderFull{client, order})
+	}
+	return arr, nil
 }
