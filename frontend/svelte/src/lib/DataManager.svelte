@@ -131,11 +131,8 @@
   }
 
   const telInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
-  const telFormat = (event) => {
-    event.preventDefault()
-    let paste = (event.clipboardData || window.clipboardData).getData("text")
-    paste = paste.replace(/[^0-9]/g, "")
-    event.target.value = paste
+  const telFormat = () => {
+    user.tel = user.tel.replace(/[^0-9]/g, "")
   }
 
   const validateEmail = () => {
@@ -166,7 +163,7 @@
     <input type="text" bind:value={user.name} placeholder="Имя">
   </div>
   <div>
-    <input type="text" bind:value={user.tel} on:paste={telFormat} on:keypress={telInput} placeholder="Телефон">
+    <input type="text" bind:value={user.tel} on:keypress={telInput} on:input={telFormat} placeholder="Телефон">
   </div>
   <div>
     <input type="text" bind:value={user.email} placeholder="Email">

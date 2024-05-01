@@ -136,11 +136,9 @@
   }
 
   const telInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
-  const telFormat = (event) => {
-    event.preventDefault()
-    let paste = (event.clipboardData || window.clipboardData).getData("text")
-    paste = paste.replace(/[^0-9]/g, "")
-    event.target.value = paste
+  const telFormat = () => {
+    cargo.mainTel = cargo.mainTel.replace(/[^0-9]/g, "")
+    cargo.managerTel = cargo.managerTel.replace(/[^0-9]/g, "")
   }
 
   const validateUrl = () => {
@@ -171,10 +169,10 @@
     <input type="text" bind:value={cargo.uri} placeholder="Сайт">
   </div>
   <div>
-    <input type="text" bind:value={cargo.mainTel} on:keypress={telInput} on:paste={telFormat} placeholder="Основной телефон">
+    <input type="text" bind:value={cargo.mainTel} on:keypress={telInput} on:input={telFormat} placeholder="Основной телефон">
   </div>
   <div>
-    <input type="text" bind:value={cargo.managerTel} on:keypress={telInput} on:paste={telFormat} placeholder="Телефон менеджера">
+    <input type="text" bind:value={cargo.managerTel} on:keypress={telInput} on:input={telFormat} placeholder="Телефон менеджера">
   </div>
   <div>
     {#if cargo.id == null}

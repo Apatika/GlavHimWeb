@@ -125,11 +125,10 @@
   }
 
   const telInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
-  const telFormat = (event) => {
-    event.preventDefault()
-    let paste = (event.clipboardData || window.clipboardData).getData("text")
-    paste = paste.replace(/[^0-9]/g, "")
-    event.target.value = paste
+  const telFormat = () => {
+    for (let i = 0; i < (client.contact).length; ++i){
+      (client.contact)[i].tel = ((client.contact)[i].tel).replace(/[^0-9]/g, "")
+    }
   }
 
 </script>
@@ -203,7 +202,7 @@
               {#each client.contact as contact}
                 <div>
                   <input type="text" bind:value={contact.name} placeholder="Контакт">
-                  <input type="text" bind:value={contact.tel} on:keypress={telInput} on:paste={telFormat} placeholder="Телефон">
+                  <input class="tel" type="text" bind:value={contact.tel} on:keypress={telInput} on:input={telFormat} placeholder="Телефон">
                 </div>
               {/each}
               <button on:click={addContact}>+</button>
