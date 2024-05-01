@@ -127,18 +127,12 @@
     }
   }
 
-  const sellCheck = () => {
-    chem.sellValue = chem.sellValue.replace(/[^0-9]/g, "")
-    if (chem.sellValue.length > 2){
-      chem.sellValue = chem.sellValue.slice(0, -1)
-    }
-  }
-
-  const probeCheck = () => {
-    chem.probeValue = chem.probeValue.replace(/[^0-9]/g, "")
-    if (chem.probeValue.length > 4 || Number(chem.probeValue) > 1000){
-      chem.probeValue = chem.probeValue.slice(0, -1)
-    }
+  const chemInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
+  const chemFormat = (event) => {
+    event.preventDefault()
+    let paste = (event.clipboardData || window.clipboardData).getData("text")
+    paste = paste.replace(/[^0-9]/g, "")
+    event.target.value = paste
   }
 
 </script>
@@ -163,10 +157,10 @@
       <input type="text" bind:value={chem.name} placeholder="Название">
     </div>
     <div>
-      <input type="text" bind:value={chem.sellValue} on:keyup={sellCheck} placeholder="Объем на продажу, л">
+      <input type="text" bind:value={chem.sellValue} on:keypress={chemInput} on:paste={chemFormat} placeholder="Объем на продажу, л">
     </div>
     <div>
-      <input type="text" bind:value={chem.probeValue} on:keyup={probeCheck} placeholder="Объем пробника, мл">
+      <input type="text" bind:value={chem.probeValue} on:keypress={chemInput} on:paste={chemFormat} placeholder="Объем пробника, мл">
     </div>
     <div>
       {#if chem.id == null}

@@ -124,6 +124,14 @@
     })
   }
 
+  const telInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
+  const telFormat = (event) => {
+    event.preventDefault()
+    let paste = (event.clipboardData || window.clipboardData).getData("text")
+    paste = paste.replace(/[^0-9]/g, "")
+    event.target.value = paste
+  }
+
 </script>
 
 <div id="search">
@@ -195,7 +203,7 @@
               {#each client.contact as contact}
                 <div>
                   <input type="text" bind:value={contact.name} placeholder="Контакт">
-                  <input type="text" bind:value={contact.tel} placeholder="Телефон">
+                  <input type="text" bind:value={contact.tel} on:keypress={telInput} on:paste={telFormat} placeholder="Телефон">
                 </div>
               {/each}
               <button on:click={addContact}>+</button>

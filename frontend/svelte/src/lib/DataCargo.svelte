@@ -135,18 +135,12 @@
     }
   }
 
-  const mainTelCheck = () => {
-    cargo.mainTel = cargo.mainTel.replace(/[^0-9]/g, "")
-    if (cargo.mainTel.length > 11){
-      cargo.mainTel = cargo.mainTel.slice(0, -1)
-    }
-  }
-
-  const managerTelCheck = () => {
-    cargo.managerTel = cargo.managerTel.replace(/[^0-9]/g, "")
-    if (cargo.managerTel.length > 11){
-      cargo.managerTel = cargo.managerTel.slice(0, -1)
-    }
+  const telInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
+  const telFormat = (event) => {
+    event.preventDefault()
+    let paste = (event.clipboardData || window.clipboardData).getData("text")
+    paste = paste.replace(/[^0-9]/g, "")
+    event.target.value = paste
   }
 
   const validateUrl = () => {
@@ -177,10 +171,10 @@
     <input type="text" bind:value={cargo.uri} placeholder="Сайт">
   </div>
   <div>
-    <input type="text" bind:value={cargo.mainTel} on:keyup={mainTelCheck} placeholder="Основной телефон">
+    <input type="text" bind:value={cargo.mainTel} on:keypress={telInput} on:paste={telFormat} placeholder="Основной телефон">
   </div>
   <div>
-    <input type="text" bind:value={cargo.managerTel} on:keyup={managerTelCheck} placeholder="Телефон менеджера">
+    <input type="text" bind:value={cargo.managerTel} on:keypress={telInput} on:paste={telFormat} placeholder="Телефон менеджера">
   </div>
   <div>
     {#if cargo.id == null}
