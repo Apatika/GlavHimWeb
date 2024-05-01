@@ -18,6 +18,14 @@
     })
   }
   getInWork()
+  const timer = ms => new Promise(res => setTimeout(res, ms))
+  const refreshInWork = async () => {
+    while(true){
+      getInWork()
+      await timer(5000)
+    }
+  }
+  refreshInWork()
 
 </script>
 
