@@ -1,4 +1,4 @@
-package handler
+package std
 
 import (
 	"encoding/json"
@@ -28,6 +28,7 @@ func pushClient(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, errText, http.StatusInternalServerError)
 		return
 	}
+	log.Printf("add new client (ID: %v)", data.ID)
 	json.NewEncoder(w).Encode(struct {
 		Code    int    `json:"code"`
 		Message string `json:"message"`

@@ -1,4 +1,4 @@
-package handler
+package std
 
 import (
 	"encoding/json"
@@ -43,8 +43,9 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := storage.CacheUpdateInWork(); err != nil {
-		log.Println("cache update failed")
+		log.Print("cache update failed")
 	}
+	log.Printf("add new order, invoice %v (ID: %v)", data.Invoice, data.ID)
 }
 
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {
