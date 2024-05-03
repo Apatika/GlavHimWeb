@@ -29,7 +29,6 @@
     lastDate: null,
     comment: null,
     probes: [],
-    pvd: []
   }
 
   let managers = []
