@@ -45,6 +45,10 @@ func main() {
 		log.Fatalln("ERROR: ", err)
 	}
 
+	if err := storage.CacheInit(); err != nil {
+		log.Fatalln("ERROR: ", err)
+	}
+
 	log.Println("set server settings")
 	srv := server.New(config.Cfg, handler)
 

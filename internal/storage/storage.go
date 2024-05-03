@@ -67,7 +67,7 @@ func DeleteOne(collName string, id primitive.ObjectID) error {
 	return nil
 }
 
-func GetInWorkOrders() ([]mongodb.OrderFull, error) {
+func getInWorkOrders() ([]mongodb.OrderFull, error) {
 	data, err := db.GetInWorkOrders()
 	if err != nil {
 		return nil, err

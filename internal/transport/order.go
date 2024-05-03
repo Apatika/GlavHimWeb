@@ -40,14 +40,12 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
 		return
 	}
+	if err := storage.CacheUpdateInWork(); err != nil {
+		log.Println("cache update failed")
+	}
 	json.NewEncoder(w).Encode(response{http.StatusOK, ""})
 }
 
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {
-	data, err := storage.GetInWorkOrders()
-	if err != nil {
-		log.Printf("read in work orders failed (%v)", err.Error())
-		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
-	}
-	json.NewEncoder(w).Encode(data)
+	json.NewEncoder(w).Encode(storage.Cache[storage.IWO])
 }
