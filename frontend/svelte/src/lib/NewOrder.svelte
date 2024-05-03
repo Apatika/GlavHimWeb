@@ -74,10 +74,8 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then((response) => {
-      return response.json()
-    }).then((data) => {
-      if (data.code != 200) throw new Error(data.message)
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
       order.id = null
       order.clientId = null
       order.payment = null
@@ -103,10 +101,10 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then((response) => {
-      return response.json()
-    }).then((data) => {
-      if (data.code != 200) throw new Error(data.message)
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
+      else return response.json()
+    }).then(data => {
       client.id = null
       client.type = '0'
       client.adress = null

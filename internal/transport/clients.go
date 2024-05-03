@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage"
 	"log"
@@ -13,15 +14,18 @@ func pushClient(w http.ResponseWriter, r *http.Request) {
 	var data service.Client
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {
-		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		errText := fmt.Sprintf("decode client failed (%v)", err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
 		return
 	}
 	if data.ID == "" {
 		data.ID = storage.GetNewID()
 	}
 	if err := storage.AddOne(path, data); err != nil {
-		log.Printf("write db failed, path /db/%v (%v)", path, err.Error())
-		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		errText := fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(struct {

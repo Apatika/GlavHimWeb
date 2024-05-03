@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage"
 	"log"
@@ -24,7 +25,9 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 	var data service.Order
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {
-		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		errText := fmt.Sprintf("decode order failed (%v)", err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
 		return
 	}
 	if data.ID == "" {
@@ -34,14 +37,14 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 	data.CreationDate.Year, month, data.CreationDate.Day = time.Now().Date()
 	data.CreationDate.Month = month.String()
 	if err := storage.AddOne(path, data); err != nil {
-		log.Printf("write db failed, path /db/%v (%v)", path, err.Error())
-		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		errText := fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
 		return
 	}
 	if err := storage.CacheUpdateInWork(); err != nil {
 		log.Println("cache update failed")
 	}
-	json.NewEncoder(w).Encode(response{http.StatusOK, ""})
 }
 
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {

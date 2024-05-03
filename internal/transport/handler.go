@@ -5,11 +5,6 @@ import (
 	"text/template"
 )
 
-type response struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
-
 func New() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./static/assets/"))))

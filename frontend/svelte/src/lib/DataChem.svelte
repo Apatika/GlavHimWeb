@@ -43,10 +43,8 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then((response) => {
-      return response.json()
-    }).then(data => {
-      if (data.code != 200) throw new Error(data.message)
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
       chem.id = null
       chem.name = null
@@ -71,10 +69,8 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then((response) => {
-      return response.json()
-    }).then(data => {
-      if (data.code != 200) throw new Error(data.message)
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
       alert("Запись Обновлена")
     }).catch((err) => {
@@ -93,10 +89,8 @@
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
-    }).then((response) => {
-      return response.json()
-    }).then(data => {
-      if (data.code != 200) throw new Error(data.message)
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
       chem.id = null
       chem.name = null
