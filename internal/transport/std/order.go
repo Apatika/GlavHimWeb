@@ -51,3 +51,33 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(storage.CacheGetInWork())
 }
+
+func changeStatus(w http.ResponseWriter, r *http.Request) {
+	newStatus := struct {
+		ID     string `json:"id" bson:"_id"`
+		Status string `json:"status" bson:"status"`
+	}{}
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&newStatus); err != nil {
+		errText := fmt.Sprintf("decode newStatus failed (%v)", err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
+		return
+	}
+	if newStatus.ID == "" || newStatus.Status == "" {
+		errText := "invalid field values (%v)"
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
+		return
+	}
+	if err := storage.UpdateOne("orders", newStatus, newStatus.ID); err != nil {
+		errText := fmt.Sprintf("update status failed (%v)", err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
+		return
+	}
+	if err := storage.CacheUpdateInWork(); err != nil {
+		log.Print("cache update failed")
+	}
+	log.Printf("update status ID: %v, status: %v", newStatus.ID, newStatus.Status)
+}

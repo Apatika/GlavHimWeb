@@ -27,6 +27,21 @@
   }
   //refreshInWork()
 
+  const changeStatus = (id, status) => {
+    fetch(`${uri}/orders/status`, {
+      method: "PUT",
+      body: JSON.stringify({id: id, status: status}),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
+      getInWork()
+    }).catch((err) => {
+      alert(err)
+    })
+  }
+
 </script>
 
 <div id="container">
@@ -36,10 +51,10 @@
       {#each orders as order}
       <div class="order">
         <div class="order-item cargo">{order.order.cargo}</div>
-        <div class="order-item name">{order.client.name}</div>
+        <div class="order-item name">{order.client.surname} {order.client.name} {order.client.secondName}</div>
         <div class="order-item adress">{order.order.adress.city}</div>
         <div class="order-item status">
-          <select value={order.order.status}>
+          <select bind:value={order.order.status} on:change={(e) => changeStatus(order.order.id, e.target.value)}>
             <option value=""></option>
             <option value="Принят В Работу">Принят В Работу</option>
             <option value="СТОП">СТОП</option>
