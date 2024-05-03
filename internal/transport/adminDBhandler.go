@@ -43,14 +43,14 @@ func adminDBHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 		return
 	case http.MethodPost:
-		data.NewID()
+		data.NewID(storage.GetNewID())
 		if err := storage.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
-			log.Printf("write db failed, path /db/%v (%v)", path, "name already exists")
+			log.Printf("write db failed, path /db/%v (%v). %v", path, "name already exists", err.Error())
 			json.NewEncoder(w).Encode(response{http.StatusBadRequest, err.Error()})
 			return
 		} else {
 			if err := storage.AddOne(path, data); err != nil {
-				log.Printf("write db failed, path /db/%v (%v)", path, err.Error())
+				log.Printf("write db failed, path /db/%v (%v). %v", path, err.Error(), err.Error())
 				json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
 				return
 			}

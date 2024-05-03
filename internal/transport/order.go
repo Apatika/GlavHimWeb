@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
@@ -29,8 +27,8 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
 		return
 	}
-	if data.ID == primitive.NilObjectID {
-		data.ID = primitive.NewObjectID()
+	if data.ID == "" {
+		data.ID = storage.GetNewID()
 	}
 	var month time.Month
 	data.CreationDate.Year, month, data.CreationDate.Day = time.Now().Date()

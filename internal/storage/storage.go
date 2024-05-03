@@ -3,19 +3,17 @@ package storage
 import (
 	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage/mongodb"
-
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IDataBase interface {
 	HealthCheck() error
-	CheckNameOne(string, string, primitive.ObjectID) error
-	GetAll(string) ([]bson.M, error)
+	CheckNameOne(string, string, string) error
+	GetAll(string) (interface{}, error)
 	AddOne(string, interface{}) error
-	UpdateOne(string, interface{}, primitive.ObjectID) error
-	DeleteOne(string, primitive.ObjectID) error
+	UpdateOne(string, interface{}, string) error
+	DeleteOne(string, string) error
 	GetInWorkOrders() ([]service.OrderFull, error)
+	GetNewID() string
 }
 
 var db IDataBase
@@ -31,15 +29,18 @@ func HealthCheck() error {
 	return nil
 }
 
-func CheckNameOne(name string, collName string, id primitive.ObjectID) error {
+func GetNewID() string {
+	return db.GetNewID()
+}
+
+func CheckNameOne(name string, collName string, id string) error {
 	if err := db.CheckNameOne(name, collName, id); err != nil {
 		return err
 	}
 	return nil
 }
 
-func GetAll(path string) ([]bson.M, error) {
-	var data []bson.M
+func GetAll(path string) (interface{}, error) {
 	data, err := db.GetAll(path)
 	if err != nil {
 		return nil, err
@@ -54,14 +55,14 @@ func AddOne(collName string, obj interface{}) error {
 	return nil
 }
 
-func UpdateOne(collName string, obj interface{}, id primitive.ObjectID) error {
+func UpdateOne(collName string, obj interface{}, id string) error {
 	if err := db.UpdateOne(collName, obj, id); err != nil {
 		return err
 	}
 	return nil
 }
 
-func DeleteOne(collName string, id primitive.ObjectID) error {
+func DeleteOne(collName string, id string) error {
 	if err := db.DeleteOne(collName, id); err != nil {
 		return err
 	}

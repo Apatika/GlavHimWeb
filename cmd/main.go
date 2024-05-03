@@ -18,6 +18,7 @@ var DB_URI string
 
 func main() {
 
+	//log.SetFlags(log.Lshortfile | log.LstdFlags)
 	file, err := os.OpenFile("log.txt", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
 	if err != nil {
 		log.Fatal(err)
@@ -42,11 +43,11 @@ func main() {
 	storage.DBInit()
 	log.Println("ping database")
 	if err = storage.HealthCheck(); err != nil {
-		log.Fatalln("ERROR: ", err)
+		log.Fatalln("ERROR (db init): ", err)
 	}
 
 	if err := storage.CacheInit(); err != nil {
-		log.Fatalln("ERROR: ", err)
+		log.Fatalln("ERROR (cache init): ", err)
 	}
 
 	log.Println("set server settings")

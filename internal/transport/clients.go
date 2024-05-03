@@ -6,8 +6,6 @@ import (
 	"glavhim-app/internal/storage"
 	"log"
 	"net/http"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func pushClient(w http.ResponseWriter, r *http.Request) {
@@ -18,8 +16,8 @@ func pushClient(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
 		return
 	}
-	if data.ID == primitive.NilObjectID {
-		data.ID = primitive.NewObjectID()
+	if data.ID == "" {
+		data.ID = storage.GetNewID()
 	}
 	if err := storage.AddOne(path, data); err != nil {
 		log.Printf("write db failed, path /db/%v (%v)", path, err.Error())
@@ -27,8 +25,8 @@ func pushClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(struct {
-		Code    int                `json:"code"`
-		Message string             `json:"message"`
-		ID      primitive.ObjectID `json:"id" bson:"_id"`
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+		ID      string `json:"id" bson:"_id"`
 	}{http.StatusOK, "", data.ID})
 }

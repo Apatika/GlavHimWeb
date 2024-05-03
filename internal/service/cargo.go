@@ -1,22 +1,18 @@
 package service
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
-
 type Cargo struct {
-	ID         primitive.ObjectID `json:"id" bson:"_id"`
-	Name       string             `json:"name" bson:"name"`
-	URI        string             `json:"uri" bson:"uri"`
-	MainTel    string             `json:"mainTel" bson:"mainTel"`
-	ManagerTel string             `json:"managerTel" bson:"managerTel"`
+	ID         string `json:"id" bson:"_id"`
+	Name       string `json:"name" bson:"name"`
+	URI        string `json:"uri" bson:"uri"`
+	MainTel    string `json:"mainTel" bson:"mainTel"`
+	ManagerTel string `json:"managerTel" bson:"managerTel"`
 }
 
-func (c *Cargo) NewID() {
-	c.ID = primitive.NewObjectID()
+func (c *Cargo) NewID(s string) {
+	c.ID = s
 }
 
-func (c *Cargo) GetID() primitive.ObjectID {
+func (c *Cargo) GetID() string {
 	return c.ID
 }
 

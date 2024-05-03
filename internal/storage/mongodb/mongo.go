@@ -34,7 +34,15 @@ func (m *MongoDB) HealthCheck() error {
 	return nil
 }
 
-func (m *MongoDB) CheckNameOne(name string, collName string, id primitive.ObjectID) error {
+func (m *MongoDB) GetNewID() string {
+	return primitive.NewObjectID().Hex()
+}
+
+func (m *MongoDB) CheckNameOne(name string, collName string, hex string) error {
+	id, err := primitive.ObjectIDFromHex(hex)
+	if err != nil {
+		return err
+	}
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
@@ -59,7 +67,7 @@ func (m *MongoDB) CheckNameOne(name string, collName string, id primitive.Object
 	return nil
 }
 
-func (m *MongoDB) GetAll(path string) ([]bson.M, error) {
+func (m *MongoDB) GetAll(path string) (interface{}, error) {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return nil, err
@@ -94,7 +102,11 @@ func (m *MongoDB) AddOne(collName string, obj interface{}) error {
 	return nil
 }
 
-func (m *MongoDB) UpdateOne(collName string, obj interface{}, id primitive.ObjectID) error {
+func (m *MongoDB) UpdateOne(collName string, obj interface{}, hex string) error {
+	id, err := primitive.ObjectIDFromHex(hex)
+	if err != nil {
+		return err
+	}
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
@@ -109,7 +121,11 @@ func (m *MongoDB) UpdateOne(collName string, obj interface{}, id primitive.Objec
 	return nil
 }
 
-func (m *MongoDB) DeleteOne(collName string, id primitive.ObjectID) error {
+func (m *MongoDB) DeleteOne(collName string, hex string) error {
+	id, err := primitive.ObjectIDFromHex(hex)
+	if err != nil {
+		return err
+	}
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err

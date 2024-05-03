@@ -1,21 +1,17 @@
 package service
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
-
 type User struct {
-	ID    primitive.ObjectID `json:"id" bson:"_id"`
-	Name  string             `json:"name" bson:"name"`
-	Tel   string             `json:"tel" bson:"tel"`
-	Email string             `json:"email" bson:"email"`
+	ID    string `json:"id" bson:"_id"`
+	Name  string `json:"name" bson:"name"`
+	Tel   string `json:"tel" bson:"tel"`
+	Email string `json:"email" bson:"email"`
 }
 
-func (u *User) NewID() {
-	u.ID = primitive.NewObjectID()
+func (u *User) NewID(s string) {
+	u.ID = s
 }
 
-func (u *User) GetID() primitive.ObjectID {
+func (u *User) GetID() string {
 	return u.ID
 }
 

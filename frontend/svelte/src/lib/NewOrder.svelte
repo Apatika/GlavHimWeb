@@ -38,6 +38,7 @@
   fetch(`${uri}/db/users`).then(function(response) {
     return response.json();
   }).then(function(data) {
+    if (data.length == 0) throw new Error("storage empty") 
     managers = data
   }).catch(function(err) {
     alert(err);
@@ -46,6 +47,7 @@
   fetch(`${uri}/db/cargos`).then(function(response) {
     return response.json();
   }).then(function(data) {
+    if (data.length == 0) throw new Error("storage empty")
     cargos = data
   }).catch(function(err) {
     alert(err);
