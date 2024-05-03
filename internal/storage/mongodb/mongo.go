@@ -38,11 +38,7 @@ func (m *MongoDB) GetNewID() string {
 	return primitive.NewObjectID().Hex()
 }
 
-func (m *MongoDB) CheckNameOne(name string, collName string, hex string) error {
-	id, err := primitive.ObjectIDFromHex(hex)
-	if err != nil {
-		return err
-	}
+func (m *MongoDB) CheckNameOne(name string, collName string, id string) error {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
@@ -102,11 +98,7 @@ func (m *MongoDB) AddOne(collName string, obj interface{}) error {
 	return nil
 }
 
-func (m *MongoDB) UpdateOne(collName string, obj interface{}, hex string) error {
-	id, err := primitive.ObjectIDFromHex(hex)
-	if err != nil {
-		return err
-	}
+func (m *MongoDB) UpdateOne(collName string, obj interface{}, id string) error {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err
@@ -121,11 +113,7 @@ func (m *MongoDB) UpdateOne(collName string, obj interface{}, hex string) error 
 	return nil
 }
 
-func (m *MongoDB) DeleteOne(collName string, hex string) error {
-	id, err := primitive.ObjectIDFromHex(hex)
-	if err != nil {
-		return err
-	}
+func (m *MongoDB) DeleteOne(collName string, id string) error {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err

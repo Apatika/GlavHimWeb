@@ -21,7 +21,80 @@ func getStructByPath(path string) service.IService {
 	return data
 }
 
-func adminDBHandler(w http.ResponseWriter, r *http.Request) {
+func dbPageGet(w http.ResponseWriter, r *http.Request) {
+	path := r.PathValue("path")
+	data, err := storage.GetAll(path)
+	if err != nil {
+		log.Printf("read db failed, path /db/%v (%v)", path, err.Error())
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		return
+	}
+	json.NewEncoder(w).Encode(data)
+}
+
+func dbPagePost(w http.ResponseWriter, r *http.Request) {
+	path := r.PathValue("path")
+	data := getStructByPath(path)
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		return
+	}
+	data.NewID(storage.GetNewID())
+	if err := storage.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+		log.Printf("write db failed, path /db/%v (%v). %v", path, "name already exists", err.Error())
+		json.NewEncoder(w).Encode(response{http.StatusBadRequest, err.Error()})
+		return
+	}
+	if err := storage.AddOne(path, data); err != nil {
+		log.Printf("write db failed, path /db/%v (%v). %v", path, err.Error(), err.Error())
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		return
+	}
+	log.Printf("write to \"%v\" collection", path)
+	json.NewEncoder(w).Encode(response{http.StatusOK, ""})
+}
+
+func dbPagePut(w http.ResponseWriter, r *http.Request) {
+	path := r.PathValue("path")
+	data := getStructByPath(path)
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		return
+	}
+	if err := storage.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+		log.Printf("write db failed, path /db/%v (%v)", path, "name already exists")
+		json.NewEncoder(w).Encode(response{http.StatusBadRequest, err.Error()})
+		return
+	}
+	if err := storage.UpdateOne(path, data, data.GetID()); err != nil {
+		log.Printf("write db failed, path /db/%v (%v)", path, err.Error())
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		return
+	}
+	log.Printf("update to \"%v\" collection", path)
+	json.NewEncoder(w).Encode(response{http.StatusOK, ""})
+}
+
+func dbPageDelete(w http.ResponseWriter, r *http.Request) {
+	path := r.PathValue("path")
+	data := getStructByPath(path)
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		return
+	}
+	if err := storage.DeleteOne(path, data.GetID()); err != nil {
+		log.Printf("delete from db failed, path /db/%v (%v)", path, err.Error())
+		json.NewEncoder(w).Encode(response{http.StatusInternalServerError, err.Error()})
+		return
+	}
+	log.Printf("delete from \"%v\" collection", path)
+	json.NewEncoder(w).Encode(response{http.StatusOK, ""})
+}
+
+/*func adminDBHandler(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue("path")
 	data := getStructByPath(path)
 	if r.Method != "GET" {
@@ -81,4 +154,4 @@ func adminDBHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(response{http.StatusOK, ""})
-}
+}*/
