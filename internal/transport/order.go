@@ -47,5 +47,5 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 }
 
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(storage.Cache[storage.IWO])
+	json.NewEncoder(w).Encode(storage.CacheGetInWork())
 }

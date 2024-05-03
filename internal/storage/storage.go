@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage/mongodb"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,7 +15,7 @@ type IDataBase interface {
 	AddOne(string, interface{}) error
 	UpdateOne(string, interface{}, primitive.ObjectID) error
 	DeleteOne(string, primitive.ObjectID) error
-	GetInWorkOrders() ([]mongodb.OrderFull, error)
+	GetInWorkOrders() ([]service.OrderFull, error)
 }
 
 var db IDataBase
@@ -67,7 +68,7 @@ func DeleteOne(collName string, id primitive.ObjectID) error {
 	return nil
 }
 
-func getInWorkOrders() ([]mongodb.OrderFull, error) {
+func getInWorkOrders() ([]service.OrderFull, error) {
 	data, err := db.GetInWorkOrders()
 	if err != nil {
 		return nil, err

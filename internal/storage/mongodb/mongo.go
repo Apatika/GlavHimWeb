@@ -17,11 +17,6 @@ type MongoDB struct {
 	Uri string
 }
 
-type OrderFull struct {
-	Client service.Client `json:"client"`
-	Order  service.Order  `json:"order"`
-}
-
 func NewMongo() *MongoDB {
 	return &MongoDB{
 		Uri: config.Cfg.DB.URI,
@@ -129,7 +124,7 @@ func (m *MongoDB) DeleteOne(collName string, id primitive.ObjectID) error {
 	return nil
 }
 
-func (m *MongoDB) GetInWorkOrders() ([]OrderFull, error) {
+func (m *MongoDB) GetInWorkOrders() ([]service.OrderFull, error) {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return nil, err
@@ -147,7 +142,7 @@ func (m *MongoDB) GetInWorkOrders() ([]OrderFull, error) {
 		return nil, err
 	}
 	coll = client.Database("glavhim").Collection("clients")
-	arr := make([]OrderFull, 0, 10)
+	arr := make([]service.OrderFull, 0, 10)
 	for _, v := range orders {
 		doc, err := bson.Marshal(v)
 		if err != nil {
@@ -163,7 +158,7 @@ func (m *MongoDB) GetInWorkOrders() ([]OrderFull, error) {
 		if err != nil {
 			return nil, err
 		}
-		arr = append(arr, OrderFull{client, order})
+		arr = append(arr, service.OrderFull{Client: client, Order: order})
 	}
 	return arr, nil
 }

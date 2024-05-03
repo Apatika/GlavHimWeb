@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"sync"
+	"glavhim-app/internal/storage/heapcache"
 )
 
 const (
@@ -9,34 +9,36 @@ const (
 	COO = "cookie"
 )
 
+type ICache interface {
+	GetInWork() interface{}
+	UpdateInWork(interface{})
+}
+
 type Cookie struct {
 	Value  string
 	Expire int64
 }
 
-var Cache = make(map[string]interface{})
-var cacheMut sync.RWMutex
+var cache ICache
 
 func CacheInit() error {
-	Cache[COO] = make([]Cookie, 0, 5)
-	if err := CacheUpdateInWork(); err != nil {
+	orders, err := getInWorkOrders()
+	if err != nil {
 		return err
 	}
+	cache = heapcache.NewHeap(orders)
 	return nil
 }
 
 func CacheUpdateInWork() error {
-	inWork, err := getInWorkOrders()
+	data, err := getInWorkOrders()
 	if err != nil {
 		return err
 	}
-	cacheMut.Lock()
-	Cache[IWO] = inWork
-	cacheMut.Unlock()
+	cache.UpdateInWork(data)
 	return nil
 }
 
-func InWork() interface{} {
-	data := Cache[IWO]
-	return data
+func CacheGetInWork() interface{} {
+	return cache.GetInWork()
 }

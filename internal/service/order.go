@@ -2,6 +2,11 @@ package service
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
+type OrderFull struct {
+	Client Client `json:"client"`
+	Order  Order  `json:"order"`
+}
+
 type Order struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id"`
 	CreationDate Date               `json:"creationDate" bson:"creation_date"`
