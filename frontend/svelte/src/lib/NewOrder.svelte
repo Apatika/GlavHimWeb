@@ -15,7 +15,6 @@
     passportSerial: null,
     passportNum: null,
     contact: [{name: null, tel: null}],
-    tel: null,
     email: null,
   }
   export let order = {
@@ -51,6 +50,35 @@
   }).catch(function(err) {
     alert(err);
   })
+
+  const check = () => {
+    if (order.adress.city == null || order.adress.city == ""){
+      alert("Город не заполнен")
+      return false
+    }
+    if (order.toadress && (order.adress.adress == null || order.adress.adress == "")){
+      alert("Адрес не заполнен")
+      return false
+    }
+    if (client.name == null || client.name == ""){
+      alert("Имя не заполнено")
+      return false
+    }
+    if (client.contact[0].tel == null || client.contact[0].tel == ""){
+      alert("Контакт не заполнен")
+      return false
+    }
+    if ((client.type == "0" || client.type == "2") && 
+        (client.surname == null || client.surname == "")){
+      alert("ФИО заполнены не полностью")
+      return false
+    }
+    if ((client.type == "1" || client.type == "0") && (client.inn == null || client.inn == "")){
+      alert("ИНН не заполнен")
+      return false
+    }
+    return true
+  }
 
   const addContact = () => client.contact = client.contact.concat({name: "", tel: ""})
   const removeContact = () => {
@@ -92,6 +120,7 @@
 
   const push = () => {
     // @ts-ignore
+    if (!check()) return
     client.adress = order.adress
     fetch(`${uri}/clients`, {
       method: "POST",
