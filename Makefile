@@ -9,6 +9,7 @@ endif
 all: build
 
 build:
+	@rm ${BUILD_PATH}/static/assets/*
 	@cp ./.env ${BUILD_PATH}/config/.env
 	@cp ${CONFIG_PATH} ${BUILD_PATH}/${CONFIG_PATH}
 	@cd ${FRONTEND_PATH}; npm run build
