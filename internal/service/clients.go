@@ -2,7 +2,7 @@ package service
 
 type Client struct {
 	ID             string    `json:"id" bson:"_id"`
-	Type           int       `json:"type" bson:"type"`
+	Type           string    `json:"type" bson:"type"`
 	Manager        string    `json:"manager" bson:"manager"`
 	Inn            string    `json:"inn" bson:"inn"`
 	PassportSerial string    `json:"passportSerial" bson:"passport_serial"`

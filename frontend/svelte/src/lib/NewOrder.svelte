@@ -3,7 +3,7 @@
 
   const uri = getContext('uri')
 
-  let client = {
+  export let client = {
     id: null,
     type: '0',
     adress: null,
@@ -18,7 +18,7 @@
     tel: null,
     email: null,
   }
-  let order = {
+  export let order = {
     id: null,
     clientId: null,
     payment: null,
@@ -132,9 +132,15 @@
 
 </script>
 
-<div id="search">
-  <input type="text" placeholder="Поиск...">
-</div>
+{#if order.id == null}
+  <div id="search">
+    <input type="text" placeholder="Поиск...">
+  </div>
+{:else}
+  <div>
+    <button id="close" on:click={(e) => e.target.parentElement.parentElement.style.display = "none"}>закрыть</button>
+  </div>
+{/if}
 <div id="container">
   <div id="main">
     <div id="client-name">
@@ -162,10 +168,20 @@
     <div>
       <div class="underline">
         <div class="lables">
+          <!--
           <div class="flex">
-            <div class="lables">ID:</div>
+            <div class="lables">ClientID:</div>
             <div>{client.id}</div>
           </div>
+          <div class="flex">
+            <div class="lables">OrderID:</div>
+            <div>{order.id}</div>
+          </div>
+          <div class="flex">
+            <div class="lables">OrderClientID:</div>
+            <div>{order.clientId}</div>
+          </div>
+          -->
           <div class="flex">
             <div class="lables">Менеджер:</div>
             <div>
@@ -290,7 +306,11 @@
       </div>
     </div>
   </div>
-  <button on:click={push}>Отправить</button>
+  {#if order.id == null}
+    <button on:click={push}>Отправить</button>
+  {:else}
+    <button>Изменить</button>
+  {/if}
 </div>
 
 <style>
@@ -321,5 +341,11 @@
   }
   #contact input, #nums input{
     width: 90px;
+  }
+  #close{
+    position: fixed;
+    right: 0;
+    top: 0;
+    margin: 5px;
   }
 </style>
