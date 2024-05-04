@@ -164,6 +164,7 @@
     }).catch((err) => {
       alert(err)
     })
+    order.status = "Изменен!"
     fetch(`${uri}/orders`, {
       method: "PUT",
       body: JSON.stringify(order),

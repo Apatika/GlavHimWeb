@@ -16,8 +16,8 @@
       orders.sort((a, b) => {
         let fa = a.order.status.toLowerCase()
         let fb = b.order.status.toLowerCase()
-        if (fa < fb) return -1
-        if (fa > fb) return 1
+        if (fa > fb) return -1
+        if (fa < fb) return 1
         return 0
       })
     }).catch(function(err) {
@@ -63,6 +63,8 @@
         return "orange"
       case "Нет Товара":
         return "red"
+      case "Изменен!":
+        return "Aquamarine"
       default:
         return "white"
     }
@@ -106,6 +108,7 @@
             <option value="Заказан Забор">Заказан Забор</option>
             <option value="Развозка">Развозка</option>
             <option value="Нет Товара">Нет Товара</option>
+            <option value="Изменен!" disabled>Изменен!</option>
           </select>
         </div>
         <button class="expander" on:click={toggleFullOrder}>ᐁ</button>

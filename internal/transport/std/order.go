@@ -18,6 +18,7 @@ const (
 	StatusStop    = "СТОП"
 	StatusCity    = "Развозка"
 	StatusEmpty   = "Нет Товара"
+	StatusChanged = "Изменен!"
 )
 
 func pushOrder(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +87,7 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, errText, http.StatusInternalServerError)
 		return
 	}
-	if newStatus.ID == "" || newStatus.Status == "" {
+	if newStatus.ID == "" {
 		errText := "invalid field values (%v)"
 		log.Print(errText)
 		http.Error(w, errText, http.StatusInternalServerError)
