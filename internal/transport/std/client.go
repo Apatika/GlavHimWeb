@@ -35,3 +35,22 @@ func pushClient(w http.ResponseWriter, r *http.Request) {
 		ID      string `json:"id" bson:"_id"`
 	}{http.StatusOK, "", data.ID})
 }
+
+func updateClient(w http.ResponseWriter, r *http.Request) {
+	path := "clients"
+	var data service.Client
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		errText := fmt.Sprintf("decode client failed (%v)", err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
+		return
+	}
+	if err := storage.UpdateOne(path, data, data.ID); err != nil {
+		errText := fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
+		return
+	}
+	log.Printf("update client ID: %v", data.ID)
+}

@@ -92,7 +92,6 @@
 
   const push = () => {
     // @ts-ignore
-    client.type = Number(client.type)
     client.adress = order.adress
     fetch(`${uri}/clients`, {
       method: "POST",
@@ -118,6 +117,32 @@
       client.tel = null
       client.email = null
       pushOrder(data.id)
+    }).catch((err) => {
+      alert(err)
+    })
+  }
+
+  const update = () => {
+    client.adress = order.adress
+    fetch(`${uri}/clients`, {
+      method: "PUT",
+      body: JSON.stringify(client),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
+    }).catch((err) => {
+      alert(err)
+    })
+    fetch(`${uri}/orders`, {
+      method: "PUT",
+      body: JSON.stringify(order),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
     }).catch((err) => {
       alert(err)
     })
@@ -309,7 +334,7 @@
   {#if order.id == null}
     <button on:click={push}>Отправить</button>
   {:else}
-    <button>Изменить</button>
+    <button on:click={update}>Изменить</button>
   {/if}
 </div>
 

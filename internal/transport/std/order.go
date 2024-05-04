@@ -48,6 +48,28 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 	log.Printf("add new order, invoice %v (ID: %v)", data.Invoice, data.ID)
 }
 
+func updateOrder(w http.ResponseWriter, r *http.Request) {
+	path := "orders"
+	var data service.Order
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		errText := fmt.Sprintf("decode order failed (%v)", err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
+		return
+	}
+	if err := storage.UpdateOne(path, data, data.ID); err != nil {
+		errText := fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error())
+		log.Print(errText)
+		http.Error(w, errText, http.StatusInternalServerError)
+		return
+	}
+	if err := storage.CacheUpdateInWork(); err != nil {
+		log.Print("cache update failed")
+	}
+	log.Printf("update order ID: %v", data.ID)
+}
+
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(storage.CacheGetInWork())
 }

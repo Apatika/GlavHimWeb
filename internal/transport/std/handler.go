@@ -14,8 +14,10 @@ func New() *http.ServeMux {
 	mux.HandleFunc("PUT /db/{path}", dbPagePut)
 	mux.HandleFunc("DELETE /db/{path}", dbPageDelete)
 	mux.HandleFunc("POST /orders", pushOrder)
+	mux.HandleFunc("PUT /orders", updateOrder)
 	mux.HandleFunc("PUT /orders/status", changeStatus)
 	mux.HandleFunc("POST /clients", pushClient)
+	mux.HandleFunc("PUT /clients", updateClient)
 	mux.HandleFunc("GET /inwork", inWorkOrders)
 
 	return mux
