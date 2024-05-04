@@ -52,19 +52,19 @@
   const getColor = (status) => {
     switch (status) {
       case "Принят В Работу":
-        return "yellow"
+        return "#FFFF00"
       case "СТОП":
-        return "purple"
+        return "#FF00FF"
       case "Забор ПЭК":
-        return "DarkGrey"
+        return "#B0C4DE"
       case "Заказан Забор":
-        return "Aqua"
+        return "#00FFFF"
       case "Развозка":
-        return "orange"
+        return "#FFA500"
       case "Нет Товара":
-        return "red"
+        return "#FF0000"
       case "Изменен!":
-        return "Aquamarine"
+        return "#00FF00"
       default:
         return "white"
     }
@@ -222,6 +222,7 @@
     background-color: transparent;
     border: none;
     color: black;
+    font-weight: bold;
   }
   .cargo{
     flex-basis: 15%;
@@ -235,6 +236,7 @@
     color: black;
     font-size: 14px;
     border: 1px solid black;
+    background-color: white;
   }
   .order-item{
     padding: 0px 3px;
@@ -266,7 +268,7 @@
   .achtung{
     padding: 0px, 5px;
     flex-basis: 10%;
-    color: red;
+    color: #0000CD;
   }
   .full-item{
     display: flex;

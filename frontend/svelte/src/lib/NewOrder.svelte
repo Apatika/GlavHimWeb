@@ -173,6 +173,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
+      alert("Запись обновлена")
     }).catch((err) => {
       alert(err)
     })
