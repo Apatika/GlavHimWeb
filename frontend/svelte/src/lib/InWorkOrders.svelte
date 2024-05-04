@@ -5,7 +5,7 @@
   const uri = getContext('uri')
 
   
-  let orders = []
+  $: orders = []
 
   const getInWork = () => {
     fetch(`${uri}/inwork`).then(function(response) {
@@ -13,6 +13,13 @@
       return response.json();
     }).then(function(d) {
       orders = d
+      orders.sort((a, b) => {
+        let fa = a.order.status.toLowerCase()
+        let fb = b.order.status.toLowerCase()
+        if (fa < fb) return -1
+        if (fa > fb) return 1
+        return 0
+      })
     }).catch(function(err) {
       alert(err);
     })
@@ -42,6 +49,25 @@
     })
   }
 
+  const getColor = (status) => {
+    switch (status) {
+      case "Принят В Работу":
+        return "yellow"
+      case "СТОП":
+        return "purple"
+      case "Забор ПЭК":
+        return "DarkGrey"
+      case "Заказан Забор":
+        return "Aqua"
+      case "Развозка":
+        return "orange"
+      case "Нет Товара":
+        return "red"
+      default:
+        return "white"
+    }
+  }
+
   const toggleFullOrder = (event) => {
     let target = event.target.parentElement.nextElementSibling
     if (target.style.display != "flex") {
@@ -63,14 +89,15 @@
       <NewOrder order={order.order} client={order.client}></NewOrder>
     </div>
     <div>
-      <div class="order">
+      <div class="order" style="background-color: {getColor(order.order.status)}">
         <div class="order-item cargo">{order.order.cargo}</div>
         <div class="order-item name">{order.client.surname} {order.client.name} {order.client.secondName}</div>
         <div class="order-item adress">{order.order.adress.city}</div>
         {#if order.order.payment} <div class="achtung"><strong>ЗА НАШ СЧЕТ</strong></div> {/if}
         {#if order.order.probes.length > 0} <div class="achtung"><strong>ПРОБНИКИ</strong></div> {/if}
         <div class="order-item status">
-          <select bind:value={order.order.status} on:change={(e) => changeStatus(order.order.id, e.target.value)}>
+          <select bind:value={order.order.status} 
+                  on:change={(e) => {changeStatus(order.order.id, e.target.value); e.target.parentElement.parentElement.style.backgroundColor  = getColor(e.target.value)}}>
             <option value=""></option>
             <option value="Принят В Работу">Принят В Работу</option>
             <option value="СТОП">СТОП</option>
