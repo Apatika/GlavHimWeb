@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"glavhim-app/internal/config"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -41,4 +42,9 @@ func uri(w http.ResponseWriter, r *http.Request) {
 	}{
 		Uri: fmt.Sprintf("%v%v", config.Cfg.Server.URI, config.Cfg.Server.Port),
 	})
+}
+
+func errorResponse(w http.ResponseWriter, errText string, code int) {
+	log.Print(errText)
+	http.Error(w, errText, code)
 }

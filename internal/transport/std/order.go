@@ -26,9 +26,7 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 	var data service.Order
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {
-		errText := fmt.Sprintf("decode order failed (%v)", err.Error())
-		log.Print(errText)
-		http.Error(w, errText, http.StatusInternalServerError)
+		errorResponse(w, fmt.Sprintf("decode order failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	if data.ID == "" {
@@ -38,9 +36,7 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 	data.CreationDate.Year, month, data.CreationDate.Day = time.Now().Date()
 	data.CreationDate.Month = month.String()
 	if err := storage.AddOne(path, data); err != nil {
-		errText := fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error())
-		log.Print(errText)
-		http.Error(w, errText, http.StatusInternalServerError)
+		errorResponse(w, fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
 	}
 	if err := storage.CacheUpdateInWork(); err != nil {
@@ -54,15 +50,11 @@ func updateOrder(w http.ResponseWriter, r *http.Request) {
 	var data service.Order
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {
-		errText := fmt.Sprintf("decode order failed (%v)", err.Error())
-		log.Print(errText)
-		http.Error(w, errText, http.StatusInternalServerError)
+		errorResponse(w, fmt.Sprintf("decode order failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	if err := storage.UpdateOne(path, data, data.ID); err != nil {
-		errText := fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error())
-		log.Print(errText)
-		http.Error(w, errText, http.StatusInternalServerError)
+		errorResponse(w, fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
 	}
 	if err := storage.CacheUpdateInWork(); err != nil {
@@ -83,15 +75,11 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 	}{}
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&newStatus); err != nil {
-		errText := fmt.Sprintf("decode newStatus failed (%v)", err.Error())
-		log.Print(errText)
-		http.Error(w, errText, http.StatusInternalServerError)
+		errorResponse(w, fmt.Sprintf("decode newStatus failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	if newStatus.ID == "" {
-		errText := "invalid field values (%v)"
-		log.Print(errText)
-		http.Error(w, errText, http.StatusInternalServerError)
+		errorResponse(w, "invalid field values (%v)", http.StatusBadRequest)
 		return
 	}
 	if newStatus.Status == StatusShipped {
@@ -100,9 +88,7 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 		newStatus.ShipmentDate.Month = month.String()
 	}
 	if err := storage.UpdateOne("orders", newStatus, newStatus.ID); err != nil {
-		errText := fmt.Sprintf("update status failed (%v)", err.Error())
-		log.Print(errText)
-		http.Error(w, errText, http.StatusInternalServerError)
+		errorResponse(w, fmt.Sprintf("update status failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	if err := storage.CacheUpdateInWork(); err != nil {
