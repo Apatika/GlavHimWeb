@@ -186,6 +186,11 @@
     }
   }
 
+  const onClose = (e) => {
+    e.target.parentElement.parentElement.style.display = "none"
+    document.body.style.pointerEvents = "all"
+  }
+
 </script>
 
 {#if order.id == null}
@@ -194,7 +199,7 @@
   </div>
 {:else}
   <div>
-    <button id="close" on:click={(e) => e.target.parentElement.parentElement.style.display = "none"}>закрыть</button>
+    <button id="close" on:click={onClose}>закрыть</button>
   </div>
 {/if}
 <div id="container">

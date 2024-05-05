@@ -82,6 +82,12 @@
     }
   }
 
+  const onEdit = (e) => {
+    e.target.parentElement.parentElement.previousElementSibling.style.display = "block"
+    document.body.style.pointerEvents = "none"
+    e.target.parentElement.parentElement.previousElementSibling.style.pointerEvents = "all"
+  }
+
 </script>
 
 <button id="refresh" on:click={getInWork}>Обновить</button>
@@ -102,12 +108,12 @@
                   on:change={(e) => {changeStatus(order.order.id, e.target.value); e.target.parentElement.parentElement.style.backgroundColor  = getColor(e.target.value)}}>
             <option value=""></option>
             <option value="Принят В Работу">Принят В Работу</option>
-            <option value="СТОП">СТОП</option>
-            <option value="Отгружен">Отгружен</option>
+            <option value="Развозка">Развозка</option>
             <option value="Забор ПЭК">Забор ПЭК</option>
             <option value="Заказан Забор">Заказан Забор</option>
-            <option value="Развозка">Развозка</option>
             <option value="Нет Товара">Нет Товара</option>
+            <option value="СТОП">СТОП</option>
+            <option value="Отгружен">Отгружен</option>
             <option value="Изменен!" disabled>Изменен!</option>
           </select>
         </div>
@@ -202,7 +208,7 @@
           </div>
         </div>
         <div class="probes"></div>
-        <button class="edit" on:click={(e) => e.target.parentElement.parentElement.previousElementSibling.style.display = "block"}>Редактировать</button>
+        <button class="edit" on:click={onEdit}>Редактировать</button>
       </div>
     </div>
   {:else}
