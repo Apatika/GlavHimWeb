@@ -77,8 +77,9 @@ func inWorkOrders(w http.ResponseWriter, r *http.Request) {
 
 func changeStatus(w http.ResponseWriter, r *http.Request) {
 	newStatus := struct {
-		ID     string `json:"id" bson:"_id"`
-		Status string `json:"status" bson:"status"`
+		ID           string       `json:"id" bson:"_id"`
+		Status       string       `json:"status" bson:"status"`
+		ShipmentDate service.Date `json:"shipmentDate" bson:"shipment_date"`
 	}{}
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&newStatus); err != nil {
@@ -92,6 +93,11 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 		log.Print(errText)
 		http.Error(w, errText, http.StatusInternalServerError)
 		return
+	}
+	if newStatus.Status == StatusShipped {
+		var month time.Month
+		newStatus.ShipmentDate.Year, month, newStatus.ShipmentDate.Day = time.Now().Date()
+		newStatus.ShipmentDate.Month = month.String()
 	}
 	if err := storage.UpdateOne("orders", newStatus, newStatus.ID); err != nil {
 		errText := fmt.Sprintf("update status failed (%v)", err.Error())
