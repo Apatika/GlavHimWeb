@@ -10,8 +10,9 @@ import (
 
 type (
 	Config struct {
-		Server server   `yaml:"server"`
-		DB     database `yaml:"database"`
+		Server   server   `yaml:"server"`
+		DB       database `yaml:"database"`
+		Frontend frontend `yaml:"frontend"`
 	}
 
 	server struct {
@@ -24,6 +25,10 @@ type (
 	database struct {
 		URI string `yaml:"uri"`
 	}
+
+	frontend struct {
+		RefreshRate int `yaml:"refreshRate"`
+	}
 )
 
 var Cfg Config
@@ -34,6 +39,9 @@ var DefaultCfg Config = Config{
 	},
 	DB: database{
 		URI: "mongodb://localhost:27017",
+	},
+	Frontend: frontend{
+		RefreshRate: 5000,
 	},
 }
 

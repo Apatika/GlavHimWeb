@@ -4,16 +4,19 @@
   import { setContext } from 'svelte'
 
   let uri = ""
+  let refreshRate = 5000
   fetch(`/uri`).then(function(response) {
     if (response.status != 200) throw new Error(response.statusText)
     return response.json();
   }).then(function(d) {
     uri = d.uri
+    refreshRate = d.refreshRate
   }).catch(function(err) {
     alert(err);
   })
 
   setContext('uri', uri)
+  setContext('refreshRate', refreshRate)
 
   let currentPage = Main
 

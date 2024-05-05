@@ -3,6 +3,7 @@
   import { getContext } from 'svelte'
 
   const uri = getContext('uri')
+  const refreshRate = getContext('refreshRate')
 
   
   $: orders = []
@@ -29,7 +30,7 @@
   const refreshInWork = async () => {
     while(true){
       getInWork()
-      await timer(5000)
+      await timer(refreshRate)
     }
   }
   //refreshInWork()

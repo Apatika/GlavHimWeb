@@ -38,9 +38,11 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func uri(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(struct {
-		Uri string
+		Uri         string
+		RefreshRate int
 	}{
-		Uri: fmt.Sprintf("%v%v", config.Cfg.Server.URI, config.Cfg.Server.Port),
+		Uri:         fmt.Sprintf("%v%v", config.Cfg.Server.URI, config.Cfg.Server.Port),
+		RefreshRate: config.Cfg.Frontend.RefreshRate,
 	})
 }
 
