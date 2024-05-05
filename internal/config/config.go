@@ -27,16 +27,33 @@ type (
 )
 
 var Cfg Config
+var DefaultCfg Config = Config{
+	Server: server{
+		URI:  "http://localhost",
+		Port: "8080",
+	},
+	DB: database{
+		URI: "mongodb://localhost:27017",
+	},
+}
 
-func New() error {
+func SetDefaultEnv() {
+	os.Setenv("CONFIG_PATH", "./config/config.yaml")
+	os.Setenv("BUILD_PATH", "./bin")
+	os.Setenv("APP_NAME", "glavhim")
+	os.Setenv("STATIC_SOURCE_PATH", "./frontend/svelte/dist")
+	os.Setenv("FRONTEND_PATH", "./frontend/svelte")
+}
+
+func New() {
 	buff, err := os.ReadFile(os.Getenv("CONFIG_PATH"))
 	if err != nil {
 		log.Println(err)
-		return err
-	}
-	if err := yaml.Unmarshal(buff, &Cfg); err != nil {
+		log.Print("load default config")
+		Cfg = DefaultCfg
+	} else if err = yaml.Unmarshal(buff, &Cfg); err != nil {
 		log.Println(err)
-		return err
+		log.Print("load default config")
+		Cfg = DefaultCfg
 	}
-	return nil
 }

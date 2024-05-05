@@ -1,4 +1,10 @@
-include .env
+-include .env
+
+CONFIG_PATH?=./config/config.yaml
+BUILD_PATH?=./bin
+APP_NAME?=glavhim
+STATIC_SOURCE_PATH?=./frontend/svelte/dist
+FRONTEND_PATH?=./frontend/svelte
 
 ifeq ($(OS), Windows_NT)
 	EXECUTABLE=${APP_NAME}.exe
@@ -9,9 +15,7 @@ endif
 all: build
 
 build:
-	@rm ${BUILD_PATH}/static/assets/*
-	@cp ./.env ${BUILD_PATH}/config/.env
-	@cp ${CONFIG_PATH} ${BUILD_PATH}/${CONFIG_PATH}
+	@rm ${BUILD_PATH}/static/assets/* || true
 	@cd ${FRONTEND_PATH}; npm run build
 	@cp ${STATIC_SOURCE_PATH}/index.html ${BUILD_PATH}/static/index.html
 	@cp ${STATIC_SOURCE_PATH}/assets/* ${BUILD_PATH}/static/assets

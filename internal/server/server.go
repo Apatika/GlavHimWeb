@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"glavhim-app/internal/config"
+	"log"
 	"net/http"
 )
 
@@ -22,6 +23,7 @@ func New(config config.Config, handler http.Handler) *Server {
 }
 
 func (s *Server) Run() error {
+	log.Printf("server run on %v", s.server.Addr)
 	return s.server.ListenAndServe()
 }
 

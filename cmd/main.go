@@ -27,15 +27,12 @@ func main() {
 	log.SetOutput(file)
 
 	log.Println("load environment variables")
-	if err := godotenv.Load("./config/.env"); err != nil {
-		log.Fatalln("ERROR:", err)
+	if err := godotenv.Load("./.env"); err != nil {
+		config.SetDefaultEnv()
 	}
 
 	log.Println("load config")
-	err = config.New()
-	if err != nil {
-		log.Fatalln("ERROR: ", err)
-	}
+	config.New()
 
 	log.Println("get http handler")
 	handler := handler.New()
@@ -64,7 +61,7 @@ func main() {
 		}
 		close(idleConnsClosed)
 	}()
-	log.Println("run server")
+	log.Println("start server")
 	if err = srv.Run(); err != http.ErrServerClosed {
 		log.Fatalln("ERROR:", err)
 	}

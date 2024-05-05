@@ -3,7 +3,16 @@
   import Data from "./lib/Data.svelte";
   import { setContext } from 'svelte'
 
-  let uri = "http://localhost:8081"
+  let uri = ""
+  fetch(`/uri`).then(function(response) {
+    if (response.status != 200) throw new Error(response.statusText)
+    return response.json();
+  }).then(function(d) {
+    uri = d.uri
+  }).catch(function(err) {
+    alert(err);
+  })
+
   setContext('uri', uri)
 
   let currentPage = Main
