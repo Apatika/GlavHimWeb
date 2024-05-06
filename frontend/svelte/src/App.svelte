@@ -1,21 +1,6 @@
 <script>
   import Main from "./lib/Main.svelte";
   import Data from "./lib/Data.svelte";
-  import { setContext } from 'svelte'
-
-  let settings = {
-    refreshRate: 5000,
-  }
-  fetch(`/settings`).then(function(response) {
-    if (response.status != 200) throw new Error(response.statusText)
-    return response.json();
-  }).then(function(d) {
-    settings = d
-  }).catch(function(err) {
-    alert(err);
-  })
-
-  setContext('settings', settings)
 
   let currentPage = Main
 

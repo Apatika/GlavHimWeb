@@ -41,7 +41,7 @@ var DefaultCfg Config = Config{
 		URI: "mongodb://localhost:27017",
 	},
 	Frontend: frontend{
-		RefreshRate: 5000,
+		RefreshRate: 10000,
 	},
 }
 

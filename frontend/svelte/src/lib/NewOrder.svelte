@@ -1,4 +1,6 @@
 <script>
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
 
   let clientDefault = {
     id: null,
@@ -168,6 +170,7 @@
   const onClose = (e) => {
     e.target.parentElement.parentElement.style.display = "none"
     document.body.style.pointerEvents = "all"
+    dispatch('message', false)
   }
 
 </script>

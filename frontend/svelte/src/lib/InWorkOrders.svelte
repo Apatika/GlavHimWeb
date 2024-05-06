@@ -1,11 +1,9 @@
 <script>
   import NewOrder from "./NewOrder.svelte"
-  import { getContext } from 'svelte'
-
-  const settings = getContext('settings')
-
   
   $: orders = []
+
+  let isEdit = false
 
   const getInWork = () => {
     fetch(`${window.location.origin}/inwork`).then(function(response) {
@@ -27,9 +25,18 @@
   getInWork()
   const timer = ms => new Promise(res => setTimeout(res, ms))
   const refreshInWork = async () => {
+    let refresh = 10000
+    await fetch(`/settings`).then(function(response) {
+      if (response.status != 200) throw new Error(response.statusText)
+      return response.json();
+    }).then((d) => {
+      refresh = d.refreshRate
+    }).catch((err) => {
+      alert(err)
+    })
     while(true){
-      await timer(settings.refreshRate)
-      getInWork()
+      await timer(refresh)
+      if (!isEdit) getInWork()
     }
   }
   refreshInWork()
@@ -73,6 +80,7 @@
   const toggleFullOrder = (event) => {
     let target = event.target.parentElement.nextElementSibling
     if (target.style.display != "flex") {
+      getInWork()
       target.style.display = "flex"
       event.target.innerHTML = 'ᐃ'
     }
@@ -86,6 +94,7 @@
     e.target.parentElement.parentElement.previousElementSibling.style.display = "block"
     document.body.style.pointerEvents = "none"
     e.target.parentElement.parentElement.previousElementSibling.style.pointerEvents = "all"
+    isEdit = true
   }
 
 </script>
@@ -94,7 +103,7 @@
 <div id="table">
   {#each orders as order}
     <div class="editor">
-      <NewOrder order={order.order} client={order.client}></NewOrder>
+      <NewOrder order={order.order} client={order.client} on:message={() => {isEdit = false}}></NewOrder>
     </div>
     <div>
       <div class="order" style="background-color: {getColor(order.order.status)}">
