@@ -103,7 +103,7 @@
 <div id="table">
   {#each orders as order}
     <div class="editor">
-      <NewOrder order={order.order} client={order.client} on:message={() => {isEdit = false}}></NewOrder>
+      <NewOrder order={order.order} client={order.client} on:message={() => {isEdit = false; getInWork()}}></NewOrder>
     </div>
     <div>
       <div class="order" style="background-color: {getColor(order.order.status)}">

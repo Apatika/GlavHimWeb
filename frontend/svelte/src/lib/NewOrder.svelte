@@ -155,6 +155,11 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       alert("Запись обновлена")
+      let closer = document.querySelectorAll('.close').forEach((elem) => {
+        elem.parentElement.parentElement.style.display = "none"
+      })
+      document.body.style.pointerEvents = "all"
+      dispatch('message', false)
     }).catch((err) => {
       alert(err)
     })
@@ -181,7 +186,7 @@
   </div>
 {:else}
   <div>
-    <button id="close" on:click={onClose}>закрыть</button>
+    <button class="close" on:click={onClose}>закрыть</button>
   </div>
 {/if}
 <div id="container">
@@ -385,7 +390,7 @@
   #contact input, #nums input{
     width: 90px;
   }
-  #close{
+  .close{
     position: fixed;
     right: 0;
     top: 0;
