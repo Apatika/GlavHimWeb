@@ -96,6 +96,7 @@
   }
 
   const push = () => {
+    if (!check()) return
     client.adress = order.adress
     order.clientId = client.id
     fetch(`${window.location.origin}/orders`, {
@@ -108,6 +109,7 @@
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       order = structuredClone(orderDefault)
       client = structuredClone(clientDefault)
+      dispatch('message', false)
     }).catch((err) => {
       alert(err)
     })

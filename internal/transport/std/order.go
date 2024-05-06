@@ -112,4 +112,5 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 		log.Print("cache update failed")
 	}
 	log.Printf("update status ID: %v, status: %v", newStatus.ID, newStatus.Status)
+	json.NewEncoder(w).Encode(storage.CacheGetInWork())
 }

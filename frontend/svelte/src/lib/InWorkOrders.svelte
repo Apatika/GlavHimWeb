@@ -5,6 +5,10 @@
 
   let isEdit = false
 
+  const updateOrders = (data) => {
+    orders = data
+  }
+
   const getInWork = () => {
     fetch(`${window.location.origin}/inwork`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
@@ -28,7 +32,7 @@
     let refresh = 10000
     await fetch(`/settings`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
-      return response.json();
+      return response.json()
     }).then((d) => {
       refresh = d.refreshRate
     }).catch((err) => {
@@ -50,7 +54,9 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      getInWork()
+      return response.json()
+    }).then((d) => {
+      updateOrders(d)
     }).catch((err) => {
       alert(err)
     })

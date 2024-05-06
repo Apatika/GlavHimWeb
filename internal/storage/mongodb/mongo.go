@@ -181,6 +181,11 @@ func (m *MongoDB) CheckClient(c service.Client) (string, error) {
 			context.TODO(),
 			bson.D{{Key: "passport_num", Value: c.PassportNum}, {Key: "passport_serial", Value: c.PassportSerial}},
 		).Decode(&find)
+	} else {
+		err = coll.FindOne(
+			context.TODO(),
+			bson.D{{Key: "surname", Value: c.Surname}, {Key: "name", Value: c.Name}, {Key: "second_name", Value: c.SecondName}},
+		).Decode(&find)
 	}
 	if err != nil {
 		return "", err
