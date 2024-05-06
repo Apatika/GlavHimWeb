@@ -1,20 +1,18 @@
 <script>
 
-  import { getContext } from 'svelte'
-
-  const uri = getContext('uri')
-
-  let chem = {
+  let chemDefault = {
     id: null,
     name: null,
     sellValue: null,
     probeValue: null
   }
 
+  let chem = structuredClone(chemDefault)
+
   let chems = []
 
   const get = () => {
-    fetch(`${uri}/db/chems`).then(function(response) {
+    fetch(`${window.location.origin}/db/chems`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
@@ -37,7 +35,7 @@
     }
     chem.sellValue = Number(chem.sellValue)
     chem.probeValue = Number(chem.probeValue)
-    fetch(`${uri}/db/chems`, {
+    fetch(`${window.location.origin}/db/chems`, {
       method: "POST",
       body: JSON.stringify(chem),
       headers: {
@@ -46,10 +44,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
-      chem.id = null
-      chem.name = null
-      chem.sellValue = null
-      chem.probeValue = null
+      chem = structuredClone(chemDefault)
       alert("Запись Добавлена")
     }).catch((err) => {
       alert(err)
@@ -63,7 +58,7 @@
     }
     chem.sellValue = Number(chem.sellValue)
     chem.probeValue = Number(chem.probeValue)
-    fetch(`${uri}/db/chems`, {
+    fetch(`${window.location.origin}/db/chems`, {
       method: "PUT",
       body: JSON.stringify(chem),
       headers: {
@@ -72,6 +67,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
+      chem = structuredClone(chemDefault)
       alert("Запись Обновлена")
     }).catch((err) => {
       alert(err)
@@ -83,7 +79,7 @@
       alert("Выберите транспортную")
       return
     }
-    fetch(`${uri}/db/chems`, {
+    fetch(`${window.location.origin}/db/chems`, {
       method: "DELETE",
       body: JSON.stringify(chem),
       headers: {
@@ -92,10 +88,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
-      chem.id = null
-      chem.name = null
-      chem.sellValue = null
-      chem.probeValue = null
+      chem = structuredClone(chemDefault)
       alert("Запись удалена")
     }).catch((err) => {
       alert(err)
@@ -104,18 +97,12 @@
 
   const select = () => {
     if (chem.name == ""){
-      chem.id = null
-      chem.name = null
-      chem.sellValue = null
-      chem.probeValue = null
+      chem = structuredClone(chemDefault)
       return
     }
     for (let i of chems){
       if (i.name == chem.name){
-        chem.id = i.id
-        chem.name = i.name
-        chem.sellValue = i.sellValue
-        chem.probeValue = i.probeValue
+        chem = structuredClone(i)
         return
       }
     }

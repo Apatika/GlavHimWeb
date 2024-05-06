@@ -1,9 +1,6 @@
 <script>
-  import { getContext } from 'svelte'
 
-  const uri = getContext('uri')
-
-  let cargo = {
+  let cargoDefault = {
     id: null,
     name: null,
     uri: null,
@@ -11,10 +8,12 @@
     managerTel: null
   }
 
+  let cargo = structuredClone(cargoDefault)
+
   let cargos =[]
 
   const get = () => {
-    fetch(`${uri}/db/cargos`).then(function(response) {
+    fetch(`${window.location.origin}/db/cargos`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
@@ -39,7 +38,7 @@
       alert("Неправильный формат адреса сайта")
       return
     }
-    fetch(`${uri}/db/cargos`, {
+    fetch(`${window.location.origin}/db/cargos`, {
       method: "POST",
       body: JSON.stringify(cargo),
       headers: {
@@ -48,11 +47,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
-      cargo.id = null
-      cargo.name = null
-      cargo.mainTel = null
-      cargo.managerTel = null
-      cargo.uri = null
+      cargo = structuredClone(cargoDefault)
       alert("Запись Добавлена")
     }).catch((err) => {
       alert(err)
@@ -68,7 +63,7 @@
       alert("Неправильный формат адреса сайта")
       return
     }
-    fetch(`${uri}/db/cargos`, {
+    fetch(`${window.location.origin}/db/cargos`, {
       method: "PUT",
       body: JSON.stringify(cargo),
       headers: {
@@ -77,6 +72,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
+      cargo = structuredClone(cargoDefault)
       alert("Запись Обновлена")
     }).catch((err) => {
       alert(err)
@@ -88,7 +84,7 @@
       alert("Выберите транспортную")
       return
     }
-    fetch(`${uri}/db/cargos`, {
+    fetch(`${window.location.origin}/db/cargos`, {
       method: "DELETE",
       body: JSON.stringify(cargo),
       headers: {
@@ -97,11 +93,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
-      cargo.id = null
-      cargo.name = null
-      cargo.mainTel = null
-      cargo.managerTel = null
-      cargo.uri = null
+      cargo = structuredClone(cargoDefault)
       alert("Запись удалена")
     }).catch((err) => {
       alert(err)
@@ -110,20 +102,12 @@
 
   const select = () => {
     if (cargo.name == ""){
-      cargo.id = null
-      cargo.name = null
-      cargo.uri = null
-      cargo.mainTel = null
-      cargo.managerTel = null
+      cargo = structuredClone(cargoDefault)
       return
     }
     for (let i of cargos){
       if (i.name == cargo.name){
-        cargo.id = i.id
-        cargo.name = i.name
-        cargo.uri = i.uri
-        cargo.mainTel = i.mainTel
-        cargo.managerTel = i.managerTel
+        cargo = structuredClone(i)
         return
       }
     }

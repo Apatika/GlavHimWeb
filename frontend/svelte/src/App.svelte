@@ -3,20 +3,19 @@
   import Data from "./lib/Data.svelte";
   import { setContext } from 'svelte'
 
-  let uri = ""
-  let refreshRate = 5000
-  fetch(`/uri`).then(function(response) {
+  let settings = {
+    refreshRate: 5000,
+  }
+  fetch(`/settings`).then(function(response) {
     if (response.status != 200) throw new Error(response.statusText)
     return response.json();
   }).then(function(d) {
-    uri = d.uri
-    refreshRate = d.refreshRate
+    settings = d
   }).catch(function(err) {
     alert(err);
   })
 
-  setContext('uri', uri)
-  setContext('refreshRate', refreshRate)
+  setContext('settings', settings)
 
   let currentPage = Main
 

@@ -2,7 +2,6 @@ package std
 
 import (
 	"encoding/json"
-	"fmt"
 	"glavhim-app/internal/config"
 	"html/template"
 	"log"
@@ -13,7 +12,7 @@ func New() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./static/assets/"))))
 	mux.HandleFunc("/", index)
-	mux.HandleFunc("GET /uri", uri)
+	mux.HandleFunc("GET /settings", settings)
 	mux.HandleFunc("GET /db/{path}", dbPageGet)
 	mux.HandleFunc("POST /db/{path}", dbPagePost)
 	mux.HandleFunc("PUT /db/{path}", dbPagePut)
@@ -36,12 +35,10 @@ func index(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "index.html", nil)
 }
 
-func uri(w http.ResponseWriter, r *http.Request) {
+func settings(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(struct {
-		Uri         string
-		RefreshRate int
+		RefreshRate int `json:"refreshRate"`
 	}{
-		Uri:         fmt.Sprintf("%v%v", config.Cfg.Server.URI, config.Cfg.Server.Port),
 		RefreshRate: config.Cfg.Frontend.RefreshRate,
 	})
 }

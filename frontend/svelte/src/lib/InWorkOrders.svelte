@@ -2,14 +2,13 @@
   import NewOrder from "./NewOrder.svelte"
   import { getContext } from 'svelte'
 
-  const uri = getContext('uri')
-  const refreshRate = getContext('refreshRate')
+  const settings = getContext('settings')
 
   
   $: orders = []
 
   const getInWork = () => {
-    fetch(`${uri}/inwork`).then(function(response) {
+    fetch(`${window.location.origin}/inwork`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
@@ -29,14 +28,14 @@
   const timer = ms => new Promise(res => setTimeout(res, ms))
   const refreshInWork = async () => {
     while(true){
+      await timer(settings.refreshRate)
       getInWork()
-      await timer(refreshRate)
     }
   }
-  //refreshInWork()
+  refreshInWork()
 
   const changeStatus = (id, status) => {
-    fetch(`${uri}/orders/status`, {
+    fetch(`${window.location.origin}/orders/status`, {
       method: "PUT",
       body: JSON.stringify({id: id, status: status}),
       headers: {

@@ -1,9 +1,6 @@
 <script>
-  import { getContext } from 'svelte'
 
-  const uri = getContext('uri')
-
-  export let client = {
+  let clientDefault = {
     id: null,
     type: '0',
     adress: null,
@@ -17,7 +14,7 @@
     contact: [{name: null, tel: null}],
     email: null,
   }
-  export let order = {
+  let orderDefault = {
     id: null,
     clientId: null,
     payment: null,
@@ -30,10 +27,13 @@
     probes: [],
   }
 
+  export let client = structuredClone(clientDefault)
+  export let order = structuredClone(orderDefault)
+
   let managers = []
   let cargos = []
 
-  fetch(`${uri}/db/users`).then(function(response) {
+  fetch(`${window.location.origin}/db/users`).then(function(response) {
     return response.json();
   }).then(function(data) {
     if (data.length == 0) throw new Error("storage empty") 
@@ -42,7 +42,7 @@
     alert(err);
   })
 
-  fetch(`${uri}/db/cargos`).then(function(response) {
+  fetch(`${window.location.origin}/db/cargos`).then(function(response) {
     return response.json();
   }).then(function(data) {
     if (data.length == 0) throw new Error("storage empty")
@@ -95,7 +95,7 @@
 
   const pushOrder = (id) => {
     order.clientId = id
-    fetch(`${uri}/orders`, {
+    fetch(`${window.location.origin}/orders`, {
       method: "POST",
       body: JSON.stringify(order),
       headers: {
@@ -103,16 +103,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      order.id = null
-      order.clientId = null
-      order.payment = null
-      order.adress = {city: null, adress: null, terminal: "основной"}
-      order.invoice = [null]
-      order.cargo = null
-      order.lastDate = null
-      order.comment = null
-      order.probes = []
-      order.toadress = false
+      order = structuredClone(orderDefault)
     }).catch((err) => {
       alert(err)
     })
@@ -122,7 +113,7 @@
     // @ts-ignore
     if (!check()) return
     client.adress = order.adress
-    fetch(`${uri}/clients`, {
+    fetch(`${window.location.origin}/clients`, {
       method: "POST",
       body: JSON.stringify(client),
       headers: {
@@ -132,19 +123,7 @@
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       else return response.json()
     }).then(data => {
-      client.id = null
-      client.type = '0'
-      client.adress = null
-      client.name = null
-      client.surname = null
-      client.secondName = null
-      client.manager = null
-      client.inn = null
-      client.passportSerial = null
-      client.passportNum = null
-      client.contact = [{name: null, tel: null}]
-      client.tel = null
-      client.email = null
+      client = structuredClone(clientDefault)
       pushOrder(data.id)
     }).catch((err) => {
       alert(err)
@@ -153,7 +132,7 @@
 
   const update = () => {
     client.adress = order.adress
-    fetch(`${uri}/clients`, {
+    fetch(`${window.location.origin}/clients`, {
       method: "PUT",
       body: JSON.stringify(client),
       headers: {
@@ -165,7 +144,7 @@
       alert(err)
     })
     order.status = "Изменен!"
-    fetch(`${uri}/orders`, {
+    fetch(`${window.location.origin}/orders`, {
       method: "PUT",
       body: JSON.stringify(order),
       headers: {

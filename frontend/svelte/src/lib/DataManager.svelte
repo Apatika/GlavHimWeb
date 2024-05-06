@@ -1,19 +1,18 @@
 <script>
-  import { getContext } from 'svelte'
 
-  const uri = getContext('uri')
-
-  let user = {
+  let userDefault = {
     id: null,
     name: null,
     tel: null,
     email: null
   }
+
+  let user = structuredClone(userDefault)
   
   let managers = []
 
   const get = () => {
-    fetch(`${uri}/db/users`).then(function(response) {
+    fetch(`${window.location.origin}/db/users`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
@@ -38,7 +37,7 @@
       alert("Неправильный формат почты")
       return
     }
-    fetch(`${uri}/db/users`, {
+    fetch(`${window.location.origin}/db/users`, {
       method: "POST",
       body: JSON.stringify(user),
       headers: {
@@ -47,10 +46,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
-      user.id = null
-      user.name = null
-      user.tel = null
-      user.email = null
+      user = structuredClone(userDefault)
       alert("Менедежер Добавлен")
     }).catch((err) => {
       alert(err)
@@ -66,7 +62,7 @@
       alert("Неправильный формат почты")
       return
     }
-    fetch(`${uri}/db/users`, {
+    fetch(`${window.location.origin}/db/users`, {
       method: "PUT",
       body: JSON.stringify(user),
       headers: {
@@ -75,6 +71,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
+      user = structuredClone(userDefault)
       alert("Менедежер Обновлен")
     }).catch((err) => {
       alert(err)
@@ -86,7 +83,7 @@
       alert("Выберите пользователя")
       return
     }
-    fetch(`${uri}/db/users`, {
+    fetch(`${window.location.origin}/db/users`, {
       method: "DELETE",
       body: JSON.stringify(user),
       headers: {
@@ -95,10 +92,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       get()
-      user.id = null
-      user.name = null
-      user.tel = null
-      user.email = null
+      user = structuredClone(userDefault)
       alert("Менедежер Удален")
     }).catch((err) => {
       alert(err)
@@ -107,18 +101,12 @@
   
   const select = () => {
     if (user.name == ""){
-      user.id = null
-      user.name = null
-      user.tel = null
-      user.email = null
+      user = structuredClone(userDefault)
       return
     }
     for (let i of managers){
       if (i.name == user.name){
-        user.id = i.id
-        user.name = i.name
-        user.tel = i.tel
-        user.email = i.email
+        user = structuredClone(i)
         return
       }
     }
