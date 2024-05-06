@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage/heapcache"
 )
 
@@ -10,8 +11,9 @@ const (
 )
 
 type ICache interface {
-	GetInWork() interface{}
-	UpdateInWork(interface{})
+	GetInWork() []service.OrderFull
+	UpdateInWork([]service.OrderFull)
+	NewOrder(order service.OrderFull)
 }
 
 type Cookie struct {
@@ -39,6 +41,10 @@ func CacheUpdateInWork() error {
 	return nil
 }
 
-func CacheGetInWork() interface{} {
+func CacheGetInWork() []service.OrderFull {
 	return cache.GetInWork()
+}
+
+func CacheNewOrder(order service.OrderFull) {
+	cache.NewOrder(order)
 }

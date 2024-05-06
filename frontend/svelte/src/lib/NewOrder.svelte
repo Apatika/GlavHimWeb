@@ -3,7 +3,7 @@
   const dispatch = createEventDispatcher();
 
   let clientDefault = {
-    id: null,
+    id: "6639312aacbb9a1cada4cffe",
     type: '0',
     adress: null,
     name: null,
@@ -95,38 +95,18 @@
     }
   }
 
-  const pushOrder = (id) => {
-    order.clientId = id
+  const push = () => {
+    order.clientId = client.id
     fetch(`${window.location.origin}/orders`, {
       method: "POST",
-      body: JSON.stringify(order),
+      body: JSON.stringify({client: client, order: order}),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       order = structuredClone(orderDefault)
-    }).catch((err) => {
-      alert(err)
-    })
-  }
-
-  const push = () => {
-    // @ts-ignore
-    if (!check()) return
-    client.adress = order.adress
-    fetch(`${window.location.origin}/clients`, {
-      method: "POST",
-      body: JSON.stringify(client),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    }).then(response => {
-      if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      else return response.json()
-    }).then(data => {
       client = structuredClone(clientDefault)
-      pushOrder(data.id)
     }).catch((err) => {
       alert(err)
     })

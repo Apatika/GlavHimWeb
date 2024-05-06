@@ -23,26 +23,46 @@ const (
 
 func pushOrder(w http.ResponseWriter, r *http.Request) {
 	path := "orders"
-	var data service.Order
+	var data service.OrderFull
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {
 		errorResponse(w, fmt.Sprintf("decode order failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if data.ID == "" {
-		data.ID = storage.GetNewID()
-	}
+	data.Order.ID = storage.GetNewID()
 	var month time.Month
-	data.CreationDate.Year, month, data.CreationDate.Day = time.Now().Date()
-	data.CreationDate.Month = month.String()
-	if err := storage.AddOne(path, data); err != nil {
-		errorResponse(w, fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
+	data.Order.CreationDate.Year, month, data.Order.CreationDate.Day = time.Now().Date()
+	data.Order.CreationDate.Month = month.String()
+	if data.Client.ID == "" {
+		id, err := storage.CheckClient(data.Client)
+		if err != nil {
+			data.Client.ID = storage.GetNewID()
+			if err := storage.AddOne("clients", data.Client); err != nil {
+				errorResponse(w, fmt.Sprintf("push client failed(%v)", err.Error()), http.StatusInternalServerError)
+				return
+			}
+		} else {
+			data.Client.ID = id
+			if err := storage.UpdateOne("clients", data.Client, data.Client.ID); err != nil {
+				errorResponse(w, fmt.Sprintf("update client failed(%v)", err.Error()), http.StatusInternalServerError)
+				return
+			}
+		}
+	} else {
+		if err := storage.UpdateOne("clients", data.Client, data.Client.ID); err != nil {
+			errorResponse(w, fmt.Sprintf("update client failed(%v)", err.Error()), http.StatusInternalServerError)
+			return
+		}
+	}
+	data.Order.ClientID = data.Client.ID
+	if err := storage.AddOne(path, data.Order); err != nil {
+		errorResponse(w, fmt.Sprintf("push order failed(%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	if err := storage.CacheUpdateInWork(); err != nil {
 		log.Print("cache update failed")
 	}
-	log.Printf("add new order, invoice %v (ID: %v)", data.Invoice, data.ID)
+	log.Printf("add new order, invoice %v (ID: %v)", data.Order.Invoice, data.Order.ID)
 }
 
 func updateOrder(w http.ResponseWriter, r *http.Request) {

@@ -141,28 +141,49 @@ func (m *MongoDB) GetInWorkOrders() ([]service.OrderFull, error) {
 	if err != nil {
 		return nil, err
 	}
-	var orders []bson.M
+	var orders []service.Order
 	if err = cursor.All(context.TODO(), &orders); err != nil {
 		return nil, err
 	}
 	coll = client.Database("glavhim").Collection("clients")
 	arr := make([]service.OrderFull, 0, 10)
 	for _, v := range orders {
-		doc, err := bson.Marshal(v)
-		if err != nil {
-			return nil, err
-		}
-		var order service.Order
-		bson.Unmarshal(doc, &order)
 		var client service.Client
 		err = coll.FindOne(
 			context.TODO(),
-			bson.D{{Key: "_id", Value: order.ClientID}},
+			bson.D{{Key: "_id", Value: v.ClientID}},
 		).Decode(&client)
 		if err != nil {
 			return nil, err
 		}
-		arr = append(arr, service.OrderFull{Client: client, Order: order})
+		arr = append(arr, service.OrderFull{Client: client, Order: v})
 	}
 	return arr, nil
+}
+
+func (m *MongoDB) CheckClient(c service.Client) (string, error) {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		err = client.Disconnect(context.TODO())
+	}()
+	coll := client.Database("glavhim").Collection("clients")
+	var find service.Client
+	if c.Inn != "" {
+		err = coll.FindOne(
+			context.TODO(),
+			bson.D{{Key: "inn", Value: c.Inn}},
+		).Decode(&find)
+	} else if c.PassportNum != "" {
+		err = coll.FindOne(
+			context.TODO(),
+			bson.D{{Key: "passport_num", Value: c.PassportNum}, {Key: "passport_serial", Value: c.PassportSerial}},
+		).Decode(&find)
+	}
+	if err != nil {
+		return "", err
+	}
+	return find.ID, nil
 }

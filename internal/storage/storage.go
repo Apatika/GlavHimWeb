@@ -14,6 +14,7 @@ type IDataBase interface {
 	DeleteOne(string, string) error
 	GetInWorkOrders() ([]service.OrderFull, error)
 	GetNewID() string
+	CheckClient(service.Client) (string, error)
 }
 
 var db IDataBase
@@ -67,6 +68,14 @@ func DeleteOne(collName string, id string) error {
 		return err
 	}
 	return nil
+}
+
+func CheckClient(c service.Client) (string, error) {
+	id, err := db.CheckClient(c)
+	if err != nil {
+		return "", err
+	}
+	return id, nil
 }
 
 func getInWorkOrders() ([]service.OrderFull, error) {
