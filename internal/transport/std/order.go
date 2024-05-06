@@ -59,28 +59,29 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("push order failed(%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.CacheUpdateInWork(); err != nil {
-		log.Print("cache update failed")
-	}
+	storage.CacheNewOrder(data)
 	log.Printf("add new order, invoice %v (ID: %v)", data.Order.Invoice, data.Order.ID)
 }
 
 func updateOrder(w http.ResponseWriter, r *http.Request) {
-	path := "orders"
-	var data service.Order
+	var data service.OrderFull
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {
 		errorResponse(w, fmt.Sprintf("decode order failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.UpdateOne(path, data, data.ID); err != nil {
-		errorResponse(w, fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
+	if err := storage.UpdateOne("orders", data.Order, data.Order.ID); err != nil {
+		errorResponse(w, fmt.Sprintf("order update failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.CacheUpdateInWork(); err != nil {
-		log.Print("cache update failed")
+	if err := storage.UpdateOne("clients", data.Client, data.Client.ID); err != nil {
+		errorResponse(w, fmt.Sprintf("client update failed (%v)", err.Error()), http.StatusInternalServerError)
+		return
 	}
-	log.Printf("update order ID: %v", data.ID)
+	if err := storage.CacheUpdateOrder(data); err != nil {
+		log.Print(err)
+	}
+	log.Printf("update order ID: %v", data.Order.ID)
 }
 
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {
@@ -88,11 +89,7 @@ func inWorkOrders(w http.ResponseWriter, r *http.Request) {
 }
 
 func changeStatus(w http.ResponseWriter, r *http.Request) {
-	newStatus := struct {
-		ID           string       `json:"id" bson:"_id"`
-		Status       string       `json:"status" bson:"status"`
-		ShipmentDate service.Date `json:"shipmentDate" bson:"shipment_date"`
-	}{}
+	var newStatus service.OrderStatusChanger
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&newStatus); err != nil {
 		errorResponse(w, fmt.Sprintf("decode newStatus failed (%v)", err.Error()), http.StatusInternalServerError)
@@ -111,7 +108,7 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("update status failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.CacheUpdateInWork(); err != nil {
+	if err := storage.CacheUpdateOrderStatus(newStatus); err != nil {
 		log.Print("cache update failed")
 	}
 	log.Printf("update status ID: %v, status: %v", newStatus.ID, newStatus.Status)

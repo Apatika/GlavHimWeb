@@ -12,8 +12,9 @@ const (
 
 type ICache interface {
 	GetInWork() []service.OrderFull
-	UpdateInWork([]service.OrderFull)
-	NewOrder(order service.OrderFull)
+	NewOrder(service.OrderFull)
+	UpdateOrder(service.OrderFull) error
+	UpdateOrderStatus(service.OrderStatusChanger) error
 }
 
 type Cookie struct {
@@ -32,19 +33,24 @@ func CacheInit() error {
 	return nil
 }
 
-func CacheUpdateInWork() error {
-	data, err := getInWorkOrders()
-	if err != nil {
-		return err
-	}
-	cache.UpdateInWork(data)
-	return nil
-}
-
 func CacheGetInWork() []service.OrderFull {
 	return cache.GetInWork()
 }
 
 func CacheNewOrder(order service.OrderFull) {
 	cache.NewOrder(order)
+}
+
+func CacheUpdateOrder(order service.OrderFull) error {
+	if err := cache.UpdateOrder(order); err != nil {
+		return err
+	}
+	return nil
+}
+
+func CacheUpdateOrderStatus(status service.OrderStatusChanger) error {
+	if err := cache.UpdateOrderStatus(status); err != nil {
+		return err
+	}
+	return nil
 }

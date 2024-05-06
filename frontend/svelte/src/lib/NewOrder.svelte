@@ -3,7 +3,7 @@
   const dispatch = createEventDispatcher();
 
   let clientDefault = {
-    id: "6639312aacbb9a1cada4cffe",
+    id: null,
     type: '0',
     adress: null,
     name: null,
@@ -96,6 +96,7 @@
   }
 
   const push = () => {
+    client.adress = order.adress
     order.clientId = client.id
     fetch(`${window.location.origin}/orders`, {
       method: "POST",
@@ -114,28 +115,17 @@
 
   const update = () => {
     client.adress = order.adress
-    fetch(`${window.location.origin}/clients`, {
-      method: "PUT",
-      body: JSON.stringify(client),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    }).then(response => {
-      if (!response.ok) return response.text().then(text => {throw new Error(text)})
-    }).catch((err) => {
-      alert(err)
-    })
     order.status = "Изменен!"
     fetch(`${window.location.origin}/orders`, {
       method: "PUT",
-      body: JSON.stringify(order),
+      body: JSON.stringify({client: client, order: order}),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       alert("Запись обновлена")
-      let closer = document.querySelectorAll('.close').forEach((elem) => {
+      document.querySelectorAll('.close').forEach((elem) => {
         elem.parentElement.parentElement.style.display = "none"
       })
       document.body.style.pointerEvents = "all"

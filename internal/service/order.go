@@ -5,6 +5,12 @@ type OrderFull struct {
 	Order  Order  `json:"order"`
 }
 
+type OrderStatusChanger struct {
+	ID           string `json:"id" bson:"_id"`
+	Status       string `json:"status" bson:"status"`
+	ShipmentDate Date   `json:"shipmentDate" bson:"shipment_date"`
+}
+
 type Order struct {
 	ID           string      `json:"id" bson:"_id"`
 	CreationDate Date        `json:"creationDate" bson:"creation_date"`
