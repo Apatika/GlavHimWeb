@@ -25,7 +25,8 @@ type Cookie struct {
 var cache ICache
 
 func CacheInit() error {
-	orders, err := getInWorkOrders()
+	db := DB()
+	orders, err := db.GetInWorkOrders()
 	if err != nil {
 		return err
 	}

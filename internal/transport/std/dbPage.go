@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-func getStructByPath(path string) service.IService {
-	var data service.IService
+func getStructByPath(path string) service.IDBPage {
+	var data service.IDBPage
 	switch path {
 	case "users":
 		data = &service.User{}
@@ -24,7 +24,8 @@ func getStructByPath(path string) service.IService {
 
 func dbPageGet(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue("path")
-	data, err := storage.GetAll(path)
+	db := storage.DB()
+	data, err := db.GetAll(path)
 	if err != nil {
 		errorResponse(w, fmt.Sprintf("read db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
@@ -40,12 +41,13 @@ func dbPagePost(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	data.NewID(storage.GetNewID())
-	if err := storage.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+	db := storage.DB()
+	data.NewID(db.GetNewID())
+	if err := db.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
 		errorResponse(w, fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error()), http.StatusBadRequest)
 		return
 	}
-	if err := storage.AddOne(path, data); err != nil {
+	if err := db.AddOne(path, data); err != nil {
 		errorResponse(w, fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
 	}
@@ -60,11 +62,12 @@ func dbPagePut(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+	db := storage.DB()
+	if err := db.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
 		errorResponse(w, fmt.Sprintf("update db failed, path /db/%v (%v)", path, err.Error()), http.StatusBadRequest)
 		return
 	}
-	if err := storage.UpdateOne(path, data, data.GetID()); err != nil {
+	if err := db.UpdateOne(path, data, data.GetID()); err != nil {
 		errorResponse(w, fmt.Sprintf("update db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
 	}
@@ -79,7 +82,8 @@ func dbPageDelete(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.DeleteOne(path, data.GetID()); err != nil {
+	db := storage.DB()
+	if err := db.DeleteOne(path, data.GetID()); err != nil {
 		errorResponse(w, fmt.Sprintf("delete from db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
 	}

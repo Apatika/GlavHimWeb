@@ -17,7 +17,8 @@ func updateClient(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("decode client failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.UpdateOne(path, data, data.ID); err != nil {
+	db := storage.DB()
+	if err := db.UpdateOne(path, data, data.ID); err != nil {
 		errorResponse(w, fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
 	}
