@@ -61,12 +61,7 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("push order failed(%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	cache, err := storage.Cache()
-	if err != nil {
-		errorResponse(w, fmt.Sprintf("cache error(%v)", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	cache.NewOrder(data)
+	storage.Cache.NewOrder(data)
 	log.Printf("add new order, invoice %v (ID: %v)", data.Order.Invoice, data.Order.ID)
 }
 
@@ -86,24 +81,14 @@ func updateOrder(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("client update failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	cache, err := storage.Cache()
-	if err != nil {
-		errorResponse(w, fmt.Sprintf("cache error(%v)", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	if err := cache.UpdateOrder(data); err != nil {
+	if err := storage.Cache.UpdateOrder(data); err != nil {
 		log.Print(err)
 	}
 	log.Printf("update order ID: %v", data.Order.ID)
 }
 
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {
-	cache, err := storage.Cache()
-	if err != nil {
-		errorResponse(w, fmt.Sprintf("cache error(%v)", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	json.NewEncoder(w).Encode(cache.GetInWork())
+	json.NewEncoder(w).Encode(storage.Cache.GetInWork())
 }
 
 func changeStatus(w http.ResponseWriter, r *http.Request) {
@@ -127,14 +112,9 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("update status failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	cache, err := storage.Cache()
-	if err != nil {
-		errorResponse(w, fmt.Sprintf("cache error(%v)", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	if err := cache.UpdateOrderStatus(newStatus); err != nil {
+	if err := storage.Cache.UpdateOrderStatus(newStatus); err != nil {
 		log.Print("cache update failed")
 	}
 	log.Printf("update status ID: %v, status: %v", newStatus.ID, newStatus.Status)
-	json.NewEncoder(w).Encode(cache.GetInWork())
+	json.NewEncoder(w).Encode(storage.Cache.GetInWork())
 }

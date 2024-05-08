@@ -9,7 +9,7 @@
 
   let chem = structuredClone(chemDefault)
 
-  let chems = []
+  $: chems = []
 
   const get = () => {
     fetch(`${window.location.origin}/db/chems`).then(function(response) {
@@ -17,6 +17,13 @@
       return response.json();
     }).then((d) => {
       chems = d
+      chems.sort((a, b) => {
+        let fa = a.name.toLowerCase()
+        let fb = b.name.toLowerCase()
+        if (fa > fb) return 1
+        if (fa < fb) return -1
+        return 0
+      })
     }).catch(function(err) {
       alert(err);
     })

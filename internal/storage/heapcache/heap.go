@@ -9,13 +9,13 @@ import (
 type Cache struct {
 	auth     map[string]string
 	inWork   []service.OrderFull
-	chems    []service.Chemistry
-	cargos   []service.Cargo
-	managers []service.User
+	chems    map[string]service.Chemistry
+	cargos   map[string]service.Cargo
+	managers map[string]service.User
 	mut      sync.RWMutex
 }
 
-func New(iwo []service.OrderFull, chems []service.Chemistry, cargos []service.Cargo, managers []service.User) *Cache {
+func New(iwo []service.OrderFull, chems map[string]service.Chemistry, cargos map[string]service.Cargo, managers map[string]service.User) *Cache {
 	return &Cache{
 		auth:     make(map[string]string, 10),
 		inWork:   iwo,
@@ -66,16 +66,4 @@ func (c *Cache) UpdateOrderStatus(status service.OrderStatusChanger) error {
 		return fmt.Errorf("not found order (ID: %v) in cache", status.ID)
 	}
 	return nil
-}
-
-func (c *Cache) Managers() []service.User {
-	return c.managers
-}
-
-func (c *Cache) Cargos() []service.Cargo {
-	return c.cargos
-}
-
-func (c *Cache) Chemistry() []service.Chemistry {
-	return c.chems
 }

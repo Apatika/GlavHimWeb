@@ -43,8 +43,7 @@ func main() {
 		log.Fatalln("ERROR (db init): ", err)
 	}
 
-	_, err = storage.Cache()
-	if err != nil {
+	if err = storage.CacheInit(); err != nil {
 		log.Fatalln("ERROR (cache init): ", err)
 	}
 

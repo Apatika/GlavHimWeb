@@ -10,7 +10,7 @@
 
   let cargo = structuredClone(cargoDefault)
 
-  let cargos =[]
+  $: cargos =[]
 
   const get = () => {
     fetch(`${window.location.origin}/db/cargos`).then(function(response) {
@@ -18,6 +18,13 @@
       return response.json();
     }).then((d) => {
       cargos = d
+      cargos.sort((a, b) => {
+        let fa = a.name.toLowerCase()
+        let fb = b.name.toLowerCase()
+        if (fa > fb) return 1
+        if (fa < fb) return -1
+        return 0
+      })
     }).catch(function(err) {
       alert(err);
     })

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"glavhim-app/internal/config"
 	"glavhim-app/internal/service"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -53,7 +52,6 @@ func (m *MongoDB) CheckNameOne(name string, collName string, id string) error {
 	coll := client.Database(config.Cfg.AppName).Collection(collName)
 	err = coll.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&nc)
 	count, err := coll.CountDocuments(context.TODO(), bson.D{{Key: "name", Value: name}}, nil)
-	log.Println(nc.Name)
 	if (count > 0 && nc.Name != name) || (count == 0 && nc.Name == name) {
 		return fmt.Errorf("name already exists")
 	}
