@@ -12,7 +12,7 @@ type Cache struct {
 	mut    sync.RWMutex
 }
 
-func NewHeap(iwo []service.OrderFull) *Cache {
+func New(iwo []service.OrderFull) *Cache {
 	return &Cache{
 		auth:   make(map[string]string, 10),
 		inWork: iwo,
