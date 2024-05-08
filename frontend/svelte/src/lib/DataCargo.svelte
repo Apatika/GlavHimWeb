@@ -16,11 +16,7 @@
     fetch(`${window.location.origin}/db/cargos`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
-    }).then(function(d) {
-      d.forEach(e => {
-        e.id = e["_id"]
-        delete e["_id"]
-      });
+    }).then((d) => {
       cargos = d
     }).catch(function(err) {
       alert(err);

@@ -8,7 +8,7 @@ import (
 type IDataBase interface {
 	HealthCheck() error
 	CheckNameOne(string, string, string) error
-	GetAll(string) (interface{}, error)
+	GetAll(string, interface{}) error
 	AddOne(string, interface{}) error
 	UpdateOne(string, interface{}, string) error
 	DeleteOne(string, string) error

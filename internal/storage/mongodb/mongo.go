@@ -63,10 +63,10 @@ func (m *MongoDB) CheckNameOne(name string, collName string, id string) error {
 	return nil
 }
 
-func (m *MongoDB) GetAll(path string) (interface{}, error) {
+func (m *MongoDB) GetAll(path string, obj interface{}) error {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer func() {
 		err = client.Disconnect(context.TODO())
@@ -74,13 +74,12 @@ func (m *MongoDB) GetAll(path string) (interface{}, error) {
 	coll := client.Database(config.Cfg.AppName).Collection(path)
 	cursor, err := coll.Find(context.TODO(), bson.D{})
 	if err != nil {
-		return nil, err
+		return err
 	}
-	var results []bson.M
-	if err = cursor.All(context.TODO(), &results); err != nil {
-		return nil, err
+	if err = cursor.All(context.TODO(), obj); err != nil {
+		return err
 	}
-	return results, nil
+	return nil
 }
 
 func (m *MongoDB) AddOne(collName string, obj interface{}) error {

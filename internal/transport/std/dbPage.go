@@ -25,13 +25,21 @@ func getStructByPath(path string) service.IDBPage {
 
 func dbPageGet(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue(pathVar)
-	db := storage.DB()
-	data, err := db.GetAll(path)
+	cache, err := storage.Cache()
 	if err != nil {
-		errorResponse(w, fmt.Sprintf("read db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
+		errorResponse(w, fmt.Sprintf("cache read failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(data)
+	switch path {
+	case config.Cfg.DB.Coll.Users:
+		json.NewEncoder(w).Encode(cache.Managers())
+	case config.Cfg.DB.Coll.Cargos:
+		json.NewEncoder(w).Encode(cache.Cargos())
+	case config.Cfg.DB.Coll.Chems:
+		json.NewEncoder(w).Encode(cache.Chemistry())
+	default:
+		errorResponse(w, fmt.Sprintf("invalid path /db/%v", path), http.StatusInternalServerError)
+	}
 }
 
 func dbPagePost(w http.ResponseWriter, r *http.Request) {

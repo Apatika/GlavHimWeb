@@ -43,6 +43,7 @@ type (
 
 var Cfg Config
 var DefaultCfg Config = Config{
+	AppName: "glavhim",
 	Server: server{
 		URI:  "http://localhost",
 		Port: "8080",
@@ -81,5 +82,4 @@ func New() {
 		log.Print("load default config")
 		Cfg = DefaultCfg
 	}
-	log.Print(Cfg)
 }
