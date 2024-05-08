@@ -2,21 +2,24 @@ package std
 
 import (
 	"encoding/json"
+	"fmt"
 	"glavhim-app/internal/config"
 	"html/template"
 	"log"
 	"net/http"
 )
 
+const pathVar = "path"
+
 func New() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./static/assets/"))))
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("GET /settings", settings)
-	mux.HandleFunc("GET /db/{path}", dbPageGet)
-	mux.HandleFunc("POST /db/{path}", dbPagePost)
-	mux.HandleFunc("PUT /db/{path}", dbPagePut)
-	mux.HandleFunc("DELETE /db/{path}", dbPageDelete)
+	mux.HandleFunc(fmt.Sprintf("GET /db/{%v}", pathVar), dbPageGet)
+	mux.HandleFunc(fmt.Sprintf("POST /db/{%v}", pathVar), dbPagePost)
+	mux.HandleFunc(fmt.Sprintf("PUT /db/{%v}", pathVar), dbPagePut)
+	mux.HandleFunc(fmt.Sprintf("DELETE /db/{%v}", pathVar), dbPageDelete)
 	mux.HandleFunc("POST /orders", pushOrder)
 	mux.HandleFunc("PUT /orders", updateOrder)
 	mux.HandleFunc("PUT /orders/status", changeStatus)

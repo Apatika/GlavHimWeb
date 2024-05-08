@@ -3,6 +3,7 @@ package std
 import (
 	"encoding/json"
 	"fmt"
+	"glavhim-app/internal/config"
 	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage"
 	"log"
@@ -12,18 +13,18 @@ import (
 func getStructByPath(path string) service.IDBPage {
 	var data service.IDBPage
 	switch path {
-	case "users":
+	case config.Cfg.DB.Coll.Users:
 		data = &service.User{}
-	case "cargos":
+	case config.Cfg.DB.Coll.Cargos:
 		data = &service.Cargo{}
-	case "chems":
+	case config.Cfg.DB.Coll.Chems:
 		data = &service.Chemistry{}
 	}
 	return data
 }
 
 func dbPageGet(w http.ResponseWriter, r *http.Request) {
-	path := r.PathValue("path")
+	path := r.PathValue(pathVar)
 	db := storage.DB()
 	data, err := db.GetAll(path)
 	if err != nil {
@@ -34,7 +35,7 @@ func dbPageGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func dbPagePost(w http.ResponseWriter, r *http.Request) {
-	path := r.PathValue("path")
+	path := r.PathValue(pathVar)
 	data := getStructByPath(path)
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {
@@ -55,7 +56,7 @@ func dbPagePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func dbPagePut(w http.ResponseWriter, r *http.Request) {
-	path := r.PathValue("path")
+	path := r.PathValue(pathVar)
 	data := getStructByPath(path)
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {
@@ -75,7 +76,7 @@ func dbPagePut(w http.ResponseWriter, r *http.Request) {
 }
 
 func dbPageDelete(w http.ResponseWriter, r *http.Request) {
-	path := r.PathValue("path")
+	path := r.PathValue(pathVar)
 	data := getStructByPath(path)
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {

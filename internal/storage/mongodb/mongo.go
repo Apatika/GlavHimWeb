@@ -50,7 +50,7 @@ func (m *MongoDB) CheckNameOne(name string, collName string, id string) error {
 		Name string             `bson:"name"`
 		ID   primitive.ObjectID `bson:"_id"`
 	}{}
-	coll := client.Database("glavhim").Collection(collName)
+	coll := client.Database(config.Cfg.AppName).Collection(collName)
 	err = coll.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&nc)
 	count, err := coll.CountDocuments(context.TODO(), bson.D{{Key: "name", Value: name}}, nil)
 	log.Println(nc.Name)
@@ -71,7 +71,7 @@ func (m *MongoDB) GetAll(path string) (interface{}, error) {
 	defer func() {
 		err = client.Disconnect(context.TODO())
 	}()
-	coll := client.Database("glavhim").Collection(path)
+	coll := client.Database(config.Cfg.AppName).Collection(path)
 	cursor, err := coll.Find(context.TODO(), bson.D{})
 	if err != nil {
 		return nil, err
@@ -91,7 +91,7 @@ func (m *MongoDB) AddOne(collName string, obj interface{}) error {
 	defer func() {
 		err = client.Disconnect(context.TODO())
 	}()
-	coll := client.Database("glavhim").Collection(collName)
+	coll := client.Database(config.Cfg.AppName).Collection(collName)
 	if _, err := coll.InsertOne(context.TODO(), obj); err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (m *MongoDB) UpdateOne(collName string, obj interface{}, id string) error {
 	defer func() {
 		err = client.Disconnect(context.TODO())
 	}()
-	coll := client.Database("glavhim").Collection(collName)
+	coll := client.Database(config.Cfg.AppName).Collection(collName)
 	if _, err := coll.UpdateOne(context.TODO(), bson.M{"_id": id}, bson.M{"$set": obj}); err != nil {
 		return err
 	}
@@ -121,7 +121,7 @@ func (m *MongoDB) DeleteOne(collName string, id string) error {
 	defer func() {
 		err = client.Disconnect(context.TODO())
 	}()
-	coll := client.Database("glavhim").Collection(collName)
+	coll := client.Database(config.Cfg.AppName).Collection(collName)
 	if _, err := coll.DeleteOne(context.TODO(), bson.M{"_id": id}); err != nil {
 		return err
 	}
@@ -136,7 +136,7 @@ func (m *MongoDB) GetInWorkOrders() ([]service.OrderFull, error) {
 	defer func() {
 		err = client.Disconnect(context.TODO())
 	}()
-	coll := client.Database("glavhim").Collection("orders")
+	coll := client.Database(config.Cfg.AppName).Collection("orders")
 	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "status", Value: bson.D{{Key: "$ne", Value: "Отгружен"}}}})
 	if err != nil {
 		return nil, err
@@ -145,7 +145,7 @@ func (m *MongoDB) GetInWorkOrders() ([]service.OrderFull, error) {
 	if err = cursor.All(context.TODO(), &orders); err != nil {
 		return nil, err
 	}
-	coll = client.Database("glavhim").Collection("clients")
+	coll = client.Database(config.Cfg.AppName).Collection("clients")
 	arr := make([]service.OrderFull, 0, 10)
 	for _, v := range orders {
 		var client service.Client
@@ -169,7 +169,7 @@ func (m *MongoDB) CheckClient(c service.Client) (string, error) {
 	defer func() {
 		err = client.Disconnect(context.TODO())
 	}()
-	coll := client.Database("glavhim").Collection("clients")
+	coll := client.Database(config.Cfg.AppName).Collection("clients")
 	var find service.Client
 	if c.Inn != "" {
 		err = coll.FindOne(

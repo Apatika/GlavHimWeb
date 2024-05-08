@@ -3,6 +3,7 @@ package std
 import (
 	"encoding/json"
 	"fmt"
+	"glavhim-app/internal/config"
 	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage"
 	"log"
@@ -10,7 +11,7 @@ import (
 )
 
 func updateClient(w http.ResponseWriter, r *http.Request) {
-	path := "clients"
+	path := config.Cfg.DB.Coll.Clients
 	var data service.Client
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&data); err != nil {

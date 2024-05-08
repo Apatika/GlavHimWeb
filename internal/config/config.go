@@ -10,6 +10,7 @@ import (
 
 type (
 	Config struct {
+		AppName  string   `yaml:"appname"`
 		Server   server   `yaml:"server"`
 		DB       database `yaml:"database"`
 		Frontend frontend `yaml:"frontend"`
@@ -23,7 +24,16 @@ type (
 	}
 
 	database struct {
-		URI string `yaml:"uri"`
+		Coll collections `yaml:"collections"`
+		URI  string      `yaml:"uri"`
+	}
+
+	collections struct {
+		Orders  string `yaml:"orders"`
+		Chems   string `yaml:"chems"`
+		Cargos  string `yaml:"cargos"`
+		Clients string `yaml:"clients"`
+		Users   string `yaml:"users"`
 	}
 
 	frontend struct {
@@ -39,6 +49,13 @@ var DefaultCfg Config = Config{
 	},
 	DB: database{
 		URI: "mongodb://localhost:27017",
+		Coll: collections{
+			Orders:  "orders",
+			Chems:   "chems",
+			Cargos:  "cargos",
+			Clients: "clients",
+			Users:   "users",
+		},
 	},
 	Frontend: frontend{
 		RefreshRate: 10000,
@@ -64,4 +81,5 @@ func New() {
 		log.Print("load default config")
 		Cfg = DefaultCfg
 	}
+	log.Print(Cfg)
 }
