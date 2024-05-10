@@ -11,10 +11,8 @@
       orders.push(v)
     }
     orders = orders.sort((a, b) => {
-      let fa = a.order.status.toLowerCase()
-      let fb = b.order.status.toLowerCase()
-      if (fa > fb) return -1
-      if (fa < fb) return 1
+      if (a.order.status > b.order.status) return -1
+      if (a.order.status < b.order.status) return 1
       return 0
     })
   }

@@ -112,5 +112,5 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 	}
 	storage.Cache.Update(config.Cfg.DB.Coll.Orders, data.Order.ID, data)
 	log.Printf("update status ID: %v, status: %v", data.Order.ID, data.Order.Status)
-	json.NewEncoder(w).Encode(storage.Cache.Get(config.Cfg.DB.Coll.Users))
+	json.NewEncoder(w).Encode(storage.Cache.Get(config.Cfg.DB.Coll.Orders))
 }

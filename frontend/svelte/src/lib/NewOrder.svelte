@@ -44,10 +44,8 @@
       managers.push(v)
     }
     managers = managers.sort((a, b) => {
-      let fa = a.name.toLowerCase()
-      let fb = b.name.toLowerCase()
-      if (fa > fb) return 1
-      if (fa < fb) return -1
+      if (a.name > b.name) return 1
+      if (a.name < b.name) return -1
       return 0
     })
   }).catch(function(err) {
@@ -63,10 +61,8 @@
       cargos.push(v)
     }
     cargos = cargos.sort((a, b) => {
-      let fa = a.name.toLowerCase()
-      let fb = b.name.toLowerCase()
-      if (fa > fb) return 1
-      if (fa < fb) return -1
+      if (a.name > b.name) return 1
+      if (a.name < b.name) return -1
       return 0
     })
   }).catch(function(err) {
