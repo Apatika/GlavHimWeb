@@ -19,7 +19,7 @@ func updateClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	db := storage.DB()
-	if err := db.UpdateOne(path, data, data.ID); err != nil {
+	if err := db.Update(path, data, data.ID); err != nil {
 		errorResponse(w, fmt.Sprintf("write db failed, path /db/%v (%v)", path, err.Error()), http.StatusInternalServerError)
 		return
 	}

@@ -7,11 +7,11 @@ import (
 
 type IDataBase interface {
 	HealthCheck() error
-	CheckNameOne(string, string, string) error
+	CheckName(string, string, string) error
 	GetAll(string, interface{}) error
-	AddOne(string, interface{}) error
-	UpdateOne(string, interface{}, string) error
-	DeleteOne(string, string) error
+	Add(string, interface{}) error
+	Update(string, interface{}, string) error
+	Delete(string, string) error
 	GetInWorkOrders() ([]service.OrderFull, error)
 	GetNewID() string
 	CheckClient(service.Client) (string, error)

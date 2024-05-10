@@ -39,25 +39,25 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		id, err := db.CheckClient(data.Client)
 		if err != nil {
 			data.Client.ID = db.GetNewID()
-			if err := db.AddOne(config.Cfg.DB.Coll.Clients, data.Client); err != nil {
+			if err := db.Add(config.Cfg.DB.Coll.Clients, data.Client); err != nil {
 				errorResponse(w, fmt.Sprintf("push client failed(%v)", err.Error()), http.StatusInternalServerError)
 				return
 			}
 		} else {
 			data.Client.ID = id
-			if err := db.UpdateOne(config.Cfg.DB.Coll.Clients, data.Client, data.Client.ID); err != nil {
+			if err := db.Update(config.Cfg.DB.Coll.Clients, data.Client, data.Client.ID); err != nil {
 				errorResponse(w, fmt.Sprintf("update client failed(%v)", err.Error()), http.StatusInternalServerError)
 				return
 			}
 		}
 	} else {
-		if err := db.UpdateOne(config.Cfg.DB.Coll.Clients, data.Client, data.Client.ID); err != nil {
+		if err := db.Update(config.Cfg.DB.Coll.Clients, data.Client, data.Client.ID); err != nil {
 			errorResponse(w, fmt.Sprintf("update client failed(%v)", err.Error()), http.StatusInternalServerError)
 			return
 		}
 	}
 	data.Order.ClientID = data.Client.ID
-	if err := db.AddOne(path, data.Order); err != nil {
+	if err := db.Add(path, data.Order); err != nil {
 		errorResponse(w, fmt.Sprintf("push order failed(%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
@@ -73,11 +73,11 @@ func updateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	db := storage.DB()
-	if err := db.UpdateOne(config.Cfg.DB.Coll.Orders, data.Order, data.Order.ID); err != nil {
+	if err := db.Update(config.Cfg.DB.Coll.Orders, data.Order, data.Order.ID); err != nil {
 		errorResponse(w, fmt.Sprintf("order update failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if err := db.UpdateOne(config.Cfg.DB.Coll.Clients, data.Client, data.Client.ID); err != nil {
+	if err := db.Update(config.Cfg.DB.Coll.Clients, data.Client, data.Client.ID); err != nil {
 		errorResponse(w, fmt.Sprintf("client update failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
@@ -106,7 +106,7 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 		data.Order.ShipmentDate.Month = month.String()
 	}
 	db := storage.DB()
-	if err := db.UpdateOne(config.Cfg.DB.Coll.Orders, data.Order, data.Order.ID); err != nil {
+	if err := db.Update(config.Cfg.DB.Coll.Orders, data.Order, data.Order.ID); err != nil {
 		errorResponse(w, fmt.Sprintf("update status failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}

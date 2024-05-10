@@ -29,11 +29,11 @@ func dbPagePost(w http.ResponseWriter, r *http.Request) {
 	}
 	db := storage.DB()
 	data.NewID(db.GetNewID())
-	if err := db.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+	if err := db.CheckName(data.GetName(), path, data.GetID()); err != nil {
 		errorResponse(w, fmt.Sprintf("write to db failed(%v)", err.Error()), http.StatusBadRequest)
 		return
 	}
-	if err := db.AddOne(path, data); err != nil {
+	if err := db.Add(path, data); err != nil {
 		errorResponse(w, fmt.Sprintf("write to db failed(%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
@@ -50,11 +50,11 @@ func dbPagePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	db := storage.DB()
-	if err := db.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+	if err := db.CheckName(data.GetName(), path, data.GetID()); err != nil {
 		errorResponse(w, fmt.Sprintf("update to db failed(%v)", err.Error()), http.StatusBadRequest)
 		return
 	}
-	if err := db.UpdateOne(path, data, data.GetID()); err != nil {
+	if err := db.Update(path, data, data.GetID()); err != nil {
 		errorResponse(w, fmt.Sprintf("update to db failed(%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
@@ -71,7 +71,7 @@ func dbPageDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	db := storage.DB()
-	if err := db.DeleteOne(path, data.GetID()); err != nil {
+	if err := db.Delete(path, data.GetID()); err != nil {
 		errorResponse(w, fmt.Sprintf("delete from db failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
