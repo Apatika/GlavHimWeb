@@ -110,7 +110,11 @@ func changeStatus(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("update status failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	storage.Cache.Update(config.Cfg.DB.Coll.Orders, data.Order.ID, data)
+	if data.Order.Status == StatusShipped {
+		storage.Cache.Delete(config.Cfg.DB.Coll.Orders, data.Order.ID)
+	} else {
+		storage.Cache.Update(config.Cfg.DB.Coll.Orders, data.Order.ID, data)
+	}
 	log.Printf("update status ID: %v, status: %v", data.Order.ID, data.Order.Status)
 	json.NewEncoder(w).Encode(storage.Cache.Get(config.Cfg.DB.Coll.Orders))
 }

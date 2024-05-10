@@ -108,129 +108,134 @@
 </script>
 
 <button id="refresh" on:click={getInWork}>Обновить</button>
-<div id="table">
-  {#each orders as order}
-    <div class="editor">
-      <NewOrder order={order.order} client={order.client} on:message={() => {isEdit = false; getInWork()}}></NewOrder>
-    </div>
-    <div>
-      <div class="order" style="background-color: {getColor(order.order.status)}">
-        <div class="order-item cargo">{order.order.cargo}</div>
-        <div class="order-item name">{order.client.surname} {order.client.name} {order.client.secondName}</div>
-        <div class="order-item adress">{order.order.adress.city}</div>
-        {#if order.order.payment} <div class="achtung"><strong>ЗА НАШ СЧЕТ</strong></div> {/if}
-        {#if order.order.probes.length > 0} <div class="achtung"><strong>ПРОБНИКИ</strong></div> {/if}
-        <div class="order-item status">
-          <select bind:value={order.order.status} 
-                  on:change={(e) => {changeStatus(order, e.target.value); e.target.parentElement.parentElement.style.backgroundColor = getColor(e.target.value)}}>
-            <option value=""></option>
-            <option value="Принят В Работу">Принят В Работу</option>
-            <option value="Развозка">Развозка</option>
-            <option value="Забор ПЭК">Забор ПЭК</option>
-            <option value="Заказан Забор">Заказан Забор</option>
-            <option value="Нет Товара">Нет Товара</option>
-            <option value="СТОП">СТОП</option>
-            <option value="Отгружен">Отгружен</option>
-            <option value="Изменен!" disabled>Изменен!</option>
-          </select>
-        </div>
-        <button class="expander" on:click={toggleFullOrder}>ᐁ</button>
+<div class="container">
+  <div id="table">
+    {#each orders as order}
+      <div class="editor">
+        <NewOrder order={order.order} client={order.client} on:message={() => {isEdit = false; getInWork()}}></NewOrder>
       </div>
-      <div class="full-order">
-        <div class="full-order-client">
-          <div class="full-item">
-            <div class="full-label"><strong>Менеджер:</strong></div>
-            <div>{order.client.manager}</div>
+      <div>
+        <div class="order" style="background-color: {getColor(order.order.status)}">
+          <div class="order-item cargo">{order.order.cargo}</div>
+          <div class="order-item name">{order.client.surname} {order.client.name} {order.client.secondName}</div>
+          <div class="order-item adress">{order.order.adress.city}</div>
+          {#if order.order.payment} <div class="achtung"><strong>ЗА НАШ СЧЕТ</strong></div> {/if}
+          {#if order.order.probes.length > 0} <div class="achtung"><strong>ПРОБНИКИ</strong></div> {/if}
+          <div class="order-item status">
+            <select bind:value={order.order.status} 
+                    on:change={(e) => {changeStatus(order, e.target.value); e.target.parentElement.parentElement.style.backgroundColor = getColor(e.target.value)}}>
+              <option value=""></option>
+              <option value="Принят В Работу">Принят В Работу</option>
+              <option value="Развозка">Развозка</option>
+              <option value="Забор ПЭК">Забор ПЭК</option>
+              <option value="Заказан Забор">Заказан Забор</option>
+              <option value="Нет Товара">Нет Товара</option>
+              <option value="СТОП">СТОП</option>
+              <option value="Отгружен">Отгружен</option>
+              <option value="Изменен!" disabled>Изменен!</option>
+            </select>
           </div>
-          {#if order.client.surname != ""}
-            <div class="full-item">
-              <div class="full-label"><strong>Фамилия:</strong></div>
-              <div>{order.client.surname}</div>
-            </div>
-          {/if}
-            <div class="full-item">
-              <div class="full-label"><strong>Имя:</strong></div>
-              <div>{order.client.name}</div>
-            </div>
-          {#if order.client.secondName != ""}
-            <div class="full-item">
-              <div class="full-label"><strong>Отчество</strong></div>
-              <div>{order.client.secondName}</div>
-            </div>
-          {/if}
-          {#if order.client.inn != ""}
-            <div class="full-item">
-              <div class="full-label"><strong>ИНН:</strong></div>
-              <div>{order.client.inn}</div>
-            </div>
-          {/if}
-          {#if order.client.passportSerial != ""}
-            <div class="full-item">
-              <div class="full-label"><strong>Паспорт:</strong></div>
-              <div>{order.client.passportSerial} {order.client.passportNum}</div>
-            </div>
-          {/if}
-            <div class="full-item">
-              <div class="full-label"><strong>Контакты:</strong></div>
-              <div>
-                {#each order.client.contact as contact}
-                  <div>{contact.name} {contact.tel}</div>
-                {/each}
-              </div>
-            </div>
-          {#if order.client.email != ""}
-            <div class="full-item">
-              <div class="full-label"><strong>Email:</strong></div>
-              <div>{order.client.email}</div>
-            </div>
-          {/if}
+          <button class="expander" on:click={toggleFullOrder}>ᐁ</button>
         </div>
-        <div class="full-order-order">
-          <div class="full-item">
-            <div class="full-label"><strong>ТК:</strong></div>
-            <div>{order.order.cargo}</div>
-          </div>
-          <div class="full-item">
-            <div class="full-label"><strong>Город:</strong></div>
-            <div>{order.order.adress.city}</div>
-          </div>
-          {#if order.order.adress.adress != ""} 
+        <div class="full-order">
+          <div class="full-order-client">
             <div class="full-item">
-              <div class="full-label"><strong>Адрес:</strong></div>
-              <div>{order.order.adress.adress}</div>
+              <div class="full-label"><strong>Менеджер:</strong></div>
+              <div>{order.client.manager}</div>
             </div>
-          {:else}
-            <div class="full-item">
-              <div class="full-label"><strong>Терминал:</strong></div>
-              <div>{order.order.adress.terminal}</div>
-            </div>
-          {/if}
-          <div>
-            <div class="full-item">
-              <div class="full-label"><strong>Счет:</strong></div>
-              <div>
-                {#each order.order.invoice as invoice}
-                  <span>{invoice}, </span>
-                {/each}
+            {#if order.client.surname != ""}
+              <div class="full-item">
+                <div class="full-label"><strong>Фамилия:</strong></div>
+                <div>{order.client.surname}</div>
               </div>
-            </div>  
+            {/if}
+              <div class="full-item">
+                <div class="full-label"><strong>Имя:</strong></div>
+                <div>{order.client.name}</div>
+              </div>
+            {#if order.client.secondName != ""}
+              <div class="full-item">
+                <div class="full-label"><strong>Отчество</strong></div>
+                <div>{order.client.secondName}</div>
+              </div>
+            {/if}
+            {#if order.client.inn != ""}
+              <div class="full-item">
+                <div class="full-label"><strong>ИНН:</strong></div>
+                <div>{order.client.inn}</div>
+              </div>
+            {/if}
+            {#if order.client.passportSerial != ""}
+              <div class="full-item">
+                <div class="full-label"><strong>Паспорт:</strong></div>
+                <div>{order.client.passportSerial} {order.client.passportNum}</div>
+              </div>
+            {/if}
+              <div class="full-item">
+                <div class="full-label"><strong>Контакты:</strong></div>
+                <div>
+                  {#each order.client.contact as contact}
+                    <div>{contact.name} {contact.tel}</div>
+                  {/each}
+                </div>
+              </div>
+            {#if order.client.email != ""}
+              <div class="full-item">
+                <div class="full-label"><strong>Email:</strong></div>
+                <div>{order.client.email}</div>
+              </div>
+            {/if}
           </div>
-          <div class="full-item">
-            <div class="full-label"><strong>Крайняя дата:</strong></div>
-            <div>{order.order.lastDate}</div>
+          <div class="full-order-order">
+            <div class="full-item">
+              <div class="full-label"><strong>ТК:</strong></div>
+              <div>{order.order.cargo}</div>
+            </div>
+            <div class="full-item">
+              <div class="full-label"><strong>Город:</strong></div>
+              <div>{order.order.adress.city}</div>
+            </div>
+            {#if order.order.adress.adress != ""} 
+              <div class="full-item">
+                <div class="full-label"><strong>Адрес:</strong></div>
+                <div>{order.order.adress.adress}</div>
+              </div>
+            {:else}
+              <div class="full-item">
+                <div class="full-label"><strong>Терминал:</strong></div>
+                <div>{order.order.adress.terminal}</div>
+              </div>
+            {/if}
+            <div>
+              <div class="full-item">
+                <div class="full-label"><strong>Счет:</strong></div>
+                <div>
+                  {#each order.order.invoice as invoice}
+                    <span>{invoice}, </span>
+                  {/each}
+                </div>
+              </div>  
+            </div>
+            <div class="full-item">
+              <div class="full-label"><strong>Крайняя дата:</strong></div>
+              <div>{order.order.lastDate}</div>
+            </div>
+            <div class="full-item">
+              <div class="full-label"><strong>Комментарий:</strong></div>
+              <div>{order.order.comment}</div>
+            </div>
           </div>
-          <div class="full-item">
-            <div class="full-label"><strong>Комментарий:</strong></div>
-            <div>{order.order.comment}</div>
-          </div>
+          <div class="probes"></div>
+          <button class="edit" on:click={onEdit}>Редактировать</button>
         </div>
-        <div class="probes"></div>
-        <button class="edit" on:click={onEdit}>Редактировать</button>
       </div>
-    </div>
-  {:else}
-    <span>Нет заказов</span>
-  {/each}
+    {:else}
+      <span>Нет заказов</span>
+    {/each}
+  </div>
+  <div id="new-order">
+    <NewOrder on:message={() => {isEdit = false; getInWork()}}></NewOrder>
+  </div>
 </div>
 
 <style>
@@ -246,6 +251,9 @@
     border: none;
     color: black;
     font-weight: bold;
+  }
+  .container {
+    display: flex;
   }
   .cargo{
     flex-basis: 15%;
@@ -297,7 +305,7 @@
     display: flex;
   }
   .full-label{
-    flex-basis: 25%;
+    flex-basis: 15%;
   }
   .expander{
     text-align: center;
@@ -323,9 +331,14 @@
     overflow:auto;
     box-shadow: 0px 0px 10px 0px black;
   }
+  #new-order{
+    flex-basis: 20%;
+    border-left: 1px solid black;
+  }
   #table{
     margin: 10px 30px 10px 0px;
     height: 90%;
+    flex-grow: 1;
   }
   #refresh{
     margin-left: 10px;

@@ -70,6 +70,14 @@
   })
 
   const check = () => {
+    if (client.manager == null || client.manager == ""){
+      alert("Менеджер не выбран")
+      return false
+    }
+    if (order.cargo == null || order.cargo == ""){
+      alert("Способ доставки не выбран")
+      return false
+    }
     if (order.adress.city == null || order.adress.city == ""){
       alert("Город не заполнен")
       return false
