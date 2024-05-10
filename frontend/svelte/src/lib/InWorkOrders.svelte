@@ -87,13 +87,15 @@
 
   const toggleFullOrder = (event) => {
     let target = event.target.parentElement.nextElementSibling
-    if (target.style.display != "flex") {
+    if (target.style.height != '160px') {
       getInWork()
-      target.style.display = "flex"
+      target.style.padding = '15px'
+      target.style.height = '160px'
       event.target.innerHTML = 'ᐃ'
     }
     else {
-      target.style.display = "none"
+      target.style.padding = null
+      target.style.height = '0px'
       event.target.innerHTML = 'ᐁ'
     }
   }
@@ -284,9 +286,11 @@
     border-right: 1px solid black;
   }
   .full-order{
-    display: none;
-    padding: 15px;
+    display: flex;
+    height: 0px;
     box-shadow: 0px -5px 10px 0px black inset;
+    transition: all .2s linear;
+    overflow: hidden;
   }
   .full-order-order{
     flex-basis: 35%;
