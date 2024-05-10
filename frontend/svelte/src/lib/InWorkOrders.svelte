@@ -305,7 +305,7 @@
     display: flex;
   }
   .full-label{
-    flex-basis: 15%;
+    flex-basis: 25%;
   }
   .expander{
     text-align: center;
