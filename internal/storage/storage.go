@@ -15,6 +15,7 @@ type IDataBase interface {
 	GetInWorkOrders() ([]service.OrderFull, error)
 	GetNewID() string
 	CheckClient(service.Client) (string, error)
+	GetCities(string) ([]service.City, error)
 }
 
 func DB() IDataBase {

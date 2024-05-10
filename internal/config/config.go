@@ -34,6 +34,7 @@ type (
 		Cargos    string `yaml:"cargos"`
 		Clients   string `yaml:"clients"`
 		Users     string `yaml:"users"`
+		City      string `yaml:"city"`
 	}
 
 	frontend struct {
@@ -56,6 +57,7 @@ var DefaultCfg Config = Config{
 			Cargos:    "cargos",
 			Clients:   "clients",
 			Users:     "users",
+			City:      "cities",
 		},
 	},
 	Frontend: frontend{

@@ -25,6 +25,7 @@ func New() *http.ServeMux {
 	mux.HandleFunc("PUT /orders/status", changeStatus)
 	mux.HandleFunc("PUT /clients", updateClient)
 	mux.HandleFunc("GET /inwork", inWorkOrders)
+	mux.HandleFunc("GET /cities", getCities)
 
 	return mux
 }

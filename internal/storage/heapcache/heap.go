@@ -2,7 +2,6 @@ package heapcache
 
 import (
 	"glavhim-app/internal/config"
-	"log"
 	"sync"
 )
 
@@ -45,7 +44,6 @@ func (c *Cache) Update(field, id string, data interface{}) {
 	switch field {
 	case config.Cfg.DB.Coll.Orders:
 		c.inWork[id] = data
-		log.Print(c.inWork)
 	case config.Cfg.DB.Coll.Cargos:
 		c.cargos[id] = data
 	case config.Cfg.DB.Coll.Chemistry:

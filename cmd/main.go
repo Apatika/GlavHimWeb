@@ -45,6 +45,9 @@ func main() {
 
 	storage.CacheInit()
 
+	a, _ := storage.DB().GetCities("оло")
+	log.Print(a)
+
 	log.Println("set server settings")
 	srv := server.New(config.Cfg, handler)
 

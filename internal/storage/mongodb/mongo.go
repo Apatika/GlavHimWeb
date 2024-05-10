@@ -142,7 +142,7 @@ func (m *MongoDB) GetInWorkOrders() ([]service.OrderFull, error) {
 	if err = cursor.All(context.TODO(), &orders); err != nil {
 		return nil, err
 	}
-	coll = client.Database(config.Cfg.AppName).Collection("clients")
+	coll = client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Clients)
 	arr := make([]service.OrderFull, 0, 10)
 	for _, v := range orders {
 		var client service.Client
@@ -166,7 +166,7 @@ func (m *MongoDB) CheckClient(c service.Client) (string, error) {
 	defer func() {
 		err = client.Disconnect(context.TODO())
 	}()
-	coll := client.Database(config.Cfg.AppName).Collection("clients")
+	coll := client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Clients)
 	var find service.Client
 	if c.Inn != "" {
 		err = coll.FindOne(
@@ -188,4 +188,26 @@ func (m *MongoDB) CheckClient(c service.Client) (string, error) {
 		return "", err
 	}
 	return find.ID, nil
+}
+
+func (m *MongoDB) GetCities(reg string) ([]service.City, error) {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		err = client.Disconnect(context.TODO())
+	}()
+	coll := client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.City)
+	var cities []service.City
+	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "city", Value: bson.D{{Key: "$regex",
+		Value: primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}},
+		options.Find().SetLimit(8))
+	if err != nil {
+		return nil, err
+	}
+	if err = cursor.All(context.TODO(), &cities); err != nil {
+		return nil, err
+	}
+	return cities, nil
 }

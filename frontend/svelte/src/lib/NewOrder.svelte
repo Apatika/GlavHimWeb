@@ -34,6 +34,7 @@
 
   let managers = []
   let cargos = []
+  let cities = []
 
   fetch(`${window.location.origin}/db/users`).then(function(response) {
     return response.json();
@@ -174,6 +175,14 @@
     dispatch('message', false)
   }
 
+  const searchCity = (e) => {
+    fetch(`${window.location.origin}/cities?city=${e.target.value}`).then(function(response) {
+    return response.json();
+  }).then((data) => {
+    cities = data
+  })
+  }
+
 </script>
 
 {#if order.id == null}
@@ -299,7 +308,14 @@
           <div class="flex">
             <div class="lables">Город:</div>
             <div>
-              <input type="text" bind:value={order.adress.city} placeholder="Город">
+              <input list="city-list" type="text" bind:value={order.adress.city} on:input={searchCity} placeholder="Город">
+              {#if order.id == null}
+                <datalist id="city-list">
+                  {#each cities as city}
+                    <option value={`${city.city} (${city.region})`}>{city.city}</option>
+                  {/each}
+                </datalist>
+              {/if}
             </div>
           </div>
           <div class="flex">
