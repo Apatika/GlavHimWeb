@@ -89,6 +89,13 @@
     let target = event.target.parentElement.nextElementSibling
     if (target.style.height != '160px') {
       getInWork()
+      document.querySelectorAll('.full-order').forEach((elem) => {
+        elem.style.padding = null
+        elem.style.height = '0px'
+      })
+      document.querySelectorAll('.expander').forEach((elem) => {
+        elem.innerHTML = 'ᐁ'
+      })
       target.style.padding = '15px'
       target.style.height = '160px'
       event.target.innerHTML = 'ᐃ'
