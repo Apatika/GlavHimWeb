@@ -1,84 +1,54 @@
 package storage
 
 import (
-	"context"
+	"fmt"
 	"glavhim-app/internal/config"
 	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage/heapcache"
-
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ICache interface {
-	GetInWork() []service.OrderFull
-	NewOrder(service.OrderFull)
-	UpdateOrder(service.OrderFull) error
-	UpdateOrderStatus(service.OrderStatusChanger) error
-	Managers() []service.User
-	Cargos() []service.Cargo
-	Chemistry() []service.Chemistry
-	AddToManagers(service.User)
-	AddToCargos(service.Cargo)
-	AddToChemistry(service.Chemistry)
-	DeleteManagers(service.User)
-	DeleteCargos(service.Cargo)
-	DeleteChemistry(service.Chemistry)
+	Get(string) map[string]interface{}
+	Update(string, string, interface{})
+	Delete(string, string)
 }
 
 var Cache ICache
 
-func CacheInit() error {
-	var err error
-	if Cache, err = newCache(); err != nil {
-		return err
-	}
-	return nil
+func CacheInit() {
+	Cache = heapcache.New()
+	load()
 }
 
-func newCache() (ICache, error) {
+func load() error {
 	db := DB()
 	orders, err := db.GetInWorkOrders()
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("cache load error")
 	}
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.Cfg.DB.URI))
-	if err != nil {
-		return nil, err
+	for _, v := range orders {
+		Cache.Update(config.Cfg.DB.Coll.Orders, v.Order.ID, v)
 	}
-	defer func() {
-		err = client.Disconnect(context.TODO())
-	}()
-	coll := client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Chems)
-	cursor, err := coll.Find(context.TODO(), bson.D{})
-	var chems = make(map[string]service.Chemistry, 40)
-	for cursor.Next(context.TODO()) {
-		var result service.Chemistry
-		if err := cursor.Decode(&result); err != nil {
-			return nil, err
-		}
-		chems[result.ID] = result
+	var cargos []service.Cargo
+	if err := db.GetAll(config.Cfg.DB.Coll.Cargos, &cargos); err != nil {
+		return err
 	}
-	coll = client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Cargos)
-	cursor, err = coll.Find(context.TODO(), bson.D{})
-	cargos := make(map[string]service.Cargo, 20)
-	for cursor.Next(context.TODO()) {
-		var result service.Cargo
-		if err := cursor.Decode(&result); err != nil {
-			return nil, err
-		}
-		cargos[result.ID] = result
+	for _, v := range cargos {
+		Cache.Update(config.Cfg.DB.Coll.Cargos, v.ID, v)
 	}
-	coll = client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Users)
-	cursor, err = coll.Find(context.TODO(), bson.D{})
-	users := make(map[string]service.User, 8)
-	for cursor.Next(context.TODO()) {
-		var result service.User
-		if err := cursor.Decode(&result); err != nil {
-			return nil, err
-		}
-		users[result.ID] = result
+	var chemistry []service.Chemistry
+	if err := db.GetAll(config.Cfg.DB.Coll.Chemistry, &chemistry); err != nil {
+		return err
 	}
-	return heapcache.New(orders, chems, cargos, users), nil
+	for _, v := range chemistry {
+		Cache.Update(config.Cfg.DB.Coll.Chemistry, v.ID, v)
+	}
+	var users []service.User
+	if err := db.GetAll(config.Cfg.DB.Coll.Users, &users); err != nil {
+		return err
+	}
+	for _, v := range users {
+		Cache.Update(config.Cfg.DB.Coll.Users, v.ID, v)
+	}
+	return nil
 }

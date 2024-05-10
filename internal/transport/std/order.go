@@ -61,7 +61,7 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("push order failed(%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	storage.Cache.NewOrder(data)
+	storage.Cache.Update(path, data.Order.ID, data)
 	log.Printf("add new order, invoice %v (ID: %v)", data.Order.Invoice, data.Order.ID)
 }
 
@@ -81,40 +81,36 @@ func updateOrder(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, fmt.Sprintf("client update failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.Cache.UpdateOrder(data); err != nil {
-		log.Print(err)
-	}
+	storage.Cache.Update(config.Cfg.DB.Coll.Orders, data.Order.ID, data)
 	log.Printf("update order ID: %v", data.Order.ID)
 }
 
 func inWorkOrders(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(storage.Cache.GetInWork())
+	json.NewEncoder(w).Encode(storage.Cache.Get(config.Cfg.DB.Coll.Orders))
 }
 
 func changeStatus(w http.ResponseWriter, r *http.Request) {
-	var newStatus service.OrderStatusChanger
+	var data service.OrderFull
 	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&newStatus); err != nil {
+	if err := decoder.Decode(&data); err != nil {
 		errorResponse(w, fmt.Sprintf("decode newStatus failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if newStatus.ID == "" {
+	if data.Order.ID == "" {
 		errorResponse(w, "invalid field values (%v)", http.StatusBadRequest)
 		return
 	}
-	if newStatus.Status == StatusShipped {
+	if data.Order.Status == StatusShipped {
 		var month time.Month
-		newStatus.ShipmentDate.Year, month, newStatus.ShipmentDate.Day = time.Now().Date()
-		newStatus.ShipmentDate.Month = month.String()
+		data.Order.ShipmentDate.Year, month, data.Order.ShipmentDate.Day = time.Now().Date()
+		data.Order.ShipmentDate.Month = month.String()
 	}
 	db := storage.DB()
-	if err := db.UpdateOne(config.Cfg.DB.Coll.Orders, newStatus, newStatus.ID); err != nil {
+	if err := db.UpdateOne(config.Cfg.DB.Coll.Orders, data.Order, data.Order.ID); err != nil {
 		errorResponse(w, fmt.Sprintf("update status failed (%v)", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	if err := storage.Cache.UpdateOrderStatus(newStatus); err != nil {
-		log.Print("cache update failed")
-	}
-	log.Printf("update status ID: %v, status: %v", newStatus.ID, newStatus.Status)
-	json.NewEncoder(w).Encode(storage.Cache.GetInWork())
+	storage.Cache.Update(config.Cfg.DB.Coll.Orders, data.Order.ID, data)
+	log.Printf("update status ID: %v, status: %v", data.Order.ID, data.Order.Status)
+	json.NewEncoder(w).Encode(storage.Cache.Get(config.Cfg.DB.Coll.Users))
 }

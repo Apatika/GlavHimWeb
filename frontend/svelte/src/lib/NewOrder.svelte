@@ -39,7 +39,17 @@
     return response.json();
   }).then(function(data) {
     if (data.length == 0) throw new Error("storage empty") 
-    managers = data
+    managers = []
+    for (let v of Object.values(data)){
+      managers.push(v)
+    }
+    managers = managers.sort((a, b) => {
+      let fa = a.name.toLowerCase()
+      let fb = b.name.toLowerCase()
+      if (fa > fb) return 1
+      if (fa < fb) return -1
+      return 0
+    })
   }).catch(function(err) {
     alert(err);
   })
@@ -48,7 +58,17 @@
     return response.json();
   }).then(function(data) {
     if (data.length == 0) throw new Error("storage empty")
-    cargos = data
+    cargos = []
+    for (let v of Object.values(data)){
+      cargos.push(v)
+    }
+    cargos = cargos.sort((a, b) => {
+      let fa = a.name.toLowerCase()
+      let fb = b.name.toLowerCase()
+      if (fa > fb) return 1
+      if (fa < fb) return -1
+      return 0
+    })
   }).catch(function(err) {
     alert(err);
   })

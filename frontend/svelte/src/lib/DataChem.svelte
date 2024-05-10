@@ -16,8 +16,11 @@
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then((d) => {
-      chems = d
-      chems.sort((a, b) => {
+      chems = []
+      for (let v of Object.values(d)){
+        chems.push(v)
+      }
+      chems = chems.sort((a, b) => {
         let fa = a.name.toLowerCase()
         let fb = b.name.toLowerCase()
         if (fa > fb) return 1

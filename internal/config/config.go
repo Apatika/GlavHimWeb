@@ -29,11 +29,11 @@ type (
 	}
 
 	collections struct {
-		Orders  string `yaml:"orders"`
-		Chems   string `yaml:"chems"`
-		Cargos  string `yaml:"cargos"`
-		Clients string `yaml:"clients"`
-		Users   string `yaml:"users"`
+		Orders    string `yaml:"orders"`
+		Chemistry string `yaml:"chems"`
+		Cargos    string `yaml:"cargos"`
+		Clients   string `yaml:"clients"`
+		Users     string `yaml:"users"`
 	}
 
 	frontend struct {
@@ -51,11 +51,11 @@ var DefaultCfg Config = Config{
 	DB: database{
 		URI: "mongodb://localhost:27017",
 		Coll: collections{
-			Orders:  "orders",
-			Chems:   "chems",
-			Cargos:  "cargos",
-			Clients: "clients",
-			Users:   "users",
+			Orders:    "orders",
+			Chemistry: "chems",
+			Cargos:    "cargos",
+			Clients:   "clients",
+			Users:     "users",
 		},
 	},
 	Frontend: frontend{

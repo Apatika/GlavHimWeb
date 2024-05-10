@@ -1,69 +1,72 @@
 package heapcache
 
 import (
-	"fmt"
-	"glavhim-app/internal/service"
+	"glavhim-app/internal/config"
+	"log"
 	"sync"
 )
 
 type Cache struct {
-	auth     map[string]string
-	inWork   []service.OrderFull
-	chems    map[string]service.Chemistry
-	cargos   map[string]service.Cargo
-	managers map[string]service.User
-	mut      sync.RWMutex
+	auth      map[string]string
+	inWork    map[string]interface{}
+	chemistry map[string]interface{}
+	cargos    map[string]interface{}
+	users     map[string]interface{}
+	mut       sync.RWMutex
 }
 
-func New(iwo []service.OrderFull, chems map[string]service.Chemistry, cargos map[string]service.Cargo, managers map[string]service.User) *Cache {
+func New() *Cache {
 	return &Cache{
-		auth:     make(map[string]string, 10),
-		inWork:   iwo,
-		chems:    chems,
-		cargos:   cargos,
-		managers: managers,
+		auth:      make(map[string]string),
+		inWork:    make(map[string]interface{}),
+		chemistry: make(map[string]interface{}),
+		cargos:    make(map[string]interface{}),
+		users:     make(map[string]interface{}),
 	}
 }
 
-func (c *Cache) GetInWork() []service.OrderFull {
-	return c.inWork
+func (c *Cache) Get(field string) map[string]interface{} {
+	switch field {
+	case config.Cfg.DB.Coll.Orders:
+		return c.inWork
+	case config.Cfg.DB.Coll.Cargos:
+		return c.cargos
+	case config.Cfg.DB.Coll.Chemistry:
+		return c.chemistry
+	case config.Cfg.DB.Coll.Users:
+		return c.users
+	default:
+		return nil
+	}
 }
 
-func (c *Cache) NewOrder(order service.OrderFull) {
+func (c *Cache) Update(field, id string, data interface{}) {
 	c.mut.Lock()
-	c.inWork = append(c.inWork, order)
+	switch field {
+	case config.Cfg.DB.Coll.Orders:
+		c.inWork[id] = data
+		log.Print(c.inWork)
+	case config.Cfg.DB.Coll.Cargos:
+		c.cargos[id] = data
+	case config.Cfg.DB.Coll.Chemistry:
+		c.chemistry[id] = data
+	case config.Cfg.DB.Coll.Users:
+		c.users[id] = data
+	}
 	c.mut.Unlock()
 }
 
-func (c *Cache) UpdateOrder(order service.OrderFull) error {
+func (c *Cache) Delete(field, id string) {
 	c.mut.Lock()
-	is := false
-	for i, v := range c.inWork {
-		if order.Order.ID == v.Order.ID {
-			is = true
-			c.inWork[i] = order
-		}
+	switch field {
+	case config.Cfg.DB.Coll.Orders:
+		delete(c.inWork, id)
+	case config.Cfg.DB.Coll.Cargos:
+		delete(c.cargos, id)
+	case config.Cfg.DB.Coll.Chemistry:
+		delete(c.chemistry, id)
+	case config.Cfg.DB.Coll.Users:
+		delete(c.users, id)
 	}
 	c.mut.Unlock()
-	if !is {
-		return fmt.Errorf("not found order (ID: %v) in cache", order.Order.ID)
-	}
-	return nil
-}
-
-func (c *Cache) UpdateOrderStatus(status service.OrderStatusChanger) error {
-	c.mut.Lock()
-	is := false
-	for i, v := range c.inWork {
-		if status.ID == v.Order.ID {
-			is = true
-			c.inWork[i].Order.Status = status.Status
-			c.inWork[i].Order.ShipmentDate = status.ShipmentDate
-		}
-	}
-	c.mut.Unlock()
-	if !is {
-		return fmt.Errorf("not found order (ID: %v) in cache", status.ID)
-	}
-	return nil
 }

@@ -43,9 +43,7 @@ func main() {
 		log.Fatalln("ERROR (db init): ", err)
 	}
 
-	if err = storage.CacheInit(); err != nil {
-		log.Fatalln("ERROR (cache init): ", err)
-	}
+	storage.CacheInit()
 
 	log.Println("set server settings")
 	srv := server.New(config.Cfg, handler)

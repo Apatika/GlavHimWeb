@@ -1,63 +1,80 @@
 package std
 
 import (
+	"encoding/json"
 	"fmt"
-	"glavhim-app/internal/config"
+	"glavhim-app/internal/service"
+	"glavhim-app/internal/storage"
+	"log"
 	"net/http"
 )
 
 func dbPageGet(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue(pathVar)
-	switch path {
-	case config.Cfg.DB.Coll.Users:
-		dbPageGetManagers(w, r)
-	case config.Cfg.DB.Coll.Cargos:
-		dbPageGetCargo(w, r)
-	case config.Cfg.DB.Coll.Chems:
-		dbPageGetChemistry(w, r)
-	default:
-		errorResponse(w, fmt.Sprintf("invalid path /db/%v", path), http.StatusInternalServerError)
-	}
+	data := service.GetStruct(path)
+	json.NewEncoder(w).Encode(storage.Cache.Get(data.GetType()))
 }
 
 func dbPagePost(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue(pathVar)
-	switch path {
-	case config.Cfg.DB.Coll.Users:
-		dbPagePostManagers(w, r)
-	case config.Cfg.DB.Coll.Cargos:
-		dbPagePostCargo(w, r)
-	case config.Cfg.DB.Coll.Chems:
-		dbPagePostChemistry(w, r)
-	default:
+	data := service.GetStruct(path)
+	if data == nil {
 		errorResponse(w, fmt.Sprintf("invalid path /db/%v", path), http.StatusInternalServerError)
+		return
 	}
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		errorResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	db := storage.DB()
+	data.NewID(db.GetNewID())
+	if err := db.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+		errorResponse(w, fmt.Sprintf("write to db failed(%v)", err.Error()), http.StatusBadRequest)
+		return
+	}
+	if err := db.AddOne(path, data); err != nil {
+		errorResponse(w, fmt.Sprintf("write to db failed(%v)", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	storage.Cache.Update(path, data.GetID(), data)
+	log.Printf("write to \"%v\" collection", path)
 }
 
 func dbPagePut(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue(pathVar)
-	switch path {
-	case config.Cfg.DB.Coll.Users:
-		dbPagePutManagers(w, r)
-	case config.Cfg.DB.Coll.Cargos:
-		dbPagePutCargo(w, r)
-	case config.Cfg.DB.Coll.Chems:
-		dbPagePutChemistry(w, r)
-	default:
-		errorResponse(w, fmt.Sprintf("invalid path /db/%v", path), http.StatusInternalServerError)
+	data := service.GetStruct(path)
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		errorResponse(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	db := storage.DB()
+	if err := db.CheckNameOne(data.GetName(), path, data.GetID()); err != nil {
+		errorResponse(w, fmt.Sprintf("update to db failed(%v)", err.Error()), http.StatusBadRequest)
+		return
+	}
+	if err := db.UpdateOne(path, data, data.GetID()); err != nil {
+		errorResponse(w, fmt.Sprintf("update to db failed(%v)", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	storage.Cache.Update(path, data.GetID(), data)
+	log.Printf("update to \"%v\" collection", path)
 }
 
 func dbPageDelete(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue(pathVar)
-	switch path {
-	case config.Cfg.DB.Coll.Users:
-		dbPageDeleteManagers(w, r)
-	case config.Cfg.DB.Coll.Cargos:
-		dbPageDeleteCargo(w, r)
-	case config.Cfg.DB.Coll.Chems:
-		dbPageDeleteChemistry(w, r)
-	default:
-		errorResponse(w, fmt.Sprintf("invalid path /db/%v", path), http.StatusInternalServerError)
+	data := service.GetStruct(path)
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		errorResponse(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	db := storage.DB()
+	if err := db.DeleteOne(path, data.GetID()); err != nil {
+		errorResponse(w, fmt.Sprintf("delete from db failed (%v)", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	storage.Cache.Delete(path, data.GetID())
+	log.Printf("delete from \"%v\" collection", path)
 }

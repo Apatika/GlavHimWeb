@@ -10,15 +10,18 @@
 
   let cargo = structuredClone(cargoDefault)
 
-  $: cargos =[]
+  $: cargos = []
 
   const get = () => {
     fetch(`${window.location.origin}/db/cargos`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then((d) => {
-      cargos = d
-      cargos.sort((a, b) => {
+      cargos = []
+      for (let v of Object.values(d)){
+        cargos.push(v)
+      }
+      cargos = cargos.sort((a, b) => {
         let fa = a.name.toLowerCase()
         let fb = b.name.toLowerCase()
         if (fa > fb) return 1

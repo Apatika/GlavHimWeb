@@ -6,7 +6,17 @@
   let isEdit = false
 
   const updateOrders = (data) => {
-    orders = data
+    orders = []
+    for (let v of Object.values(data)){
+      orders.push(v)
+    }
+    orders = orders.sort((a, b) => {
+      let fa = a.order.status.toLowerCase()
+      let fb = b.order.status.toLowerCase()
+      if (fa > fb) return -1
+      if (fa < fb) return 1
+      return 0
+    })
   }
 
   const getInWork = () => {
@@ -14,14 +24,7 @@
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
-      orders = d
-      orders.sort((a, b) => {
-        let fa = a.order.status.toLowerCase()
-        let fb = b.order.status.toLowerCase()
-        if (fa > fb) return -1
-        if (fa < fb) return 1
-        return 0
-      })
+      updateOrders(d)
     }).catch(function(err) {
       alert(err);
     })
@@ -43,12 +46,13 @@
       if (!isEdit) getInWork()
     }
   }
-  refreshInWork()
+  //refreshInWork()
 
-  const changeStatus = (id, status) => {
+  const changeStatus = (order, status) => {
+    order.order.status = status
     fetch(`${window.location.origin}/orders/status`, {
       method: "PUT",
-      body: JSON.stringify({id: id, status: status}),
+      body: JSON.stringify(order),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
@@ -120,7 +124,7 @@
         {#if order.order.probes.length > 0} <div class="achtung"><strong>ПРОБНИКИ</strong></div> {/if}
         <div class="order-item status">
           <select bind:value={order.order.status} 
-                  on:change={(e) => {changeStatus(order.order.id, e.target.value); e.target.parentElement.parentElement.style.backgroundColor  = getColor(e.target.value)}}>
+                  on:change={(e) => {changeStatus(order, e.target.value); e.target.parentElement.parentElement.style.backgroundColor = getColor(e.target.value)}}>
             <option value=""></option>
             <option value="Принят В Работу">Принят В Работу</option>
             <option value="Развозка">Развозка</option>

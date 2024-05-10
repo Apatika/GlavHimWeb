@@ -16,8 +16,11 @@
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then((d) => {
-      managers = d
-      managers.sort((a, b) => {
+      managers = []
+      for (let v of Object.values(d)){
+        managers.push(v)
+      }
+      managers = managers.sort((a, b) => {
         let fa = a.name.toLowerCase()
         let fb = b.name.toLowerCase()
         if (fa > fb) return 1
