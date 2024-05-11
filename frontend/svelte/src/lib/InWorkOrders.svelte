@@ -350,9 +350,10 @@
     top: 50%;
     transform: translate(-50%, -50%);
     border: 1px solid black;
-    background-color: white;
+    background-color: #FFEBCD;
     overflow:auto;
     box-shadow: 0px 0px 10px 0px black;
+    z-index: 5;
   }
   #new-order{
     flex-basis: 20%;
