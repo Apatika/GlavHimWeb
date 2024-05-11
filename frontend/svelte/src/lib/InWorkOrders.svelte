@@ -350,6 +350,7 @@
     top: 50%;
     transform: translate(-50%, -50%);
     border: 1px solid black;
+    border-radius: 5px;
     background-color: #FFEBCD;
     overflow:auto;
     box-shadow: 0px 0px 10px 0px black;
@@ -366,7 +367,7 @@
     text-align: center;
   }
   #table-container{
-    margin: 10px 10px 10px 0px;
+    margin: 10px 30px;
     flex-grow: 1;
   }
   #table{

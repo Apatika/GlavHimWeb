@@ -7,13 +7,8 @@
 </script>
 
 <div class="nav">
-  <div>
-    <button on:click={() => currentPage = Main}>Главная</button>
-  </div>
-  <div>
-    <button on:click={() => currentPage = Data}>База Данных<button>
-  </div>
-  <div id="placeholder"></div>
+  <button on:click={() => currentPage = Main}>Главная</button>
+  <button on:click={() => currentPage = Data}>База Данных</button>
 </div>
 <div class="content">
   <svelte:component this={currentPage} />
@@ -22,29 +17,31 @@
 <style>
   button{
     display: block;
-    width: 100%;
-    background-color: transparent;
+    position: relative;
     border: none;
+    margin-left: 2px;
+    margin-top: 1px;
+    font-size: 18px;
+    height: 40px;
+    border-top: 1px solid #fdf5df;
+    border-radius: 5px;
+    background-color: #191970;
+    box-shadow: 0px 0px 10px 2px black;
+  }
+  button:hover{
+    box-shadow: 0px 0px 10px 2px black, 0px 0px 2px 0px white inset;
+  }
+  button:active{
+    box-shadow: 0px 0px 10px 0px black inset;
   }
   .nav{
-    flex-basis: 10%;
-    background-color: darkblue;
-    box-shadow: 0px 0px 10px 0px grey;
-  }
-  .nav div{
     display: flex;
-    height: 40px;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0px 0px 10px 0px grey;
+    flex-direction: column;
+    background-color: #fdf5df;
+    width: 150px;
   }
   .content{
     background-color: #fdf5df;
     flex-grow: 1;
-  }
-  #placeholder{
-    box-shadow: 0px 0px 10px 0px grey;
-    height: 100%;
-    overflow: hidden;
   }
 </style>

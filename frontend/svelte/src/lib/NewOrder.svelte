@@ -402,7 +402,7 @@
     flex-basis: 35%;
   }
   .underline{
-    border-bottom: 1px solid blue;
+    border-bottom: 1px solid #191970;
   }
   .flex div{
     margin-bottom: 2px;
