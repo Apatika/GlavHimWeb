@@ -1,6 +1,12 @@
 package service
 
-import "glavhim-app/internal/config"
+import (
+	"encoding/json"
+	"fmt"
+	"glavhim-app/internal/config"
+	"glavhim-app/internal/storage"
+	"log"
+)
 
 type Cargo struct {
 	ID         string `json:"id" bson:"_id"`
@@ -8,27 +14,48 @@ type Cargo struct {
 	URI        string `json:"uri" bson:"uri"`
 	MainTel    string `json:"mainTel" bson:"mainTel"`
 	ManagerTel string `json:"managerTel" bson:"managerTel"`
-	Type       string `json:"type" bson:"type"`
 }
 
-func NewCargo() IDBPage {
-	return &Cargo{
-		Type: config.Cfg.DB.Coll.Cargos,
+func (c *Cargo) GetAll() map[string]interface{} {
+	return storage.Cache.Get(config.Cfg.DB.Coll.Cargos)
+}
+
+func (c *Cargo) Push(raw []byte) error {
+	json.Unmarshal(raw, c)
+	db := storage.DB()
+	c.ID = db.GetNewID()
+	if err := db.CheckName(c.Name, config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
+		return fmt.Errorf("write cargo to db failed(%v)", err.Error())
 	}
+	if err := db.Add(config.Cfg.DB.Coll.Cargos, c); err != nil {
+		return fmt.Errorf("write cargo to db failed(%v)", err.Error())
+	}
+	storage.Cache.Update(config.Cfg.DB.Coll.Cargos, c.ID, c)
+	log.Printf("create cargo (id: %v)", c.ID)
+	return nil
 }
 
-func (c *Cargo) NewID(s string) {
-	c.ID = s
+func (c *Cargo) Update(raw []byte) error {
+	json.Unmarshal(raw, c)
+	db := storage.DB()
+	if err := db.CheckName(c.Name, config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
+		return fmt.Errorf("update cargo failed(%v)", err.Error())
+	}
+	if err := db.Update(config.Cfg.DB.Coll.Cargos, c, c.ID); err != nil {
+		return fmt.Errorf("update cargo failed(%v)", err.Error())
+	}
+	storage.Cache.Update(config.Cfg.DB.Coll.Cargos, c.ID, c)
+	log.Printf("update cargo (id: %v)", c.ID)
+	return nil
 }
 
-func (c *Cargo) GetID() string {
-	return c.ID
-}
-
-func (c *Cargo) GetName() string {
-	return c.Name
-}
-
-func (c *Cargo) GetType() string {
-	return c.Type
+func (c *Cargo) Delete(raw []byte) error {
+	json.Unmarshal(raw, c)
+	db := storage.DB()
+	if err := db.Delete(config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
+		return fmt.Errorf("delete cargo from db failed (%v)", err.Error())
+	}
+	storage.Cache.Delete(config.Cfg.DB.Coll.Cargos, c.ID)
+	log.Printf("delete cargo (name: %v)", c.Name)
+	return nil
 }

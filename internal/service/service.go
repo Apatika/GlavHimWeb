@@ -3,20 +3,20 @@ package service
 import "glavhim-app/internal/config"
 
 type IDBPage interface {
-	NewID(string)
-	GetID() string
-	GetName() string
-	GetType() string
+	GetAll() map[string]interface{}
+	Push(raw []byte) error
+	Update(raw []byte) error
+	Delete(raw []byte) error
 }
 
 func GetStruct(path string) IDBPage {
 	switch path {
 	case config.Cfg.DB.Coll.Users:
-		return NewUser()
+		return &User{}
 	case config.Cfg.DB.Coll.Cargos:
-		return NewCargo()
+		return &Cargo{}
 	case config.Cfg.DB.Coll.Chemistry:
-		return NewChemistry()
+		return &Chemistry{}
 	default:
 		return nil
 	}

@@ -179,7 +179,10 @@
     fetch(`${window.location.origin}/cities?city=${e.target.value}`).then(function(response) {
     return response.json();
   }).then((data) => {
+    if (data.length == 0) throw new Error("storage empty")
     cities = data
+  }).catch(() => {
+    return
   })
   }
 
@@ -191,7 +194,7 @@
   </div>
 {:else}
   <div>
-    <button class="close" on:click={onClose}>закрыть</button>
+    <button class="close" on:click={onClose}>Закрыть</button>
   </div>
 {/if}
 <div id="container">
@@ -312,7 +315,7 @@
               {#if order.id == null}
                 <datalist id="city-list">
                   {#each cities as city}
-                    <option value={`${city.city} (${city.region})`}>{city.city}</option>
+                    <option value={city.city}>{city.city}</option>
                   {/each}
                 </datalist>
               {/if}

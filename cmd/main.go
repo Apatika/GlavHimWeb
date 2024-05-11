@@ -4,6 +4,7 @@ import (
 	"context"
 	"glavhim-app/internal/config"
 	"glavhim-app/internal/server"
+	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage"
 	handler "glavhim-app/internal/transport"
 	"log"
@@ -44,9 +45,9 @@ func main() {
 	}
 
 	storage.CacheInit()
-
-	a, _ := storage.DB().GetCities("оло")
-	log.Print(a)
+	if err := service.LoadCache(); err != nil {
+		log.Fatalf("ERROR (load cache): %v", err)
+	}
 
 	log.Println("set server settings")
 	srv := server.New(config.Cfg, handler)
