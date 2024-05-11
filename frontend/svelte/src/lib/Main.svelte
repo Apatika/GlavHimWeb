@@ -16,6 +16,6 @@
   }
   #content{
     flex-grow: 1;
-    padding: 10px 5px;
+    padding-left: 8px;
   }
 </style>

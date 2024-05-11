@@ -168,6 +168,11 @@
       (client.contact)[i].tel = ((client.contact)[i].tel).replace(/[^0-9]/g, "")
     }
   }
+  const innFormat = () => client.inn = (client.inn).replace(/[^0-9]/g, "")
+  const passportFormat = () => {
+    client.passportNum = (client.passportNum).replace(/[^0-9]/g, "")
+    client.passportSerial = (client.passportSerial).replace(/[^0-9]/g, "")
+  }
 
   const onClose = (e) => {
     e.target.parentElement.parentElement.style.display = "none"
@@ -258,11 +263,11 @@
             </div>
             <div id="nums">
               {#if client.type != "2"}
-                <input type="text" bind:value={client.inn} placeholder="ИНН">
+                <input type="text" bind:value={client.inn} on:keypress={telInput} on:input={innFormat} placeholder="ИНН">
               {:else}
                 <div>
-                  <input type="text" bind:value={client.passportSerial} placeholder="Серия">
-                  <input type="text" bind:value={client.passportNum} placeholder="Номер">
+                  <input type="text" bind:value={client.passportSerial} on:keypress={telInput} on:input={passportFormat} placeholder="Серия">
+                  <input type="text" bind:value={client.passportNum} on:keypress={telInput} on:input={passportFormat} placeholder="Номер">
                 </div>
               {/if}
             </div>
@@ -370,7 +375,7 @@
     </div>
   </div>
   {#if order.id == null}
-    <button on:click={push}>Отправить</button>
+    <button class="new-order-button" on:click={push}>Отправить</button>
   {:else}
     <button on:click={update}>Изменить</button>
   {/if}
@@ -410,5 +415,8 @@
     right: 0;
     top: 0;
     margin: 5px;
+  }
+  .new-order-button{
+    margin: 10px 0px;
   }
 </style>

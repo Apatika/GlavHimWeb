@@ -303,7 +303,8 @@
     display: flex;
     height: 0px;
     border-radius: 5px;
-    box-shadow: 0px -5px 10px 0px black inset;
+    background-color: #FFEBCD;
+    box-shadow: 0px -3px 3px 0px black inset;
     transition: all .2s linear;
     overflow: hidden;
   }
@@ -352,9 +353,10 @@
   }
   #new-order{
     flex-basis: 20%;
-    border-left: 1px solid grey;
-    border-bottom: 1px solid grey;
-    box-shadow: -5px 5px 5px 0px grey;
+    background-color: #FFEBCD;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0px black;
   }
   #new-order-title {
     text-align: center;

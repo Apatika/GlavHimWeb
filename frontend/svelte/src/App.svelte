@@ -29,20 +29,21 @@
   .nav{
     flex-basis: 10%;
     background-color: darkblue;
+    box-shadow: 0px 0px 10px 0px grey;
   }
   .nav div{
     display: flex;
     height: 40px;
     justify-content: center;
     align-items: center;
-    box-shadow: -5px 0px 5px 0px white inset;
+    box-shadow: 0px 0px 10px 0px grey;
   }
   .content{
-    background-color: white;
+    background-color: #fdf5df;
     flex-grow: 1;
   }
   #placeholder{
-    box-shadow: -5px 0px 5px 0px white inset;
+    box-shadow: 0px 0px 10px 0px grey;
     height: 100%;
     overflow: hidden;
   }

@@ -17,7 +17,7 @@ body{
   margin: 0;
   overflow: hidden;
 }
-button{
+button, select{
   cursor: pointer;
 }
 #app {
