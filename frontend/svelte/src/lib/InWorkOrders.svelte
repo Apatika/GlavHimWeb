@@ -91,17 +91,20 @@
         elem.style.padding = null
         elem.style.height = '0px'
       })
-      document.querySelectorAll('.expander').forEach((elem) => {
-        elem.innerHTML = 'ᐁ'
+      document.querySelectorAll('.order').forEach((elem) => {
+        elem.style.transform = 'scale(1)'
+        elem.style.boxShadow = 'none'
       })
       target.style.padding = '15px'
       target.style.height = '160px'
-      event.target.innerHTML = 'ᐃ'
+      event.target.parentElement.style.transform = 'scale(1.005)'
+      event.target.parentElement.style.boxShadow = '0px 0px 10px black'
     }
     else {
       target.style.padding = null
       target.style.height = '0px'
-      event.target.innerHTML = 'ᐁ'
+      event.target.parentElement.style.transform = 'scale(1)'
+      event.target.parentElement.style.boxShadow = 'none'
     }
   }
 
@@ -125,10 +128,12 @@
           <NewOrder order={order.order} client={order.client} on:message={() => {isEdit = false; getInWork()}}></NewOrder>
         </div>
         <div>
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
           <div class="order" style="background-color: {getColor(order.order.status)}">
-            <div class="order-item cargo">{order.order.cargo}</div>
-            <div class="order-item name">{order.client.surname} {order.client.name} {order.client.secondName}</div>
-            <div class="order-item adress">{order.order.adress.city}</div>
+            <div class="order-item cargo" on:click={toggleFullOrder}>{order.order.cargo}</div>
+            <div class="order-item name" on:click={toggleFullOrder}>{order.client.surname} {order.client.name} {order.client.secondName}</div>
+            <div class="order-item adress" on:click={toggleFullOrder}>{order.order.adress.city}</div>
             {#if order.order.payment} <div class="achtung"><strong>ЗА НАШ СЧЕТ</strong></div> {/if}
             {#if order.order.probes.length > 0} <div class="achtung"><strong>ПРОБНИКИ</strong></div> {/if}
             <div class="order-item status">
@@ -145,7 +150,6 @@
                 <option value="Изменен!" disabled>Изменен!</option>
               </select>
             </div>
-            <button class="expander" on:click={toggleFullOrder}>ᐁ</button>
           </div>
           <div class="full-order">
             <div class="full-order-client">
@@ -284,11 +288,13 @@
     border: 1px solid black;
     border-radius: 5px;
     background-color: white;
+    transition: all .1s linear;
   }
   .order-item{
     padding: 0px 3px;
     vertical-align: center;
     border-right: 1px solid black;
+    cursor: pointer;
   }
   .adress{
     flex-basis: 15%;
@@ -320,16 +326,13 @@
     padding: 0px, 5px;
     flex-basis: 10%;
     color: #0000CD;
+    pointer-events: none;
   }
   .full-item{
     display: flex;
   }
   .full-label{
     flex-basis: 25%;
-  }
-  .expander{
-    text-align: center;
-    vertical-align: middle;
   }
   .edit{
     float: right;
