@@ -356,7 +356,7 @@
     z-index: 5;
   }
   #new-order{
-    flex-basis: 20%;
+    flex-basis: 21%;
     background-color: #FFEBCD;
     border: 1px solid black;
     border-radius: 5px;
@@ -366,7 +366,7 @@
     text-align: center;
   }
   #table-container{
-    margin: 10px 30px 10px 0px;
+    margin: 10px 10px 10px 0px;
     flex-grow: 1;
   }
   #table{

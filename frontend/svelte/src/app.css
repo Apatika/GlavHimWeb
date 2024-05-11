@@ -13,6 +13,9 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+html * {
+  font-family: Helvetica !important;
+}
 body{
   margin: 0;
   overflow: hidden;
