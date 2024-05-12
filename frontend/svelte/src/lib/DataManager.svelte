@@ -10,6 +10,25 @@
   let user = structuredClone(userDefault)
   
   export let managers = []
+
+  const get = () => {
+    fetch(`${window.location.origin}/db/users`).then(function(response) {
+      if (response.status != 200) throw new Error(response.statusText)
+      return response.json();
+    }).then((d) => {
+      managers = []
+      for (let v of Object.values(d)){
+        managers.push(v)
+      }
+      managers = managers.sort((a, b) => {
+        if (a.name > b.name) return 1
+        if (a.name < b.name) return -1
+        return 0
+      })
+    }).catch(function(err) {
+      alert(err);
+    })
+  }
   
   const add = () => {
     if (user.name == null || user.tel == null || user.email == null){
