@@ -13,6 +13,43 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+input[type="text"], textarea{
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid red;
+  outline: none;
+  color: black;
+  font-size: 14px;
+}
+input[type='checkbox']:checked {
+  background-color: #023047;
+}
+input[type='checkbox']:checked:after {
+  content: '\2713';
+  color:white;
+}
+input[type='checkbox']{
+  text-align: center;
+  vertical-align: middle;
+  width: 20px !important;
+  height: 20px !important;
+  appearance:none;
+  border-radius:10%;
+  border: 1px solid #191970;
+  box-shadow: none;
+  font-size: 1em;
+}
+input::placeholder{
+  color: black;
+}
+select, input[type="date"] {
+  background-color: transparent;
+  color: #191970;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #191970;
+  cursor: pointer;
+}
 html * {
   font-family: Helvetica !important;
 }
@@ -20,7 +57,7 @@ body{
   margin: 0;
   overflow: hidden;
 }
-button, select{
+button{
   cursor: pointer;
 }
 #app {

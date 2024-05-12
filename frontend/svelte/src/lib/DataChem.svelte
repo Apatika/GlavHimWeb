@@ -9,28 +9,7 @@
 
   let chem = structuredClone(chemDefault)
 
-  $: chems = []
-
-  const get = () => {
-    fetch(`${window.location.origin}/db/chems`).then(function(response) {
-      if (response.status != 200) throw new Error(response.statusText)
-      return response.json();
-    }).then((d) => {
-      chems = []
-      for (let v of Object.values(d)){
-        chems.push(v)
-      }
-      chems = chems.sort((a, b) => {
-        if (a.name > b.name) return 1
-        if (a.name < b.name) return -1
-        return 0
-      })
-    }).catch(function(err) {
-      alert(err);
-    })
-  }
-
-  get()
+  export let chems = []
 
   const add = () => {
     if (chem.name == null || chem.sellValue == null || chem.probeValue == null){

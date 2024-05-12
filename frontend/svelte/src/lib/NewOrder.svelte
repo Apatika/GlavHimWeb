@@ -32,43 +32,9 @@
   export let client = structuredClone(clientDefault)
   export let order = structuredClone(orderDefault)
 
-  let managers = []
-  let cargos = []
   let cities = []
-
-  fetch(`${window.location.origin}/db/users`).then(function(response) {
-    return response.json();
-  }).then(function(data) {
-    if (data.length == 0) throw new Error("storage empty") 
-    managers = []
-    for (let v of Object.values(data)){
-      managers.push(v)
-    }
-    managers = managers.sort((a, b) => {
-      if (a.name > b.name) return 1
-      if (a.name < b.name) return -1
-      return 0
-    })
-  }).catch(function(err) {
-    alert(err);
-  })
-
-  fetch(`${window.location.origin}/db/cargos`).then(function(response) {
-    return response.json();
-  }).then(function(data) {
-    if (data.length == 0) throw new Error("storage empty")
-    cargos = []
-    for (let v of Object.values(data)){
-      cargos.push(v)
-    }
-    cargos = cargos.sort((a, b) => {
-      if (a.name > b.name) return 1
-      if (a.name < b.name) return -1
-      return 0
-    })
-  }).catch(function(err) {
-    alert(err);
-  })
+  export let managers = []
+  export let cargos = []
 
   const check = () => {
     if (client.manager == null || client.manager == ""){
@@ -281,9 +247,9 @@
                   <input class="tel" type="text" bind:value={contact.tel} on:keypress={telInput} on:input={telFormat} placeholder="Телефон">
                 </div>
               {/each}
-              <button on:click={addContact}>+</button>
-              <button on:click={removeContact}>-</button>
-              <span>добавить/удалить</span>
+              <button class="add-del-button" on:click={addContact}>+</button>
+              <button class="add-del-button" on:click={removeContact}>-</button>
+              <span class="add-del">добавить/удалить</span>
             </div>
           </div>
           <div class="flex">
@@ -353,9 +319,9 @@
                   <input type="text" bind:value={invoice} placeholder="Счет">
                 </div>
               {/each}
-              <button on:click={addInvoice}>+</button>
-              <button on:click={removeInvoice}>-</button>
-              <span>добавить/удалить</span>
+              <button class="add-del-button" on:click={addInvoice}>+</button>
+              <button class="add-del-button" on:click={removeInvoice}>-</button>
+              <span class="add-del">добавить/удалить</span>
             </div>
           </div>
           <div class="flex">
@@ -382,6 +348,17 @@
 </div>
 
 <style>
+  button{
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 0px grey;
+    background-color: #191970;
+    outline: none;
+    color: #fdf5df;
+  }
+  button:active{
+    box-shadow: none;
+  }
   #search{
     margin-left: 5px;
     margin-top: 10px;
@@ -395,14 +372,15 @@
   .flex{
     display: flex;
     border-bottom: 1px solid grey;
-    border-image: linear-gradient(to right, white 0%, blue 50%, white 100%) 1;
+    border-image: linear-gradient(to right, transparent 0%, #778899 50%, transparent 85%) 1;
     padding: 2px 0px;
   }
   .lables{
     flex-basis: 35%;
+    font-size: 14px;
   }
   .underline{
-    border-bottom: 1px solid #191970;
+    border-bottom: 1px solid #778899;
   }
   .flex div{
     margin-bottom: 2px;
@@ -418,5 +396,12 @@
   }
   .new-order-button{
     margin: 10px 0px;
+  }
+  .add-del{
+    font-size: 14px;
+  }
+  .add-del-button{
+    width: 20px;
+    height: 20px;
   }
 </style>

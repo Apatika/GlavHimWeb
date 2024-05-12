@@ -10,28 +10,7 @@
 
   let cargo = structuredClone(cargoDefault)
 
-  $: cargos = []
-
-  const get = () => {
-    fetch(`${window.location.origin}/db/cargos`).then(function(response) {
-      if (response.status != 200) throw new Error(response.statusText)
-      return response.json();
-    }).then((d) => {
-      cargos = []
-      for (let v of Object.values(d)){
-        cargos.push(v)
-      }
-      cargos = cargos.sort((a, b) => {
-        if (a.name > b.name) return 1
-        if (a.name < b.name) return -1
-        return 0
-      })
-    }).catch(function(err) {
-      alert(err);
-    })
-  }
-
-  get()
+  export let cargos = []
 
   const add = () => {
     if (cargo.name == null || cargo.uri == null || cargo.mainTel == null){
