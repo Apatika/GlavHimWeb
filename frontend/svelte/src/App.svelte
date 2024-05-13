@@ -118,4 +118,9 @@
     background-color: #fdf5df;
     flex-grow: 1;
   }
+  @media (min-width:960px){
+    button {
+      font-size: 14px;
+    }
+  }
 </style>

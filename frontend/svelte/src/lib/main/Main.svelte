@@ -63,7 +63,19 @@
   }
   //refreshInWork()
 
+  const closeFullOrder = () => {
+    document.querySelectorAll('.full-order').forEach((elem) => {
+      elem.style.padding = null
+      elem.style.height = '0px'
+    })
+    document.querySelectorAll('.order').forEach((elem) => {
+      elem.style.transform = 'scale(1)'
+      elem.style.boxShadow = 'none'
+    })
+  }
+
   const changeStatus = (order, status) => {
+    closeFullOrder()
     order.order.status = status
     fetch(`${window.location.origin}/orders/status`, {
       method: "PUT",
@@ -101,39 +113,25 @@
   }
 
   const toggleFullOrder = (event) => {
-    let target = event.target.parentElement.nextElementSibling
+    let target = event.target.closest('.order').nextElementSibling
     if (target.style.height != '160px') {
       getInWork()
-      document.querySelectorAll('.full-order').forEach((elem) => {
-        elem.style.padding = null
-        elem.style.height = '0px'
-      })
-      document.querySelectorAll('.order').forEach((elem) => {
-        elem.style.transform = 'scale(1)'
-        elem.style.boxShadow = 'none'
-      })
+      closeFullOrder()
       target.style.padding = '15px'
       target.style.height = '160px'
-      event.target.parentElement.style.transform = 'scale(1.005)'
-      event.target.parentElement.style.boxShadow = '0px 0px 10px black'
+      event.target.closest('.order').style.transform = 'scale(1.005)'
+      event.target.closest('.order').style.boxShadow = '0px 0px 10px black'
     }
     else {
       target.style.padding = null
       target.style.height = '0px'
-      event.target.parentElement.style.transform = 'scale(1)'
-      event.target.parentElement.style.boxShadow = 'none'
+      event.target.closest('.order').style.transform = 'scale(1)'
+      event.target.closest('.order').style.boxShadow = 'none'
     }
   }
 
   const dispatchEdit = () => {
-    document.querySelectorAll('.full-order').forEach((elem) => {
-      elem.style.padding = null
-      elem.style.height = '0px'
-    })
-    document.querySelectorAll('.order').forEach((elem) => {
-      elem.style.transform = 'scale(1)'
-      elem.style.boxShadow = 'none'
-    })
+    closeFullOrder()
     let target = document.querySelector('#editor')
     target.style.display = "none"
     document.body.style.pointerEvents = "all"
@@ -171,13 +169,28 @@
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <div class="order" style="background-color: {getColor(order.order.status)}">
-            <div class="order-item cargo" on:click={toggleFullOrder}>{order.order.cargo}</div>
-            <div class="order-item name" on:click={toggleFullOrder}>{order.client.surname} {order.client.name} {order.client.secondName}</div>
-            <div class="order-item adress" on:click={toggleFullOrder}>{order.order.adress.city}</div>
-            {#if order.order.payment} <div class="achtung"><strong>ЗА НАШ СЧЕТ</strong></div> {/if}
-            {#if order.order.probes.length > 0} <div class="achtung"><strong>ПРОБНИКИ</strong></div> {/if}
-            <div class="order-item status">
-              <select bind:value={order.order.status} 
+            <div class="order-item cargo" on:click={toggleFullOrder}>
+              <div><strong>{order.order.cargo}</strong></div>
+              <div>счет: 
+                {#each order.order.invoice as invoice}
+                  <span>{invoice} </span>
+                {/each}
+              </div>
+            </div>
+            <div class="order-item name" on:click={toggleFullOrder}><strong>{order.client.surname} {order.client.name}</strong> {order.client.secondName}</div>
+            <div class="order-item adress" on:click={toggleFullOrder}>
+              <div><strong>{order.order.adress.city}</strong></div>
+              {#if order.order.adress.adress != ""}
+                <div>адрес: {order.order.adress.adress}</div>
+              {:else}
+                <div>терминал: {order.order.adress.terminal}</div>
+              {/if}
+            </div>
+            {#if order.order.lastDate != ""} <div class="achtung" on:click={toggleFullOrder}><strong>{order.order.lastDate}</strong></div> {/if}
+            {#if order.order.probes.length > 0} <div class="achtung" on:click={toggleFullOrder}><strong>ПРОБНИКИ</strong></div> {/if}
+            {#if order.order.payment} <div class="achtung" id="payment-span" on:click={toggleFullOrder}><strong>ЗА НАШ СЧЕТ</strong></div> {/if}
+            <div class="order-item status" on:click={() => {return}}>
+              <select bind:value={order.order.status}
                       on:change={(e) => {changeStatus(order, e.target.value); e.target.parentElement.parentElement.style.backgroundColor = getColor(e.target.value)}}>
                 <option value=""></option>
                 <option value="Принят В Работу">Принят В Работу</option>
@@ -265,7 +278,7 @@
                   <div class="full-label"><strong>Счет:</strong></div>
                   <div>
                     {#each order.order.invoice as invoice}
-                      <span>{invoice}, </span>
+                      <span>{invoice} </span>
                     {/each}
                   </div>
                 </div>  
@@ -299,9 +312,7 @@
     color: black;
   }
   select{
-    height: 18px;
-    margin: 1px;
-    padding: 0px;
+    height: 34px;
     text-align: center;
     background-color: transparent;
     border: none;
@@ -322,7 +333,7 @@
   }
   .order{
     display: flex;
-    height: 20px;
+    height: 40px;
     color: black;
     font-size: 14px;
     border: 1px solid black;
@@ -331,10 +342,10 @@
     transition: all .1s linear;
   }
   .order-item{
-    padding: 0px 3px;
-    vertical-align: center;
+    padding: 5px 5px;
     border-right: 1px solid black;
     cursor: pointer;
+    line-height: 1;
   }
   .adress{
     flex-basis: 15%;
@@ -344,6 +355,7 @@
   .status{
     border-left: 1px solid black;
     border-right: 1px solid black;
+    cursor: pointer;
   }
   .full-order{
     display: flex;
@@ -355,7 +367,7 @@
     overflow: hidden;
   }
   .full-order-order{
-    flex-basis: 35%;
+    flex-basis: 30%;
     font-size: small;
   }
   .full-order-client{
@@ -363,16 +375,21 @@
     font-size: small;
   }
   .achtung{
-    padding: 0px, 5px;
-    flex-basis: 10%;
+    padding: 10px 0px;
+    flex-basis: 8%;
+    font-size: 12px;
     color: #0000CD;
     pointer-events: none;
   }
   .full-item{
     display: flex;
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .full-label{
     flex-basis: 25%;
+    min-width: 25%;
   }
   .edit{
     float: right;
@@ -380,6 +397,9 @@
   }
   .probes{
     flex-grow: 1;
+  }
+  #payment-span{
+    margin-right: 5px;
   }
   #editor{
     display: none;
@@ -398,6 +418,7 @@
   }
   #new-order{
     flex-basis: 21%;
+    min-width: 21%;
     background-color: #FFF5EE;
     border: 1px solid black;
     border-radius: 5px;
@@ -427,5 +448,24 @@
   }
   #refresh:hover{
     box-shadow: none;
+  }
+  @media (min-width:960px){
+    .order{
+      font-size: 12px;
+    }
+    #new-order{
+      display: none;
+      position: absolute;
+      width: 30%;
+      right: 0;
+      top: 0;
+    }
+    .full-label{
+      flex-basis: 30%;
+      min-width: 30%;
+    }
+    #editor{
+      width: 400px;
+    }
   }
 </style>
