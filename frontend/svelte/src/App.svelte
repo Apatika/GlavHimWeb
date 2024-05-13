@@ -1,60 +1,46 @@
 <script>
-  import Main from "./lib/Main.svelte";
-  import Data from "./lib/Data.svelte";
+  import Main from "./lib/main/Main.svelte";
+  import Data from "./lib/data/Data.svelte";
 
-  let managers = []
-  let cargos = []
-  let chems = []
+  let managers = {}
+  let cargos = {}
+  let chems = {}
 
   window.onload = () => {
     document.querySelector('#main').style.display = 'block'
+    getManagers()
+    getCargos()
+    getChems()
+  }
+
+  const getManagers = () => {
     fetch(`${window.location.origin}/db/users`).then(function(response) {
       return response.json();
     }).then(function(data) {
       if (data.length == 0) throw new Error("storage empty") 
-      managers = []
-      for (let v of Object.values(data)){
-        managers.push(v)
-      }
-      managers = managers.sort((a, b) => {
-        if (a.name > b.name) return 1
-        if (a.name < b.name) return -1
-        return 0
-      })
+      managers = data
     }).catch(function(err) {
       alert(err);
     })
-
+  }
+  
+  const getCargos = () => {
     fetch(`${window.location.origin}/db/cargos`).then(function(response) {
       return response.json();
     }).then(function(data) {
       if (data.length == 0) throw new Error("storage empty")
-      cargos = []
-      for (let v of Object.values(data)){
-        cargos.push(v)
-      }
-      cargos = cargos.sort((a, b) => {
-        if (a.name > b.name) return 1
-        if (a.name < b.name) return -1
-        return 0
-      })
+      cargos = data
     }).catch(function(err) {
       alert(err);
     })
+  }
 
+  const getChems = () => {
     fetch(`${window.location.origin}/db/chems`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
-    }).then((d) => {
-      chems = []
-      for (let v of Object.values(d)){
-        chems.push(v)
-      }
-      chems = chems.sort((a, b) => {
-        if (a.name > b.name) return 1
-        if (a.name < b.name) return -1
-        return 0
-      })
+    }).then((data) => {
+      chems = data
     }).catch(function(err) {
       alert(err);
     })
@@ -67,7 +53,22 @@
     let name = e.target.name
     document.querySelector(`#${name}`).style.display = 'block'
   }
- 
+
+  const update = (text) => {
+    switch (text) {
+      case 'managers':
+        getManagers()
+        break
+      case 'cargos':
+        getCargos()
+        break
+      case 'chems':
+        getChems()
+        break
+      default:
+        alert('update case not alowed')
+    }
+  }
 
 </script>
 
@@ -80,7 +81,7 @@
     <Main {managers} {cargos}></Main>
   </div>
   <div class="page" id="data">
-    <Data {managers} {cargos} {chems}></Data>
+    <Data {managers} {cargos} {chems} on:message={(e) => update(e.detail.text)}></Data>
   </div>
 </div>
 

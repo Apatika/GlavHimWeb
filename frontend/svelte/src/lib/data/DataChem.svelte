@@ -1,4 +1,6 @@
 <script>
+  import { createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
 
   let chemDefault = {
     id: null,
@@ -9,26 +11,7 @@
 
   let chem = structuredClone(chemDefault)
 
-  export let chems = []
-
-  const get = () => {
-    fetch(`${window.location.origin}/db/chems`).then(function(response) {
-      if (response.status != 200) throw new Error(response.statusText)
-      return response.json();
-    }).then((d) => {
-      chems = []
-      for (let v of Object.values(d)){
-        chems.push(v)
-      }
-      chems = chems.sort((a, b) => {
-        if (a.name > b.name) return 1
-        if (a.name < b.name) return -1
-        return 0
-      })
-    }).catch(function(err) {
-      alert(err);
-    })
-  }
+  export let chems = {}
 
   const add = () => {
     if (chem.name == null || chem.sellValue == null || chem.probeValue == null){
@@ -45,7 +28,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      get()
+      dispatch('message', {text: 'chems'})
       chem = structuredClone(chemDefault)
       alert("Запись Добавлена")
     }).catch((err) => {
@@ -68,7 +51,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      get()
+      dispatch('message', {text: 'chems'})
       chem = structuredClone(chemDefault)
       alert("Запись Обновлена")
     }).catch((err) => {
@@ -89,25 +72,21 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      get()
+      dispatch('message', {text: 'chems'})
       chem = structuredClone(chemDefault)
       alert("Запись удалена")
     }).catch((err) => {
       alert(err)
+      alert(JSON.stringify(chems))
     })
   }
 
-  const select = () => {
-    if (chem.name == ""){
-      chem = structuredClone(chemDefault)
+  const select = (id) => {
+    chem = structuredClone(chemDefault)
+    if (id == ""){
       return
     }
-    for (let i of chems){
-      if (i.name == chem.name){
-        chem = structuredClone(i)
-        return
-      }
-    }
+    chem = chems[id]
   }
 
   const chemInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
@@ -124,10 +103,10 @@
       <span>Химия</span>
     </div>
     <div>
-      <select bind:value={chem.name} on:change={select}>
-        <option value="">Новая</option>
-        {#each chems as chem}
-          <option value={chem.name}>{chem.name}</option>
+      <select value={chem.id} on:change={(e) => select(e.target.value)}>
+        <option value="" selected>Новая</option>
+        {#each Object.values(chems).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
+          <option value={chem.id}>{chem.name}</option>
         {/each}
       </select>
     </div>
@@ -156,13 +135,17 @@
 
 <style>
 
-  .container{
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin: 5px;
-    padding: 5px;
     border: 1px solid black;
     width: 250px;
     height: 250px;
     text-align: center;
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px 0px grey;
   }
 
 </style>

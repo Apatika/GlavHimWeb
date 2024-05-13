@@ -33,8 +33,8 @@
   export let order = structuredClone(orderDefault)
 
   let cities = []
-  export let managers = []
-  export let cargos = []
+  export let managers = {}
+  export let cargos = {}
 
   const check = () => {
     if (client.manager == null || client.manager == ""){
@@ -213,7 +213,7 @@
             <div class="lables">Менеджер:</div>
             <div>
               <select bind:value={client.manager}>
-                {#each managers as manager}
+                {#each Object.values(managers) as manager}
                   <option value={manager.name}>{manager.name}</option>
                 {/each}
               </select>
@@ -269,7 +269,7 @@
                 <option value="город">город</option>
                 <option value="самовывоз">самовывоз</option>
                 <option value="забрать заказ">забрать заказ</option>
-                {#each cargos as cargo}
+                {#each Object.values(cargos) as cargo}
                   <option value={cargo.name}>{cargo.name}</option>
                 {/each}
               </select>

@@ -1,4 +1,6 @@
 <script>
+  import { createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
 
   let cargoDefault = {
     id: null,
@@ -10,26 +12,7 @@
 
   let cargo = structuredClone(cargoDefault)
 
-  export let cargos = []
-
-  const get = () => {
-    fetch(`${window.location.origin}/db/cargos`).then(function(response) {
-      if (response.status != 200) throw new Error(response.statusText)
-      return response.json();
-    }).then((d) => {
-      cargos = []
-      for (let v of Object.values(d)){
-        cargos.push(v)
-      }
-      cargos = cargos.sort((a, b) => {
-        if (a.name > b.name) return 1
-        if (a.name < b.name) return -1
-        return 0
-      })
-    }).catch(function(err) {
-      alert(err);
-    })
-  }
+  export let cargos = {}
 
   const add = () => {
     if (cargo.name == null || cargo.uri == null || cargo.mainTel == null){
@@ -48,7 +31,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      get()
+      dispatch('message', {text: 'cargos'})
       cargo = structuredClone(cargoDefault)
       alert("Запись Добавлена")
     }).catch((err) => {
@@ -73,7 +56,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      get()
+      dispatch('message', {text: 'cargos'})
       cargo = structuredClone(cargoDefault)
       alert("Запись Обновлена")
     }).catch((err) => {
@@ -94,7 +77,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      get()
+      dispatch('message', {text: 'cargos'})
       cargo = structuredClone(cargoDefault)
       alert("Запись удалена")
     }).catch((err) => {
@@ -102,17 +85,12 @@
     })
   }
 
-  const select = () => {
-    if (cargo.name == ""){
-      cargo = structuredClone(cargoDefault)
+  const select = (id) => {
+    cargo = structuredClone(cargoDefault)
+    if (id == ""){
       return
     }
-    for (let i of cargos){
-      if (i.name == cargo.name){
-        cargo = structuredClone(i)
-        return
-      }
-    }
+    cargo = cargos[id]
   }
 
   const telInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
@@ -132,10 +110,10 @@
     <span>Транспортные</span>
   </div>
   <div>
-    <select bind:value={cargo.name} on:change={select}>
+    <select value={cargo.id} on:change={(e) => select(e.target.value)}>
       <option value="">Новая</option>
-      {#each cargos as cargo}
-        <option value={cargo.name}>{cargo.name}</option>
+      {#each Object.values(cargos).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as cargo}
+        <option value={cargo.id}>{cargo.name}</option>
       {/each}
     </select>
   </div>
@@ -167,12 +145,16 @@
 <style>
 
   .container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin: 5px;
-    padding: 5px;
     border: 1px solid black;
     width: 250px;
     height: 250px;
     text-align: center;
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px 0px grey;
   }
 
 </style>

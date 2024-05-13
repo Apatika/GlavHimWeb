@@ -1,31 +1,45 @@
 <script>
   import NewOrder from "./NewOrder.svelte"
   
-  $: orders = []
+  let orders = {}
 
   let isEdit = false
-
-  export let managers = []
-  export let cargos = []
-
-  const updateOrders = (data) => {
-    orders = []
-    for (let v of Object.values(data)){
-      orders.push(v)
-    }
-    orders = orders.sort((a, b) => {
-      if (a.order.status > b.order.status) return -1
-      if (a.order.status < b.order.status) return 1
-      return 0
-    })
+  let editClient = {
+    id: null,
+    type: '0',
+    adress: null,
+    name: null,
+    surname: null,
+    secondName: null,
+    manager: null,
+    inn: null,
+    passportSerial: null,
+    passportNum: null,
+    contact: [{name: null, tel: null}],
+    email: null,
   }
+  let editOrder = {
+    id: null,
+    clientId: null,
+    payment: null,
+    toadress: false,
+    adress: {city: null, adress: null, terminal: "основной"},
+    invoice: [null],
+    cargo: null,
+    lastDate: null,
+    comment: null,
+    probes: [],
+  }
+
+  export let managers = {}
+  export let cargos = {}
 
   const getInWork = () => {
     fetch(`${window.location.origin}/inwork`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json();
     }).then(function(d) {
-      updateOrders(d)
+      orders = d
     }).catch(function(err) {
       alert(err);
     })
@@ -111,10 +125,13 @@
     }
   }
 
-  const onEdit = (e) => {
-    e.target.parentElement.parentElement.previousElementSibling.style.display = "block"
+  const onEdit = (order, client) => {
+    editClient = client
+    editOrder = order
+    let target = document.querySelector('#editor')
+    target.style.display = "block"
     document.body.style.pointerEvents = "none"
-    e.target.parentElement.parentElement.previousElementSibling.style.pointerEvents = "all"
+    target.style.pointerEvents = "all"
     isEdit = true
   }
 
@@ -125,11 +142,11 @@
     <div>
       <button id="refresh" on:click={getInWork}>Обновить</button>
     </div>
+    <div id="editor">
+      <NewOrder order={editOrder} client={editClient} {managers} {cargos} on:message={() => {isEdit = false; getInWork()}}></NewOrder>
+    </div>
     <div id="table">
-      {#each orders as order}
-        <div class="editor">
-          <NewOrder order={order.order} client={order.client} {managers} {cargos} on:message={() => {isEdit = false; getInWork()}}></NewOrder>
-        </div>
+      {#each Object.values(orders).sort((a, b) => {return a.order.status == b.order.status ? 0 : (a.order.status < b.order.status ? 1 : -1)}) as order}
         <div>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -243,7 +260,7 @@
               </div>
             </div>
             <div class="probes"></div>
-            <button class="edit" on:click={onEdit}>Редактировать</button>
+            <button class="edit" on:click={() => onEdit(order.order, order.client)}>Редактировать</button>
           </div>
         </div>
       {:else}
@@ -344,7 +361,7 @@
   .probes{
     flex-grow: 1;
   }
-  .editor{
+  #editor{
     display: none;
     position: absolute;
     width: 500px;

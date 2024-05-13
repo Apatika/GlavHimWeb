@@ -39,32 +39,32 @@ func (c *Cache) Get(field string) map[string]interface{} {
 	}
 }
 
-func (c *Cache) Update(field, id string, data interface{}) {
+func (c *Cache) Update(field, key string, data interface{}) {
 	c.mut.Lock()
 	switch field {
 	case config.Cfg.DB.Coll.Orders:
-		c.inWork[id] = data
+		c.inWork[key] = data
 	case config.Cfg.DB.Coll.Cargos:
-		c.cargos[id] = data
+		c.cargos[key] = data
 	case config.Cfg.DB.Coll.Chemistry:
-		c.chemistry[id] = data
+		c.chemistry[key] = data
 	case config.Cfg.DB.Coll.Users:
-		c.users[id] = data
+		c.users[key] = data
 	}
 	c.mut.Unlock()
 }
 
-func (c *Cache) Delete(field, id string) {
+func (c *Cache) Delete(field, key string) {
 	c.mut.Lock()
 	switch field {
 	case config.Cfg.DB.Coll.Orders:
-		delete(c.inWork, id)
+		delete(c.inWork, key)
 	case config.Cfg.DB.Coll.Cargos:
-		delete(c.cargos, id)
+		delete(c.cargos, key)
 	case config.Cfg.DB.Coll.Chemistry:
-		delete(c.chemistry, id)
+		delete(c.chemistry, key)
 	case config.Cfg.DB.Coll.Users:
-		delete(c.users, id)
+		delete(c.users, key)
 	}
 	c.mut.Unlock()
 }
