@@ -118,10 +118,6 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       alert("Запись обновлена")
-      document.querySelectorAll('.close').forEach((elem) => {
-        elem.parentElement.parentElement.style.display = "none"
-      })
-      document.body.style.pointerEvents = "all"
       dispatch('message', false)
     }).catch((err) => {
       alert(err)
@@ -141,8 +137,6 @@
   }
 
   const onClose = (e) => {
-    e.target.parentElement.parentElement.style.display = "none"
-    document.body.style.pointerEvents = "all"
     dispatch('message', false)
   }
 
@@ -386,7 +380,7 @@
     margin-bottom: 2px;
   }
   #contact input, #nums input{
-    width: 90px;
+    width: 110px;
   }
   .close{
     position: fixed;

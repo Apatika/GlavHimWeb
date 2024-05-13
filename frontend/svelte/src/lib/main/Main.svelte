@@ -125,6 +125,22 @@
     }
   }
 
+  const dispatchEdit = () => {
+    document.querySelectorAll('.full-order').forEach((elem) => {
+      elem.style.padding = null
+      elem.style.height = '0px'
+    })
+    document.querySelectorAll('.order').forEach((elem) => {
+      elem.style.transform = 'scale(1)'
+      elem.style.boxShadow = 'none'
+    })
+    let target = document.querySelector('#editor')
+    target.style.display = "none"
+    document.body.style.pointerEvents = "all"
+    isEdit = false
+    getInWork()
+  }
+
   const onEdit = (order, client) => {
     editClient = client
     editOrder = order
@@ -143,7 +159,7 @@
       <button id="refresh" on:click={getInWork}>Обновить</button>
     </div>
     <div id="editor">
-      <NewOrder order={editOrder} client={editClient} {managers} {cargos} on:message={() => {isEdit = false; getInWork()}}></NewOrder>
+      <NewOrder order={editOrder} client={editClient} {managers} {cargos} on:message={dispatchEdit}></NewOrder>
     </div>
     <div id="table">
       {#each Object.values(orders).sort((a, b) => {return a.order.status == b.order.status ? 0 : (a.order.status < b.order.status ? 1 : -1)}) as order}
