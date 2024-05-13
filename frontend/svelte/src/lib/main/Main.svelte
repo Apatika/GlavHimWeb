@@ -151,6 +151,10 @@
     isEdit = true
   }
 
+  const sortOrders = (a, b) => {
+    return a.order.status > b.order.status ? -1 : (a.order.status < b.order.status ? 1 : (a.order.cargo < b.order.cargo ? -1 : 1))
+  }
+
 </script>
 
 <div class="container">
@@ -162,7 +166,7 @@
       <NewOrder order={editOrder} client={editClient} {managers} {cargos} on:message={dispatchEdit}></NewOrder>
     </div>
     <div id="table">
-      {#each Object.values(orders).sort((a, b) => {return a.order.status == b.order.status ? 0 : (a.order.status < b.order.status ? 1 : -1)}) as order}
+      {#each Object.values(orders).sort(sortOrders) as order}
         <div>
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <!-- svelte-ignore a11y-no-static-element-interactions -->
