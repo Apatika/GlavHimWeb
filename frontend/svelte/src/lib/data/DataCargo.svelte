@@ -2,15 +2,13 @@
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
-  let cargoDefault = {
+  let cargo = {
     id: null,
     name: null,
     uri: null,
     mainTel: null,
     managerTel: null
   }
-
-  let cargo = structuredClone(cargoDefault)
 
   export let cargos = {}
 
@@ -32,7 +30,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       dispatch('message', {text: 'cargos'})
-      cargo = structuredClone(cargoDefault)
+      Object.keys(cargo).forEach(c => cargo[c] = null)
       alert("Запись Добавлена")
     }).catch((err) => {
       alert(err)
@@ -57,7 +55,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       dispatch('message', {text: 'cargos'})
-      cargo = structuredClone(cargoDefault)
+      Object.keys(cargo).forEach(c => cargo[c] = null)
       alert("Запись Обновлена")
     }).catch((err) => {
       alert(err)
@@ -78,7 +76,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       dispatch('message', {text: 'cargos'})
-      cargo = structuredClone(cargoDefault)
+      Object.keys(cargo).forEach(c => cargo[c] = null)
       alert("Запись удалена")
     }).catch((err) => {
       alert(err)

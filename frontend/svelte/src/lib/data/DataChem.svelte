@@ -2,14 +2,12 @@
   import { createEventDispatcher } from 'svelte'
   const dispatch = createEventDispatcher()
 
-  let chemDefault = {
+  let chem = {
     id: null,
     name: null,
     sellValue: null,
     probeValue: null
   }
-
-  let chem = structuredClone(chemDefault)
 
   export let chems = {}
 
@@ -29,7 +27,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       dispatch('message', {text: 'chems'})
-      chem = structuredClone(chemDefault)
+      Object.keys(chem).forEach(c => chem[c] = null)
       alert("Запись Добавлена")
     }).catch((err) => {
       alert(err)
@@ -52,7 +50,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       dispatch('message', {text: 'chems'})
-      chem = structuredClone(chemDefault)
+      Object.keys(chem).forEach(c => chem[c] = null)
       alert("Запись Обновлена")
     }).catch((err) => {
       alert(err)
@@ -73,7 +71,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       dispatch('message', {text: 'chems'})
-      chem = structuredClone(chemDefault)
+      Object.keys(chem).forEach(c => chem[c] = null)
       alert("Запись удалена")
     }).catch((err) => {
       alert(err)

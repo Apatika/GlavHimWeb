@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
-  let clientDefault = {
+  export let client = {
     id: null,
     type: '0',
     adress: null,
@@ -16,7 +16,7 @@
     contact: [{name: null, tel: null}],
     email: null,
   }
-  let orderDefault = {
+  export let order = {
     id: null,
     clientId: null,
     payment: null,
@@ -28,9 +28,16 @@
     comment: null,
     probes: [],
   }
-
-  export let client = structuredClone(clientDefault)
-  export let order = structuredClone(orderDefault)
+  const setInitial = () => {
+    Object.keys(order).forEach(o => order[o] = null)
+    Object.keys(client).forEach(c => client[c] = null)
+    client.contact = [{name: null, tel: null}]
+    client.type = '0'
+    order.toadress = false
+    order.adress = {city: null, adress: null, terminal: "основной"}
+    order.invoice = [null]
+    order.probes = []
+  }
 
   let cities = []
   export let managers = {}
@@ -98,8 +105,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      order = structuredClone(orderDefault)
-      client = structuredClone(clientDefault)
+      setInitial()
       dispatch('message', false)
     }).catch((err) => {
       alert(err)
@@ -223,7 +229,7 @@
             </div>
             <div id="nums">
               {#if client.type != "2"}
-                <input type="text" bind:value={client.inn} on:keypress={telInput} on:input={innFormat} placeholder="ИНН">
+                <input class="inn" type="text" bind:value={client.inn} on:keypress={telInput} on:input={innFormat} placeholder="ИНН">
               {:else}
                 <div>
                   <input type="text" bind:value={client.passportSerial} on:keypress={telInput} on:input={passportFormat} placeholder="Серия">
@@ -380,6 +386,9 @@
     margin-bottom: 2px;
   }
   #contact input, #nums input{
+    width: 100px;
+  }
+  #nums .inn {
     width: 110px;
   }
   .close{

@@ -19,7 +19,7 @@
     email: null,
   }
   let editOrder = {
-    id: null,
+    id: "",
     clientId: null,
     payment: null,
     toadress: false,
@@ -449,7 +449,7 @@
   #refresh:hover{
     box-shadow: none;
   }
-  @media (min-width:960px){
+  @media (max-width:1600px){
     .order{
       font-size: 12px;
     }
