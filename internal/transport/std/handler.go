@@ -1,15 +1,20 @@
 package std
 
 import (
-	"encoding/json"
 	"fmt"
-	"glavhim-app/internal/config"
+	"glavhim-app/internal/service"
 	"html/template"
-	"log"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 const pathVar = "path"
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 func New() *http.ServeMux {
 	mux := http.NewServeMux()
@@ -23,7 +28,7 @@ func New() *http.ServeMux {
 	mux.HandleFunc("POST /orders", pushOrder)
 	mux.HandleFunc("PUT /orders", updateOrder)
 	mux.HandleFunc("PUT /orders/status", updateOrder)
-	mux.HandleFunc("GET /inwork", inWorkOrders)
+	mux.HandleFunc("GET /inwork", wsHandler)
 	mux.HandleFunc("GET /cities", getCities)
 
 	return mux
@@ -37,15 +42,21 @@ func index(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "index.html", nil)
 }
 
-func settings(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(struct {
-		RefreshRate int `json:"refreshRate"`
-	}{
-		RefreshRate: config.Cfg.Frontend.RefreshRate,
-	})
-}
-
-func errorResponse(w http.ResponseWriter, errText string, code int) {
-	log.Print(errText)
-	http.Error(w, errText, code)
+func wsHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		errorResponse(w, err.Error(), http.StatusInternalServerError)
+	}
+	ch := make(chan struct{}, 1)
+	id := clients.AddChan(ch)
+	ch <- struct{}{}
+	for {
+		<-ch
+		order := service.NewOrderFull()
+		data := order.GetAll()
+		if err := conn.WriteJSON(data); err != nil {
+			clients.DeleteChan(id)
+			conn.Close()
+		}
+	}
 }

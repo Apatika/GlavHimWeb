@@ -34,34 +34,20 @@
   export let managers = {}
   export let cargos = {}
 
-  const getInWork = () => {
-    fetch(`${window.location.origin}/inwork`).then(function(response) {
-      if (response.status != 200) throw new Error(response.statusText)
-      return response.json();
-    }).then(function(d) {
-      orders = d
-    }).catch(function(err) {
-      alert(err);
-    })
+let socket = new WebSocket("ws://localhost:8081/inwork");
+socket.onmessage = (event) => {
+  orders = JSON.parse(event.data)
+}
+socket.onclose = (event) => {
+  if (event.wasClean) {
+    alert(`[close] Соединение закрыто чисто, код=${event.code} причина=${event.reason}`);
+  } else {
+    alert('[close] Соединение прервано');
   }
-  getInWork()
-  const timer = ms => new Promise(res => setTimeout(res, ms))
-  const refreshInWork = async () => {
-    let refresh = 10000
-    await fetch(`/settings`).then(function(response) {
-      if (response.status != 200) throw new Error(response.statusText)
-      return response.json()
-    }).then((d) => {
-      refresh = d.refreshRate
-    }).catch((err) => {
-      alert(err)
-    })
-    while(true){
-      await timer(refresh)
-      if (!isEdit) getInWork()
-    }
-  }
-  //refreshInWork()
+}
+socket.onerror = (error) => {
+  alert(`[error]`);
+}
 
   const closeFullOrder = () => {
     document.querySelectorAll('.full-order').forEach((elem) => {
@@ -85,7 +71,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      getInWork()
+      //getInWork()
     }).catch((err) => {
       alert(err)
     })
@@ -115,7 +101,7 @@
   const toggleFullOrder = (event) => {
     let target = event.target.closest('.order').nextElementSibling
     if (target.style.height != '160px') {
-      getInWork()
+      //getInWork()
       closeFullOrder()
       target.style.padding = '15px'
       target.style.height = '160px'
@@ -136,7 +122,7 @@
     target.style.display = "none"
     document.body.style.pointerEvents = "all"
     isEdit = false
-    getInWork()
+    //getInWork()
   }
 
   const onEdit = (order, client) => {
@@ -158,7 +144,7 @@
 <div class="container">
   <div id="table-container">
     <div>
-      <button id="refresh" on:click={getInWork}>Обновить</button>
+      <button id="refresh" on:click={/*getInWork*/()=>{}}>Обновить</button>
     </div>
     <div id="editor">
       <NewOrder order={editOrder} client={editClient} {managers} {cargos} on:message={dispatchEdit}></NewOrder>
@@ -303,7 +289,7 @@
   </div>
   <div id="new-order">
     <div id="new-order-title"><strong>Новый Заказ</strong></div>
-    <NewOrder {managers} {cargos} on:message={() => {isEdit = false; getInWork()}}></NewOrder>
+    <NewOrder {managers} {cargos} on:message={() => {isEdit = false; /*getInWork()*/}}></NewOrder>
   </div>
 </div>
 

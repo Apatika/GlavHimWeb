@@ -76,7 +76,6 @@ func (o *OrderFull) Update(raw []byte) error {
 		log.Printf("update status ID: %v, status: %v", o.Order.ID, o.Order.Status)
 	} else {
 		storage.Cache.Update(config.Cfg.DB.Coll.Orders, o.Order.ID, o)
-		log.Printf("update order ID: %v", o.Order.ID)
 	}
 	return nil
 }

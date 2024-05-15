@@ -1,7 +1,6 @@
 package std
 
 import (
-	"encoding/json"
 	"fmt"
 	"glavhim-app/internal/service"
 	"io"
@@ -9,6 +8,7 @@ import (
 )
 
 func pushOrder(w http.ResponseWriter, r *http.Request) {
+	defer clients.Update()
 	order := service.NewOrderFull()
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -19,9 +19,11 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 }
 
 func updateOrder(w http.ResponseWriter, r *http.Request) {
+	defer clients.Update()
 	order := service.NewOrderFull()
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -32,10 +34,4 @@ func updateOrder(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
-
-func inWorkOrders(w http.ResponseWriter, r *http.Request) {
-	order := service.NewOrderFull()
-	data := order.GetAll()
-	json.NewEncoder(w).Encode(data)
 }

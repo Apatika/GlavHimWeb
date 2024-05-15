@@ -2,7 +2,9 @@ package std
 
 import (
 	"encoding/json"
+	"glavhim-app/internal/config"
 	"glavhim-app/internal/service"
+	"log"
 	"net/http"
 )
 
@@ -14,4 +16,17 @@ func getCities(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(cities)
+}
+
+func settings(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(struct {
+		RefreshRate int `json:"refreshRate"`
+	}{
+		RefreshRate: config.Cfg.Frontend.RefreshRate,
+	})
+}
+
+func errorResponse(w http.ResponseWriter, errText string, code int) {
+	log.Print(errText)
+	http.Error(w, errText, code)
 }
