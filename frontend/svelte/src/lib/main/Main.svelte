@@ -3,7 +3,6 @@
   
   let orders = {}
 
-  let isEdit = false
   let editClient = {
     id: null,
     type: '0',
@@ -101,7 +100,6 @@ socket.onerror = (error) => {
   const toggleFullOrder = (event) => {
     let target = event.target.closest('.order').nextElementSibling
     if (target.style.height != '160px') {
-      //getInWork()
       closeFullOrder()
       target.style.padding = '15px'
       target.style.height = '160px'
@@ -121,8 +119,6 @@ socket.onerror = (error) => {
     let target = document.querySelector('#editor')
     target.style.display = "none"
     document.body.style.pointerEvents = "all"
-    isEdit = false
-    //getInWork()
   }
 
   const onEdit = (order, client) => {
@@ -132,7 +128,6 @@ socket.onerror = (error) => {
     target.style.display = "block"
     document.body.style.pointerEvents = "none"
     target.style.pointerEvents = "all"
-    isEdit = true
   }
 
   const sortOrders = (a, b) => {
@@ -143,9 +138,6 @@ socket.onerror = (error) => {
 
 <div class="container">
   <div id="table-container">
-    <div>
-      <button id="refresh" on:click={/*getInWork*/()=>{}}>Обновить</button>
-    </div>
     <div id="editor">
       <NewOrder order={editOrder} client={editClient} {managers} {cargos} on:message={dispatchEdit}></NewOrder>
     </div>
@@ -289,7 +281,7 @@ socket.onerror = (error) => {
   </div>
   <div id="new-order">
     <div id="new-order-title"><strong>Новый Заказ</strong></div>
-    <NewOrder {managers} {cargos} on:message={() => {isEdit = false; /*getInWork()*/}}></NewOrder>
+    <NewOrder {managers} {cargos}></NewOrder>
   </div>
 </div>
 
@@ -403,8 +395,7 @@ socket.onerror = (error) => {
     z-index: 5;
   }
   #new-order{
-    flex-basis: 21%;
-    min-width: 21%;
+    width: 370px;
     background-color: #FFF5EE;
     border: 1px solid black;
     border-radius: 5px;
@@ -421,19 +412,6 @@ socket.onerror = (error) => {
   #table{
     border-radius: 5px;
     box-shadow: 0px 0px 10px 0px black, 0px 0px 10px 0px black inset;
-  }
-  #refresh{
-    margin-left: 10px;
-    margin-bottom: 7px;
-    border: none;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px 0px grey;
-    background-color: #191970;
-    outline: none;
-    color: #fdf5df;
-  }
-  #refresh:hover{
-    box-shadow: none;
   }
   @media (max-width:1600px){
     .order{

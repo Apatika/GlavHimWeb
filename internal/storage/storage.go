@@ -16,6 +16,7 @@ type IDataBase interface {
 	GetNewID() string
 	CheckClient(params ...string) (string, error)
 	GetCities(string, interface{}) error
+	GetClients(reg string, clients interface{}) error
 }
 
 func DB() IDataBase {

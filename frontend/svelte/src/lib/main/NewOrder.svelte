@@ -40,6 +40,7 @@
   }
 
   let cities = []
+  let clientList = []
   export let managers = {}
   export let cargos = {}
 
@@ -148,20 +149,48 @@
 
   const searchCity = (e) => {
     fetch(`${window.location.origin}/cities?city=${e.target.value}`).then(function(response) {
-    return response.json();
-  }).then((data) => {
-    if (data.length == 0) throw new Error("storage empty")
-    cities = data
-  }).catch(() => {
-    return
-  })
+      return response.json();
+    }).then((data) => {
+      if (data.length == 0) throw new Error("storage empty")
+      cities = data
+    }).catch(() => {
+      return
+    })
+  }
+
+  const searchClient = (e) => {
+    fetch(`${window.location.origin}/clients?client=${e.target.value}`).then(function(response) {
+      return response.json();
+    }).then((data) => {
+      if (data.length == 0) throw new Error("storage empty")
+      clientList = data
+    }).catch(() => {
+      return
+    })
+  }
+
+  const getClient = (e) => {
+    for (let v of clientList){
+      if (e.target.value == v.id){
+        client = v
+        order.adress = v.adress
+        return
+      }
+    }
   }
 
 </script>
 
 {#if order.id == null}
   <div id="search">
-    <input type="text" placeholder="Поиск...">
+    <input list="clients-list" type="text" on:input={searchClient} on:change={getClient} placeholder="Поиск...">
+    {#if order.id == null}
+      <datalist id="clients-list">
+        {#each clientList as cl}
+          <option value={cl.id}>{cl.surname} {cl.name} {cl.secondName}</option>
+        {/each}
+      </datalist>
+    {/if}
   </div>
 {:else}
   <div>
@@ -362,6 +391,9 @@
   #search{
     margin-left: 5px;
     margin-top: 10px;
+  }
+  #search input{
+    width: 250px;
   }
   #container{
     margin: 30px 0px 5px 15px;

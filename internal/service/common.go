@@ -47,6 +47,15 @@ func GetCities(reg string) ([]City, error) {
 	return cities, nil
 }
 
+func GetClients(reg string) ([]Client, error) {
+	var clients []Client
+	db := storage.DB()
+	if err := db.GetClients(reg, &clients); err != nil {
+		return nil, err
+	}
+	return clients, nil
+}
+
 func InWork() ([]OrderFull, error) {
 	var orders []Order
 	db := storage.DB()

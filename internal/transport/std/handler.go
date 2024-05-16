@@ -20,7 +20,6 @@ func New() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./static/assets/"))))
 	mux.HandleFunc("/", index)
-	mux.HandleFunc("GET /settings", settings)
 	mux.HandleFunc(fmt.Sprintf("GET /db/{%v}", pathVar), dbPageGet)
 	mux.HandleFunc(fmt.Sprintf("POST /db/{%v}", pathVar), dbPagePost)
 	mux.HandleFunc(fmt.Sprintf("PUT /db/{%v}", pathVar), dbPagePut)
@@ -30,6 +29,7 @@ func New() *http.ServeMux {
 	mux.HandleFunc("PUT /orders/status", updateOrder)
 	mux.HandleFunc("GET /inwork", wsHandler)
 	mux.HandleFunc("GET /cities", getCities)
+	mux.HandleFunc("GET /clients", getClients)
 
 	return mux
 }
