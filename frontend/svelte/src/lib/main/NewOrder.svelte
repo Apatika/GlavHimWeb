@@ -26,7 +26,7 @@
     cargo: null,
     lastDate: null,
     comment: null,
-    probes: [],
+    probes: {},
   }
   const setInitial = () => {
     Object.keys(order).forEach(o => order[o] = null)
@@ -43,6 +43,7 @@
   let clientList = []
   export let managers = {}
   export let cargos = {}
+  export let chems = {}
 
   const check = () => {
     if (client.manager == null || client.manager == ""){
@@ -125,6 +126,7 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       alert("Запись обновлена")
+      resetProbeCounts()
       dispatch('message', false)
     }).catch((err) => {
       alert(err)
@@ -144,6 +146,7 @@
   }
 
   const onClose = (e) => {
+    resetProbeCounts()
     dispatch('message', false)
   }
 
@@ -179,25 +182,57 @@
     }
   }
 
+  const probesShow = (e) => {
+    let target = e.target.previousElementSibling
+    target.style.height = '500px'
+    target.style.padding = '10px'
+    probesLoad()
+  }
+
+  const probesClose = (e) => {
+    let target = e.target.closest('.probes-container')
+    target.style.height = '0px'
+    target.style.padding = '0px'
+    for (let v of Object.values(chems)) {
+      if (v.probeCount > 0) {
+        order.probes[v.id] = v
+      }
+    }
+  }
+
+  const probesLoad = () => {
+    for (let v of Object.values(chems)){
+      if (v.id in order.probes){
+        chems[v.id] = order.probes[v.id]
+      }
+    }
+  }
+
+  const resetProbeCounts = () => {
+    for (let k of Object.keys(chems)){
+      (chems[k]).probeCount = 0
+    }
+  }
+
 </script>
 
-{#if order.id == null}
-  <div id="search">
-    <input list="clients-list" type="text" on:input={searchClient} on:change={getClient} placeholder="Поиск...">
-    {#if order.id == null}
-      <datalist id="clients-list">
-        {#each clientList as cl}
-          <option value={cl.id}>{cl.surname} {cl.name} {cl.secondName}</option>
-        {/each}
-      </datalist>
-    {/if}
-  </div>
-{:else}
-  <div>
-    <button class="close" on:click={onClose}>Закрыть</button>
-  </div>
-{/if}
 <div id="container">
+  {#if order.id == null}
+    <div id="search">
+      <input list="clients-list" type="text" on:input={searchClient} on:change={getClient} placeholder="Поиск...">
+      {#if order.id == null}
+        <datalist id="clients-list">
+          {#each clientList as cl}
+            <option value={cl.id}>{cl.surname} {cl.name} {cl.secondName}</option>
+          {/each}
+        </datalist>
+      {/if}
+    </div>
+  {:else}
+    <div>
+      <button class="close" on:click={onClose}>Закрыть</button>
+    </div>
+  {/if}
   <div id="main">
     <div id="client-name">
       <select bind:value={client.type}>
@@ -365,6 +400,24 @@
               <textarea  rows="4" bind:value={order.comment} placeholder="Комментарий"></textarea>
             </div>
           </div>
+          <div>
+            <div class="probes-container">
+              <button on:click={probesClose}>закрыть</button>
+              {#each Object.values(chems).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
+                <div class="probes">
+                  <div class="probes-name">
+                    <span>{chem.name}</span>
+                  </div>
+                  <div class="probes-count">
+                    <button on:click={() => {if (chem.probeCount > 0) chem.probeCount--}}>-</button>
+                    <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
+                    <button on:click={() => chem.probeCount++}>+</button>
+                  </div>
+                </div>
+              {/each}
+            </div>
+            <button on:click={probesShow}>ПРОБНИКИ</button>
+          </div>
         </div>
       </div>
     </div>
@@ -438,5 +491,35 @@
   .add-del-button{
     width: 20px;
     height: 20px;
+  }
+  .probes{
+    display: flex;
+  }
+  .probes-name{
+    width: 150px;
+  }
+  .probes-count{
+    width: 100px;
+  }
+  .probes-count-span{
+    display: inline-block;
+    width: 50px;
+    margin: 0px 3px;
+    text-align: center;
+  }
+  .probes-container{
+    position: absolute;
+    background-color: #FFF5EE;
+    border: 1px solid black;
+    border-right: none;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0px black;
+    top: 0;
+    right: 0;
+    width: 300;
+    height: 0px;
+    overflow: auto;
+    text-align: center;
+    transition: all .2s linear;
   }
 </style>

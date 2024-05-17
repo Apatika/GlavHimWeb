@@ -78,7 +78,7 @@
 </div>
 <div class="content">
   <div class="page" id="main">
-    <Main {managers} {cargos}></Main>
+    <Main {managers} {cargos} {chems}></Main>
   </div>
   <div class="page" id="data">
     <Data {managers} {cargos} {chems} on:message={(e) => update(e.detail.text)}></Data>

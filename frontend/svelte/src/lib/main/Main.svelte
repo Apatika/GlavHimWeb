@@ -27,11 +27,12 @@
     cargo: null,
     lastDate: null,
     comment: null,
-    probes: [],
+    probes: {},
   }
 
   export let managers = {}
   export let cargos = {}
+  export let chems = {}
 
 let socket = new WebSocket("ws://localhost:8081/inwork");
 socket.onmessage = (event) => {
@@ -70,7 +71,6 @@ socket.onerror = (error) => {
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      //getInWork()
     }).catch((err) => {
       alert(err)
     })
@@ -139,7 +139,7 @@ socket.onerror = (error) => {
 <div class="container">
   <div id="table-container">
     <div id="editor">
-      <NewOrder order={editOrder} client={editClient} {managers} {cargos} on:message={dispatchEdit}></NewOrder>
+      <NewOrder order={editOrder} client={editClient} {managers} {cargos} {chems} on:message={dispatchEdit}></NewOrder>
     </div>
     <div id="table">
       {#each Object.values(orders).sort(sortOrders) as order}
@@ -270,7 +270,12 @@ socket.onerror = (error) => {
                 <div>{order.order.comment}</div>
               </div>
             </div>
-            <div class="probes"></div>
+            <div class="probes">
+              {#if Object.keys(order.order.probes).length > 0}<span><strong>ПРОБНИКИ</strong></span>{/if}
+              {#each Object.values(order.order.probes) as chem}
+                <div>{chem.name} - {(chem.probeValue * chem.probeCount) / 1000} л.</div>
+              {/each}
+            </div>
             <button class="edit" on:click={() => onEdit(order.order, order.client)}>Редактировать</button>
           </div>
         </div>
@@ -281,7 +286,7 @@ socket.onerror = (error) => {
   </div>
   <div id="new-order">
     <div id="new-order-title"><strong>Новый Заказ</strong></div>
-    <NewOrder {managers} {cargos}></NewOrder>
+    <NewOrder {managers} {cargos} {chems}></NewOrder>
   </div>
 </div>
 
@@ -345,11 +350,11 @@ socket.onerror = (error) => {
     overflow: hidden;
   }
   .full-order-order{
-    flex-basis: 30%;
+    width: 350px;
     font-size: small;
   }
   .full-order-client{
-    flex-basis: 25%;
+    width: 300px;
     font-size: small;
   }
   .achtung{
@@ -366,8 +371,8 @@ socket.onerror = (error) => {
     overflow-wrap: break-word;
   }
   .full-label{
-    flex-basis: 25%;
-    min-width: 25%;
+    width: 100px;
+    min-width: 100px;
   }
   .edit{
     float: right;
@@ -375,6 +380,8 @@ socket.onerror = (error) => {
   }
   .probes{
     flex-grow: 1;
+    text-align: center;
+    font-size: small;
   }
   #payment-span{
     margin-right: 5px;
