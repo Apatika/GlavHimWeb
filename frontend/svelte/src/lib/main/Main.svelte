@@ -1,7 +1,7 @@
 <script>
   import NewOrder from "./NewOrder.svelte"
   
-  let orders = {}
+  
 
   let editClient = {
     id: null,
@@ -33,21 +33,7 @@
   export let managers = {}
   export let cargos = {}
   export let chems = {}
-
-let socket = new WebSocket("ws://localhost:8081/inwork");
-socket.onmessage = (event) => {
-  orders = JSON.parse(event.data)
-}
-socket.onclose = (event) => {
-  if (event.wasClean) {
-    alert(`[close] Соединение закрыто чисто, код=${event.code} причина=${event.reason}`);
-  } else {
-    alert('[close] Соединение прервано');
-  }
-}
-socket.onerror = (error) => {
-  alert(`[error]`);
-}
+  export let orders = {}
 
   const closeFullOrder = () => {
     document.querySelectorAll('.full-order').forEach((elem) => {
@@ -119,6 +105,9 @@ socket.onerror = (error) => {
     let target = document.querySelector('#editor')
     target.style.display = "none"
     document.body.style.pointerEvents = "all"
+    for (let k of Object.keys(chems)){
+      chems[k].probeCount = 0
+    }
   }
 
   const onEdit = (order, client) => {
@@ -165,7 +154,7 @@ socket.onerror = (error) => {
               {/if}
             </div>
             {#if order.order.lastDate != ""} <div class="achtung" on:click={toggleFullOrder}><strong>{order.order.lastDate}</strong></div> {/if}
-            {#if order.order.probes.length > 0} <div class="achtung" on:click={toggleFullOrder}><strong>ПРОБНИКИ</strong></div> {/if}
+            {#if Object.keys(order.order.probes).length > 0} <div class="achtung" on:click={toggleFullOrder}><strong>ПРОБНИКИ</strong></div> {/if}
             {#if order.order.payment} <div class="achtung" id="payment-span" on:click={toggleFullOrder}><strong>ЗА НАШ СЧЕТ</strong></div> {/if}
             <div class="order-item status" on:click={() => {return}}>
               <select bind:value={order.order.status}
@@ -272,7 +261,7 @@ socket.onerror = (error) => {
             </div>
             <div class="probes">
               {#if Object.keys(order.order.probes).length > 0}<span><strong>ПРОБНИКИ</strong></span>{/if}
-              {#each Object.values(order.order.probes) as chem}
+              {#each Object.values(order.order.probes).filter(val => val.probeCount > 0).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
                 <div>{chem.name} - {(chem.probeValue * chem.probeCount) / 1000} л.</div>
               {/each}
             </div>

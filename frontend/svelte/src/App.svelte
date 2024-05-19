@@ -1,16 +1,33 @@
 <script>
   import Main from "./lib/main/Main.svelte";
   import Data from "./lib/data/Data.svelte";
+  import Route from "./lib/route/Route.svelte";
 
   let managers = {}
   let cargos = {}
   let chems = {}
+  let orders = {}
 
   window.onload = () => {
     document.querySelector('#main').style.display = 'block'
     getManagers()
     getCargos()
     getChems()
+  }
+
+  let socket = new WebSocket("ws://localhost:8081/inwork");
+  socket.onmessage = (event) => {
+    orders = JSON.parse(event.data)
+  }
+  socket.onclose = (event) => {
+    if (event.wasClean) {
+      alert(`[close] Соединение закрыто чисто, код=${event.code} причина=${event.reason}`);
+    } else {
+      alert('[close] Соединение прервано');
+    }
+  }
+  socket.onerror = (error) => {
+    alert(`[error]`);
   }
 
   const getManagers = () => {
@@ -75,13 +92,17 @@
 <div class="nav">
   <button name='main' on:click={change}>Главная</button>
   <button name='data' on:click={change}>База Данных</button>
+  <button name='route' on:click={change}>Маршрут</button>
 </div>
 <div class="content">
   <div class="page" id="main">
-    <Main {managers} {cargos} {chems}></Main>
+    <Main {orders} {managers} {cargos} {chems}></Main>
   </div>
   <div class="page" id="data">
     <Data {managers} {cargos} {chems} on:message={(e) => update(e.detail.text)}></Data>
+  </div>
+  <div class="page" id="route">
+    <Route {orders}></Route>
   </div>
 </div>
 
@@ -94,9 +115,9 @@
     margin-top: 1px;
     font-size: 18px;
     height: 40px;
-    border-top: 1px solid #fdf5df;
+    border-top: 1px solid var(--background-main);
     border-radius: 5px;
-    background-color: #191970;
+    background-color: var(--border-main);
     box-shadow: 0px 0px 10px 2px black;
   }
   button:hover{
@@ -111,11 +132,11 @@
   .nav{
     display: flex;
     flex-direction: column;
-    background-color: #fdf5df;
+    background-color: var(--background-main);
     width: 150px;
   }
   .content{
-    background-color: #fdf5df;
+    background-color: var(--background-main);
     flex-grow: 1;
   }
   @media (min-width:960px){

@@ -116,6 +116,7 @@
 
   const update = () => {
     client.adress = order.adress
+    if (Object.keys(order.probes).length == 0) order.probes = Object.assign({}, chems)
     order.status = "Изменен!"
     fetch(`${window.location.origin}/orders`, {
       method: "PUT",
@@ -126,7 +127,6 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       alert("Запись обновлена")
-      resetProbeCounts()
       dispatch('message', false)
     }).catch((err) => {
       alert(err)
@@ -146,7 +146,6 @@
   }
 
   const onClose = (e) => {
-    resetProbeCounts()
     dispatch('message', false)
   }
 
@@ -186,32 +185,12 @@
     let target = e.target.previousElementSibling
     target.style.height = '500px'
     target.style.padding = '10px'
-    probesLoad()
   }
 
   const probesClose = (e) => {
     let target = e.target.closest('.probes-container')
     target.style.height = '0px'
     target.style.padding = '0px'
-    for (let v of Object.values(chems)) {
-      if (v.probeCount > 0) {
-        order.probes[v.id] = v
-      }
-    }
-  }
-
-  const probesLoad = () => {
-    for (let v of Object.values(chems)){
-      if (v.id in order.probes){
-        chems[v.id] = order.probes[v.id]
-      }
-    }
-  }
-
-  const resetProbeCounts = () => {
-    for (let k of Object.keys(chems)){
-      (chems[k]).probeCount = 0
-    }
   }
 
 </script>
@@ -403,18 +382,34 @@
           <div>
             <div class="probes-container">
               <button on:click={probesClose}>закрыть</button>
-              {#each Object.values(chems).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
-                <div class="probes">
-                  <div class="probes-name">
-                    <span>{chem.name}</span>
+              {#if Object.keys(order.probes).length == 0}
+                {#each Object.values(chems).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
+                  <div class="probes">
+                    <div class="probes-name">
+                      <span>{chem.name}</span>
+                    </div>
+                    <div class="probes-count">
+                      <button on:click={() => {if (chem.probeCount > 0) chem.probeCount--}}>-</button>
+                      <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
+                      <button on:click={() => chem.probeCount++}>+</button>
+                    </div>
                   </div>
-                  <div class="probes-count">
-                    <button on:click={() => {if (chem.probeCount > 0) chem.probeCount--}}>-</button>
-                    <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
-                    <button on:click={() => chem.probeCount++}>+</button>
+                {/each}
+              {:else}
+                {#each Object.values(order.probes).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
+                  <div class="probes">
+                    <div class="probes-name">
+                      <span>{chem.name}</span>
+                    </div>
+                    <div class="probes-count">
+                      <button on:click={() => {if (chem.probeCount > 0) chem.probeCount--}}>-</button>
+                      <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
+                      <button on:click={() => chem.probeCount++}>+</button>
+                    </div>
                   </div>
-                </div>
-              {/each}
+                {/each}
+              {/if}
+              
             </div>
             <button on:click={probesShow}>ПРОБНИКИ</button>
           </div>

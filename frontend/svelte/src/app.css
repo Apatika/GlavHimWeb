@@ -12,6 +12,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --background-main: #fdf5df;
+  --border-main: #191970;
 }
 input[type="text"], textarea{
   background-color: transparent;
