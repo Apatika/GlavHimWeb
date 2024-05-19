@@ -127,7 +127,10 @@
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
       alert("Запись обновлена")
-      dispatch('message', false)
+      dispatch('message', {
+        id: order.id,
+        update: true
+      })
     }).catch((err) => {
       alert(err)
     })
@@ -146,7 +149,10 @@
   }
 
   const onClose = (e) => {
-    dispatch('message', false)
+    dispatch('message', {
+      id: order.id,
+      update: false
+    })
   }
 
   const searchCity = (e) => {

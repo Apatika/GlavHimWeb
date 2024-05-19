@@ -103,13 +103,16 @@
     }
   }
 
-  const dispatchEdit = () => {
+  const dispatchEdit = (detail) => {
     closeFullOrder()
     let target = document.querySelector('#editor')
     target.style.display = "none"
     document.body.style.pointerEvents = "all"
     for (let k of Object.keys(chems)){
       chems[k].probeCount = 0
+    }
+    if (detail.update){
+      dispatch('message', {routeId: detail.id})
     }
   }
 
@@ -131,7 +134,7 @@
 <div class="container">
   <div id="table-container">
     <div id="editor">
-      <NewOrder order={editOrder} client={editClient} {managers} {cargos} {chems} on:message={dispatchEdit}></NewOrder>
+      <NewOrder order={editOrder} client={editClient} {managers} {cargos} {chems} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
     </div>
     <div id="table">
       {#each Object.values(orders).sort(sortOrders) as order}
