@@ -1,4 +1,6 @@
 <script>
+  import { createEventDispatcher } from "svelte"
+  const dispatch = createEventDispatcher()
   import NewOrder from "./NewOrder.svelte"
   
   let editClient = {
@@ -55,6 +57,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
+      dispatch('message', {routeId: order.order.id})
     }).catch((err) => {
       alert(err)
     })

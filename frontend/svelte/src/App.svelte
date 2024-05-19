@@ -98,6 +98,13 @@
     }
   }
 
+  const removeRoute = (id) => {
+    const index = routeIds.indexOf(id);
+    if (index > -1) {
+      routeIds = routeIds.filter(elem => elem != id)
+    }
+  }
+
 </script>
 
 <div class="nav">
@@ -107,7 +114,7 @@
 </div>
 <div class="content">
   <div class="page" id="main">
-    <Main {orders} {managers} {cargos} {chems}></Main>
+    <Main {orders} {managers} {cargos} {chems} on:message={(e) => removeRoute(e.detail.routeId)}></Main>
   </div>
   <div class="page" id="data">
     <Data {managers} {cargos} {chems} on:message={(e) => update(e.detail.text)}></Data>
