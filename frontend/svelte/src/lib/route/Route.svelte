@@ -45,6 +45,14 @@
           {order.client.name}
           {#if order.client.surname != ""} {order.client.secondName}{/if}          
         </div>
+        <div>
+          <span>{order.order.adress.city}, </span>
+          {#if order.order.adress.adress != ""}
+            {order.order.adress.adress}
+          {:else}
+            {order.order.adress.terminal}
+          {/if}
+        </div>
         <button class="toggle" on:click={(e) => add(e, order)}>></button>
       </div>
     {/each}
@@ -59,6 +67,14 @@
           {#if order.client.surname != ""}{order.client.surname} {/if}
           {order.client.name}
           {#if order.client.surname != ""} {order.client.secondName}{/if}          
+        </div>
+        <div>
+          <span>{order.order.adress.city}, </span>
+          {#if order.order.adress.adress != ""}
+            {order.order.adress.adress}
+          {:else}
+            {order.order.adress.terminal}
+          {/if}
         </div>
         <div class="move">
           <button on:click={() => del(order)}>X</button>
