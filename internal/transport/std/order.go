@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func pushOrder(w http.ResponseWriter, r *http.Request) {
+func orderPush(w http.ResponseWriter, r *http.Request) {
 	defer clients.Update()
 	order := service.NewOrderFull()
 	body, err := io.ReadAll(r.Body)
@@ -19,10 +19,9 @@ func pushOrder(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
-func updateOrder(w http.ResponseWriter, r *http.Request) {
+func orderUpdate(w http.ResponseWriter, r *http.Request) {
 	defer clients.Update()
 	order := service.NewOrderFull()
 	body, err := io.ReadAll(r.Body)

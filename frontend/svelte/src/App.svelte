@@ -7,6 +7,8 @@
   let cargos = {}
   let chems = {}
   let orders = {}
+  let routeIds = []
+  let onOpen = true
 
   window.onload = () => {
     document.querySelector('#main').style.display = 'block'
@@ -15,9 +17,18 @@
     getChems()
   }
 
+  const getRoute = () => {
+    let arr = Object.values(orders).filter(elem => elem.order.status == "В Маршрут")
+    arr.forEach(elem => routeIds.push(elem.order.id))
+  }
+
   let socket = new WebSocket("ws://localhost:8081/inwork");
   socket.onmessage = (event) => {
     orders = JSON.parse(event.data)
+    if (onOpen){
+      getRoute()
+      onOpen = false
+    }
   }
   socket.onclose = (event) => {
     if (event.wasClean) {
@@ -27,7 +38,7 @@
     }
   }
   socket.onerror = (error) => {
-    alert(`[error]`);
+    alert(`[error]`)
   }
 
   const getManagers = () => {
@@ -102,7 +113,7 @@
     <Data {managers} {cargos} {chems} on:message={(e) => update(e.detail.text)}></Data>
   </div>
   <div class="page" id="route">
-    <Route {orders}></Route>
+    <Route {orders} ids={routeIds}></Route>
   </div>
 </div>
 

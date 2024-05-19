@@ -1,8 +1,6 @@
 <script>
   import NewOrder from "./NewOrder.svelte"
   
-  
-
   let editClient = {
     id: null,
     type: '0',
@@ -78,6 +76,8 @@
         return "#FF0000"
       case "Изменен!":
         return "#00FF00"
+      case "В Маршрут":
+        return "#008B8B"
       default:
         return "white"
     }
@@ -168,6 +168,7 @@
                 <option value="СТОП">СТОП</option>
                 <option value="Отгружен">Отгружен</option>
                 <option value="Изменен!" disabled>Изменен!</option>
+                <option value="В Маршрут" disabled>В Маршрут</option>
               </select>
             </div>
           </div>

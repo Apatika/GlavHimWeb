@@ -11,6 +11,7 @@ type Cache struct {
 	chemistry map[string]interface{}
 	cargos    map[string]interface{}
 	users     map[string]interface{}
+	route     []string
 	mut       sync.RWMutex
 }
 
@@ -21,6 +22,7 @@ func New() *Cache {
 		chemistry: make(map[string]interface{}),
 		cargos:    make(map[string]interface{}),
 		users:     make(map[string]interface{}),
+		route:     make([]string, 0),
 	}
 }
 
