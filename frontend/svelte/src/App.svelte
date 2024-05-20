@@ -22,7 +22,7 @@
     arr.forEach(elem => routeIds.push(elem.order.id))
   }
 
-  let socket = new WebSocket("ws://localhost:8081/inwork");
+  let socket = new WebSocket(`ws://${window.location.host}/inwork`);
   socket.onmessage = (event) => {
     orders = JSON.parse(event.data)
     if (onOpen){
@@ -160,6 +160,11 @@
   @media (min-width:960px){
     button {
       font-size: 14px;
+    }
+  }
+  @media (max-width:1364px){
+    .nav{
+      display: none;
     }
   }
 </style>

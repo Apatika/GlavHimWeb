@@ -90,10 +90,12 @@
 
   const toggleFullOrder = (event) => {
     let target = event.target.closest('.order').nextElementSibling
-    if (target.style.height != '160px') {
+    let height = "160px"
+    if (window.screen.width < 1366) height = "300px"
+    if (target.style.height != height) {
       closeFullOrder()
       target.style.padding = '15px'
-      target.style.height = '160px'
+      target.style.height = height
       event.target.closest('.order').style.transform = 'scale(1.005)'
       event.target.closest('.order').style.boxShadow = '0px 0px 10px black'
     }
@@ -138,6 +140,12 @@
     <div id="editor">
       <NewOrder order={editOrder} client={editClient} {managers} {cargos} {chems} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
     </div>
+    <div class="legend">
+      <span>🧴 - пробники</span>
+      <span>💰 - за наш счет</span>
+      <span>💬 - комментарий</span>
+      <span><strong>2024-05-17</strong> - крайняя дата</span>
+    </div>
     <div id="table">
       {#each Object.values(orders).sort(sortOrders) as order}
         <div>
@@ -146,7 +154,7 @@
           <div class="order" style="background-color: {getColor(order.order.status)}">
             <div class="order-item cargo" on:click={toggleFullOrder}>
               <div><strong>{order.order.cargo}</strong></div>
-              <div>счет: 
+              <div class="additional">счет: 
                 {#each order.order.invoice as invoice}
                   <span>{invoice} </span>
                 {/each}
@@ -161,9 +169,10 @@
                 <div>терминал: {order.order.adress.terminal}</div>
               {/if}
             </div>
-            {#if order.order.lastDate != ""} <div class="achtung" on:click={toggleFullOrder}><strong>{order.order.lastDate}</strong></div> {/if}
-            {#if Object.keys(order.order.probes).length > 0} <div class="achtung" on:click={toggleFullOrder}><strong>ПРОБНИКИ</strong></div> {/if}
-            {#if order.order.payment} <div class="achtung" id="payment-span" on:click={toggleFullOrder}><strong>ЗА НАШ СЧЕТ</strong></div> {/if}
+            {#if order.order.lastDate != ""} <div class="last-date" on:click={toggleFullOrder}><strong>{order.order.lastDate}</strong></div> {/if}
+            {#if Object.keys(order.order.probes).length > 0} <div class="achtung" on:click={toggleFullOrder}><strong>🧴</strong></div> {/if}
+            {#if order.order.payment} <div class="achtung" id="payment-span" on:click={toggleFullOrder}><strong>💰</strong></div> {/if}
+            {#if order.order.comment != ""} <div class="achtung">💬</div> {/if}
             <div class="order-item status" on:click={() => {return}}>
               <select bind:value={order.order.status}
                       on:change={(e) => {changeStatus(order, e.target.value); e.target.parentElement.parentElement.style.backgroundColor = getColor(e.target.value)}}>
@@ -275,7 +284,14 @@
                 <div>{chem.name} - {(chem.probeValue * chem.probeCount) / 1000} л.</div>
               {/each}
             </div>
-            <button class="edit" on:click={() => onEdit(order.order, order.client)}>Редактировать</button>
+            <div>
+              <div>
+                <button class="edit" on:click={() => onEdit(order.order, order.client)}>Редактировать</button>
+              </div>
+              <div>
+                {#if order.order.payment} <span style="color: red; font-size: 14px;"><strong>ЗА НАШ СЧЕТ!!!</strong></span> {/if}
+              </div>
+            </div>
           </div>
         </div>
       {:else}
@@ -360,11 +376,21 @@
     font-size: small;
   }
   .achtung{
+    padding: 5px 0px;
+    width: 30px;
+    font-size: 18px;
+    text-shadow:
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    1px 1px 0 black;
+  }
+  .last-date{
     padding: 10px 0px;
-    flex-basis: 8%;
     font-size: 12px;
+    width: 75px;
     color: #0000CD;
-    pointer-events: none;
+    font-weight: bold;
   }
   .full-item{
     display: flex;
@@ -384,6 +410,16 @@
     flex-grow: 1;
     text-align: center;
     font-size: small;
+  }
+  .legend{
+    margin: 5px;
+  }
+  .legend span{
+    margin-right: 10px;
+    color: white;
+  }
+  .legend strong{
+    color: #0000CD;
   }
   #payment-span{
     margin-right: 5px;
@@ -422,7 +458,7 @@
     border-radius: 5px;
     box-shadow: 0px 0px 10px 0px black, 0px 0px 10px 0px black inset;
   }
-  @media (max-width:1600px){
+  @media (min-width:1365px) and (max-width:1600px){
     .order{
       font-size: 12px;
     }
@@ -439,6 +475,31 @@
     }
     #editor{
       width: 400px;
+    }
+  }
+  @media (max-width:1364px){
+    .adress, .achtung, #new-order, .last-date, .legend, .additional{
+      display: none;
+    }
+    .full-order{
+      display: block;
+      overflow: scroll;
+    }
+    .edit{
+      margin-bottom: 5px;
+    }
+    .name{
+      flex-grow: 1;
+    }
+    #table-container{
+      width: 200px;
+    }
+    .order-item, .status{
+      font-size: 9px;
+    }
+    #editor{
+      width: 300px;
+      font-size: 7px;
     }
   }
 </style>
