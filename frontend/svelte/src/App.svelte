@@ -150,11 +150,11 @@
   .nav{
     display: flex;
     flex-direction: column;
-    background-color: var(--background-main);
+    
     width: 150px;
   }
   .content{
-    background-color: var(--background-main);
+    
     flex-grow: 1;
   }
   @media (min-width:960px){

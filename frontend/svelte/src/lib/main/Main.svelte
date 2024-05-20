@@ -81,6 +81,8 @@
         return "#00FF00"
       case "В Маршрут":
         return "#008B8B"
+      case "Передан":
+        return "green"
       default:
         return "white"
     }
@@ -175,6 +177,7 @@
                 <option value="Отгружен">Отгружен</option>
                 <option value="Изменен!" disabled>Изменен!</option>
                 <option value="В Маршрут" disabled>В Маршрут</option>
+                <option value="Передан" disabled>Передан</option>
               </select>
             </div>
           </div>
@@ -335,6 +338,9 @@
     border-left: 1px solid black;
     border-right: 1px solid black;
     cursor: pointer;
+  }
+  .status option:disabled{
+    display: none;
   }
   .full-order{
     display: flex;

@@ -31,6 +31,14 @@
     })
   }
 
+  const delivered = (id) => {
+    const index = ids.indexOf(id);
+    if (index > -1) {
+      ids.splice(index, 1)
+    }
+    changeStatus(orders[id], 'Передан')
+  }
+
 </script>
 
 <div class="container">
@@ -138,6 +146,7 @@
             </div>
           {/if}
         </div>
+        <button on:click={() => delivered(id)}>передан</button>
       </div>
     {/each}
   </div>
