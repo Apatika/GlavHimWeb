@@ -57,7 +57,6 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-      dispatch('message', {routeId: order.order.id})
     }).catch((err) => {
       alert(err)
     })
@@ -131,6 +130,17 @@
 
   const sortOrders = (a, b) => {
     return a.order.status > b.order.status ? -1 : (a.order.status < b.order.status ? 1 : (a.order.cargo < b.order.cargo ? -1 : 1))
+  }
+
+  const toggleNewOrder = (e) => {
+    let target = document.querySelector('#new-order')
+    if (target.style.display == "block"){
+      target.style.display = "none"
+      e.target.innerHTML = "НОВЫЙ ЗАКАЗ"
+    } else {
+      target.style.display = "block"
+      e.target.innerHTML = "ЗАКРЫТЬ"
+    }
   }
 
 </script>
@@ -303,6 +313,7 @@
     <div id="new-order-title"><strong>Новый Заказ</strong></div>
     <NewOrder {managers} {cargos} {chems}></NewOrder>
   </div>
+  <button id="new-order-expand" on:click={toggleNewOrder}>НОВЫЙ ЗАКАЗ</button>
 </div>
 
 <style>
@@ -458,16 +469,18 @@
     border-radius: 5px;
     box-shadow: 0px 0px 10px 0px black, 0px 0px 10px 0px black inset;
   }
+  #new-order-expand{
+    display: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 370px;
+    height: 40px;
+    border-radius: none;
+  }
   @media (min-width:1365px) and (max-width:1600px){
     .order{
       font-size: 12px;
-    }
-    #new-order{
-      display: none;
-      position: absolute;
-      width: 30%;
-      right: 0;
-      top: 0;
     }
     .full-label{
       flex-basis: 30%;
@@ -476,6 +489,15 @@
     #editor{
       width: 400px;
     }
+    #new-order-expand{
+      display: inline-block;
+    }
+    #new-order{
+      display: none;
+      position: absolute;
+      right: 0;
+      bottom: 40px;
+    }
   }
   @media (max-width:1364px){
     .adress, .achtung, #new-order, .last-date, .legend, .additional{
@@ -483,7 +505,7 @@
     }
     .full-order{
       display: block;
-      overflow: scroll;
+      overflow: auto;
     }
     .edit{
       margin-bottom: 5px;

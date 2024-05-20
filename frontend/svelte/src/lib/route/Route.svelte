@@ -1,19 +1,14 @@
 <script>
 
   export let orders = {}
-  export let ids = []
 
   const add = (e, order) => {
     changeStatus(order, "В Маршрут")
-    ids.push(order.order.id)
   }
 
   const del = (order) => {
     changeStatus(order, "Развозка")
-    const index = ids.indexOf(order.order.id);
-    if (index > -1) {
-      ids.splice(index, 1)
-    }
+
   }
 
   const changeStatus = (order, status) => {
@@ -32,10 +27,6 @@
   }
 
   const delivered = (id) => {
-    const index = ids.indexOf(id);
-    if (index > -1) {
-      ids.splice(index, 1)
-    }
     changeStatus(orders[id], 'Передан')
   }
 
@@ -91,62 +82,62 @@
     {/each}
   </div>
   <div id="info">
-    {#each ids as id}
+    {#each Object.values(orders).filter(val => val.order.status == "В Маршрут") as order}
       <div class="info">
         <div class="item">
           <div class="label">Способ доставки:</div>
-          <div class="value">{orders[id].order.cargo}</div>
+          <div class="value">{order.order.cargo}</div>
         </div>
         <div class="item">
           <div class="label">Наименование:</div>
           <div class="value">
-            {#if orders[id].client.surname != ""}{orders[id].client.surname} {/if}
-            {orders[id].order.cargo}
-            {#if orders[id].client.surname != ""} {orders[id].client.secondName}{/if}
+            {#if order.client.surname != ""}{order.client.surname} {/if}
+            {order.client.name}
+            {#if order.client.surname != ""} {order.client.secondName}{/if}
           </div>
         </div>
         <div class="item">
           <div class="label">Менеджер:</div>
-          <div class="value">{orders[id].client.manager}</div>
+          <div class="value">{order.client.manager}</div>
         </div>
         <div class="item">
           <div class="label">Город:</div>
-          <div class="value">{orders[id].order.adress.city}</div>
+          <div class="value">{order.order.adress.city}</div>
         </div>
-        {#if orders[id].order.adress.adress != ""}
+        {#if order.order.adress.adress != ""}
           <div class="item">
             <div class="label">Адрес:</div>
-            <div class="value">{orders[id].order.adress.adress}</div>
+            <div class="value">{order.order.adress.adress}</div>
           </div>
         {:else}
           <div class="item">
             <div class="label">Терминал:</div>
-            <div class="value">{orders[id].order.adress.terminal}</div>
+            <div class="value">{order.order.adress.terminal}</div>
           </div>
         {/if}
         <div class="item">
           <div class="label">Контактное лицо:</div>
           <div class="value">
-            {#each orders[id].client.contact as contact}
+            {#each order.client.contact as contact}
               <div>{contact.name} - {contact.tel}</div>
             {/each}
           </div>
         </div>
-        {#if orders[id].order.comment != ""}
+        {#if order.order.comment != ""}
           <div class="item">
             <div class="label">Комментарий:</div>
-            <div class="value">{orders[id].order.comment}</div>
+            <div class="value">{order.order.comment}</div>
           </div>
         {/if}
         <div class="item">
-          {#if orders[id].order.payment}
+          {#if order.order.payment}
             <div class="item">
               <div class="label"></div>
               <div class="value"><strong>ЗА НАШ СЧЕТ</strong></div>
             </div>
           {/if}
         </div>
-        <button on:click={() => delivered(id)}>передан</button>
+        <button on:click={() => delivered(order.order.id)}>передан</button>
       </div>
     {/each}
   </div>
@@ -202,6 +193,15 @@
     padding: 5px;
     width: 500px;
     font-size: 12px;
+  }
+  @media (max-width:1364px){
+    .container{
+      display: block;
+      padding: 5px;
+    }
+    #all-routes, #selected-routes{
+      display: none;
+    }
   }
 
 </style>

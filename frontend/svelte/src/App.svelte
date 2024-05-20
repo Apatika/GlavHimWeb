@@ -7,8 +7,6 @@
   let cargos = {}
   let chems = {}
   let orders = {}
-  let routeIds = []
-  let onOpen = true
 
   window.onload = () => {
     document.querySelector('#main').style.display = 'block'
@@ -17,18 +15,9 @@
     getChems()
   }
 
-  const getRoute = () => {
-    let arr = Object.values(orders).filter(elem => elem.order.status == "В Маршрут")
-    arr.forEach(elem => routeIds.push(elem.order.id))
-  }
-
   let socket = new WebSocket(`ws://${window.location.host}/inwork`);
   socket.onmessage = (event) => {
     orders = JSON.parse(event.data)
-    if (onOpen){
-      getRoute()
-      onOpen = false
-    }
   }
   socket.onclose = (event) => {
     if (event.wasClean) {
@@ -75,6 +64,8 @@
   }
 
   const change = (e) => {
+    document.querySelector('.mobile-nav').style.display = "none"
+    document.querySelector('.content').style.display = "block"
     document.querySelectorAll('.page').forEach((elem) => {
       elem.style.display = 'none'
     })
@@ -98,11 +89,9 @@
     }
   }
 
-  const removeRoute = (id) => {
-    const index = routeIds.indexOf(id);
-    if (index > -1) {
-      routeIds = routeIds.filter(elem => elem != id)
-    }
+  const mobileMenu = () => {
+    document.querySelector('.content').style.display = 'none'
+    document.querySelector('.mobile-nav').style.display = 'block'
   }
 
 </script>
@@ -112,17 +101,22 @@
   <button name='data' on:click={change}>База Данных</button>
   <button name='route' on:click={change}>Маршрут</button>
 </div>
+<div class="mobile-nav">
+  <button name='main' on:click={change}>Главная</button>
+  <button name='route' on:click={change}>Маршрут</button>
+</div>
 <div class="content">
   <div class="page" id="main">
-    <Main {orders} {managers} {cargos} {chems} on:message={(e) => removeRoute(e.detail.routeId)}></Main>
+    <Main {orders} {managers} {cargos} {chems}></Main>
   </div>
   <div class="page" id="data">
     <Data {managers} {cargos} {chems} on:message={(e) => update(e.detail.text)}></Data>
   </div>
   <div class="page" id="route">
-    <Route {orders} ids={routeIds}></Route>
+    <Route {orders}></Route>
   </div>
 </div>
+<button id="menu-button" on:click={mobileMenu}>меню</button>
 
 <style>
   button{
@@ -150,12 +144,38 @@
   .nav{
     display: flex;
     flex-direction: column;
-    
     width: 150px;
+  }
+  .mobile-nav{
+    display: none;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--border-main);
+  }
+  .mobile-nav button{
+    display: block;
+    width: 100%;
+    border-top: none;
+    border-bottom: 1px solid white;
+    box-shadow: none;
+    border-radius: 0;
   }
   .content{
     
     flex-grow: 1;
+  }
+  #menu-button{
+    position: absolute;
+    display: none;
+    bottom: 5px;
+    right: 5px;
+    border-radius: 50%;
+    font-size: 7px;
+    border: none;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    padding: 0;
   }
   @media (min-width:960px){
     button {
@@ -165,6 +185,9 @@
   @media (max-width:1364px){
     .nav{
       display: none;
+    }
+    #menu-button{
+      display: inline-block;
     }
   }
 </style>

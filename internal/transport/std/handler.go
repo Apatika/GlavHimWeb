@@ -19,6 +19,7 @@ var upgrader = websocket.Upgrader{
 func New() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./static/assets/"))))
+	mux.Handle("/icons/", http.StripPrefix("/icons/", http.FileServer(http.Dir("./static/icons/"))))
 	mux.HandleFunc("/", index)
 	mux.HandleFunc(fmt.Sprintf("GET /db/{%v}", pathVar), dbPageGet)
 	mux.HandleFunc(fmt.Sprintf("POST /db/{%v}", pathVar), dbPagePost)
