@@ -21,6 +21,7 @@ type Order struct {
 	Payment      bool                 `json:"payment" bson:"payment"`
 	ShipmentDate Date                 `json:"shipmentDate" bson:"shipment_date"`
 	Status       string               `json:"status" bson:"status"`
+	RouteNum     string               `json:"routeNum" bson:"routeNum"`
 }
 
 func (o *Order) Push() error {

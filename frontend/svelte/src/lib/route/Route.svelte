@@ -26,6 +26,28 @@
     })
   }
 
+  const update = (o) => {
+    let char = o.order.routeNum[0]
+    if (char >= '0' && char <= '9'){
+      o.order.routeNum = char
+    }
+    else {
+      o.order.routeNum = ""
+      return
+    }
+    fetch(`${window.location.origin}/orders`, {
+      method: "PUT",
+      body: JSON.stringify(o),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
+    }).catch((err) => {
+      alert(err)
+    })
+  }
+
   const delivered = (id) => {
     changeStatus(orders[id], 'Передан')
   }
@@ -82,7 +104,7 @@
     {/each}
   </div>
   <div id="info">
-    {#each Object.values(orders).filter(val => val.order.status == "В Маршрут") as order}
+    {#each Object.values(orders).filter(val => val.order.status == "В Маршрут").sort((a, b) => {return a.order.routeNum > b.order.routeNum ? 1 : (a.order.routeNum == b.order.routeNum ? 0 : -1)}) as order}
       <div class="info">
         <div class="item">
           <div class="label">Способ доставки:</div>
@@ -138,6 +160,7 @@
           {/if}
         </div>
         <button on:click={() => delivered(order.order.id)}>передан</button>
+        <input class="route-num" type="text" bind:value={order.order.routeNum} on:input={() => update(order)}>
       </div>
     {/each}
   </div>
@@ -184,6 +207,13 @@
     width: 370px;
     word-wrap: break-word;
   }
+  .route-num{
+    width: 20px;
+    background-color: #FFA500;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+  }
   #all-routes, #selected-routes{
     width: 350px;
     border-right: 1px solid black;
@@ -201,6 +231,9 @@
     }
     #all-routes, #selected-routes{
       display: none;
+    }
+    .route-num{
+      pointer-events: none;
     }
   }
 
