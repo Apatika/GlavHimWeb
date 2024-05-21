@@ -515,6 +515,7 @@
     }
     #table-container{
       width: 200px;
+      margin: 10px 40px 10px 5px;
     }
     .order-item, .status{
       font-size: 9px;
@@ -522,6 +523,9 @@
     #editor{
       width: 300px;
       font-size: 7px;
+    }
+    .status select{
+      font-size: 9px;
     }
   }
 </style>

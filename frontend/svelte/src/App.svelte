@@ -64,6 +64,7 @@
   }
 
   const change = (e) => {
+    if (window.screen.width < 1366) document.querySelector('#menu-button').style.display = 'inline-block'
     document.querySelector('.mobile-nav').style.display = "none"
     document.querySelector('.content').style.display = "block"
     document.querySelectorAll('.page').forEach((elem) => {
@@ -90,6 +91,7 @@
   }
 
   const mobileMenu = () => {
+    if (window.screen.width < 1366) document.querySelector('#menu-button').style.display = 'none'
     document.querySelector('.content').style.display = 'none'
     document.querySelector('.mobile-nav').style.display = 'block'
   }
@@ -161,13 +163,12 @@
     border-radius: 0;
   }
   .content{
-    
     flex-grow: 1;
   }
   #menu-button{
     position: absolute;
     display: none;
-    bottom: 5px;
+    top: 5px;
     right: 5px;
     border-radius: 50%;
     font-size: 7px;
@@ -188,6 +189,10 @@
     }
     #menu-button{
       display: inline-block;
+    }
+    .content{
+      flex-grow: 0;
+      width: 100%;
     }
   }
 </style>

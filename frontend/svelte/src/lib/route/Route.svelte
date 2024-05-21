@@ -154,12 +154,12 @@
         <div class="item">
           {#if order.order.payment}
             <div class="item">
-              <div class="label"></div>
-              <div class="value"><strong>ЗА НАШ СЧЕТ</strong></div>
+              <div class="label" style="color: red;"><strong>ЗА НАШ СЧЕТ</strong></div>
+              <div class="value"></div>
             </div>
           {/if}
         </div>
-        <button on:click={() => delivered(order.order.id)}>передан</button>
+        <button class="delivered-button" on:click={() => delivered(order.order.id)}>передан</button>
         <input class="route-num" type="text" bind:value={order.order.routeNum} on:input={() => update(order)}>
       </div>
     {/each}
@@ -214,6 +214,13 @@
     border-radius: 5px;
     text-align: center;
   }
+  .delivered-button{
+    background-color: #FFA500;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    color: black;
+  }
   #all-routes, #selected-routes{
     width: 350px;
     border-right: 1px solid black;
@@ -228,12 +235,24 @@
     .container{
       display: block;
       padding: 5px;
+      overflow-x: hidden;
     }
     #all-routes, #selected-routes{
       display: none;
     }
+    #info{
+      width: 100%;
+      font-size: 10px;
+    }
     .route-num{
       pointer-events: none;
+      margin-left: 20px;
+    }
+    .label{
+      width: 130px;
+    }
+    .delivered-button{
+      margin-bottom: 2px;
     }
   }
 
