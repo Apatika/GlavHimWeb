@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"glavhim-app/internal/config"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,6 +23,7 @@ func NewMongo() *MongoDB {
 }
 
 func (m *MongoDB) HealthCheck() error {
+	log.Print(m.Uri)
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(m.Uri))
 	if err != nil {
 		return err

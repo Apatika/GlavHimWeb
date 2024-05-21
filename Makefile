@@ -15,10 +15,12 @@ endif
 all: build
 
 build:
+	@mkdir ${BUILD_PATH} || true
+	@mkdir ${BUILD_PATH}/static || true
+	@mkdir ${BUILD_PATH}/config || true
 	@rm ${BUILD_PATH}/static/assets/* || true
 	@cd ${FRONTEND_PATH}; npm run build
-	@cp ${STATIC_SOURCE_PATH}/index.html ${BUILD_PATH}/static/index.html
-	@cp ${STATIC_SOURCE_PATH}/assets/* ${BUILD_PATH}/static/assets
+	@cp -a ${STATIC_SOURCE_PATH}/. ${BUILD_PATH}/static/
 	@cd cmd; go build -o .${BUILD_PATH}/${EXECUTABLE}
 
 run: build

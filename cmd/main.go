@@ -11,8 +11,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-
-	"github.com/joho/godotenv"
 )
 
 var DB_URI string
@@ -26,11 +24,6 @@ func main() {
 	}
 	defer file.Close()
 	log.SetOutput(file)
-
-	log.Println("load environment variables")
-	if err := godotenv.Load("./.env"); err != nil {
-		config.SetDefaultEnv()
-	}
 
 	log.Println("load config")
 	config.New()

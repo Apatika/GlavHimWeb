@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"log"
 	"os"
 	"time"
@@ -24,8 +25,8 @@ type (
 	}
 
 	database struct {
-		Coll collections `yaml:"collections"`
 		URI  string      `yaml:"uri"`
+		Coll collections `yaml:"collections"`
 	}
 
 	collections struct {
@@ -65,21 +66,28 @@ var DefaultCfg Config = Config{
 	},
 }
 
-func SetDefaultEnv() {
-	os.Setenv("CONFIG_PATH", "./config/config.yaml")
-	os.Setenv("BUILD_PATH", "./bin")
-	os.Setenv("APP_NAME", "glavhim")
-	os.Setenv("STATIC_SOURCE_PATH", "./frontend/svelte/dist")
-	os.Setenv("FRONTEND_PATH", "./frontend/svelte")
-}
-
 func New() {
-	buff, err := os.ReadFile(os.Getenv("CONFIG_PATH"))
+	buff, err := os.ReadFile("./config/config.yaml")
 	if err != nil {
 		log.Println(err)
-		log.Print("load default config")
-		Cfg = DefaultCfg
-	} else if err = yaml.Unmarshal(buff, &Cfg); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			log.Print("create config file")
+			file, err := os.Create("./config/config.yaml")
+			if err != nil {
+				log.Panic("create config file error")
+			}
+			config, err := yaml.Marshal(DefaultCfg)
+			if err != nil {
+				log.Panic("create config file error")
+			}
+			buff = config
+			_, err = file.Write(config)
+			if err != nil {
+				log.Panic("create config file error")
+			}
+		}
+	}
+	if err := yaml.Unmarshal(buff, &Cfg); err != nil {
 		log.Println(err)
 		log.Print("load default config")
 		Cfg = DefaultCfg
