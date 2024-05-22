@@ -19,7 +19,7 @@ build:
 	@mkdir ${BUILD_PATH}/static || true
 	@mkdir ${BUILD_PATH}/config || true
 	@rm ${BUILD_PATH}/static/assets/* || true
-	@if [ ! -d ${FRONTEND_PATH}/node_modules ]; then npm install; fi
+	@if [ ! -d ${FRONTEND_PATH}/node_modules ]; then cd ${FRONTEND_PATH}; npm install; fi
 	@cd ${FRONTEND_PATH}; npm run build
 	@cp -a ${STATIC_SOURCE_PATH}/. ${BUILD_PATH}/static/
 	@cd cmd; go build -o .${BUILD_PATH}/${EXECUTABLE}
