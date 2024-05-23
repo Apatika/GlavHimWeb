@@ -5,7 +5,6 @@ import (
 )
 
 type IDataBase interface {
-	HealthCheck() error
 	CheckName(string, string, string) error
 	GetById(collName string, obj interface{}, id string) error
 	GetAll(string, interface{}) error

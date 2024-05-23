@@ -31,11 +31,7 @@ func main() {
 	log.Println("get http handler")
 	handler := handler.New()
 
-	db := storage.DB()
-	log.Println("ping database")
-	if err = db.HealthCheck(); err != nil {
-		log.Fatalln("ERROR (db init): ", err)
-	}
+	storage.DB()
 
 	storage.CacheInit()
 	if err := service.LoadCache(); err != nil {
