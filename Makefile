@@ -17,7 +17,7 @@ all: build
 build:
 	@if [ ! -d ${BUILD_PATH} ]; then mkdir ${BUILD_PATH}; fi
 	@if [ ! -d ${BUILD_PATH}/static ]; then mkdir ${BUILD_PATH}/static; fi
-	@if [ ! -d ${BUILD_PATH}/config ]; then ${BUILD_PATH}/config; fi
+	@if [ ! -d ${BUILD_PATH}/config ]; then mkdir ${BUILD_PATH}/config; fi
 	@rm ${BUILD_PATH}/static/assets/* || true
 	@if [ ! -d ${FRONTEND_PATH}/node_modules ]; then cd ${FRONTEND_PATH}; npm install; fi
 	@cd ${FRONTEND_PATH}; npm run build
