@@ -152,7 +152,7 @@ func (m *MongoDB) GetCities(reg string, cities interface{}) error {
 	return nil
 }
 
-func (m *MongoDB) GetClients(reg string, clients interface{}) error {
+func (m *MongoDB) GetCustomers(reg string, clients interface{}) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Customers)
 	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "$or", Value: bson.A{bson.D{{Key: "surname", Value: bson.D{{Key: "$regex", Value: primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}},
 		bson.D{{Key: "name", Value: bson.D{{Key: "$regex", Value: primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}}}}},

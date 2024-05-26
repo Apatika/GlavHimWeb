@@ -27,7 +27,6 @@ func New() *http.ServeMux {
 	mux.HandleFunc(fmt.Sprintf("DELETE /db/{%v}", pathVar), dbPageDelete)
 	mux.HandleFunc("POST /orders", orderPush)
 	mux.HandleFunc("PUT /orders", orderUpdate)
-	mux.HandleFunc("PUT /orders/status", orderUpdate)
 	mux.HandleFunc("GET /inwork", wsHandler)
 	mux.HandleFunc("GET /cities", getCities)
 	mux.HandleFunc("GET /clients", getCustomers)
@@ -42,6 +41,13 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 	t.ExecuteTemplate(w, "index.html", nil)
 }
+
+/*func auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		next.ServeHTTP(w, r)
+	})
+}*/
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)

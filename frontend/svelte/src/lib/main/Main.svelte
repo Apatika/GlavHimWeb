@@ -49,7 +49,7 @@
   const changeStatus = (order, status) => {
     closeFullOrder()
     order.order.status = status
-    fetch(`${window.location.origin}/orders/status`, {
+    fetch(`${window.location.origin}/orders`, {
       method: "PUT",
       body: JSON.stringify(order),
       headers: {

@@ -14,10 +14,10 @@ func GetCities(reg string) ([]City, error) {
 	return cities, nil
 }
 
-func GetClients(reg string) ([]Customer, error) {
+func GetCustomers(reg string) ([]Customer, error) {
 	var clients []Customer
 	db := storage.DB()
-	if err := db.GetClients(reg, &clients); err != nil {
+	if err := db.GetCustomers(reg, &clients); err != nil {
 		return nil, err
 	}
 	return clients, nil

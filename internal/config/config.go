@@ -47,8 +47,10 @@ var Cfg Config
 var DefaultCfg Config = Config{
 	AppName: "glavhim",
 	Server: server{
-		URI:  "http://localhost",
-		Port: "8080",
+		URI:          "http://localhost",
+		Port:         "8080",
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
 	},
 	DB: database{
 		URI: "mongodb://localhost:27017",
