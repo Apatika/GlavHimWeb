@@ -35,6 +35,7 @@
       o.order.routeNum = ""
       return
     }
+    document.activeElement.blur()
     fetch(`${window.location.origin}/orders`, {
       method: "PUT",
       body: JSON.stringify(o),

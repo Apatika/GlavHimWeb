@@ -32,6 +32,7 @@
     probes: {},
   }
 
+  let probeCountSum = 0
   export let managers = {}
   export let cargos = {}
   export let chems = {}
@@ -82,6 +83,7 @@
   const onEdit = (order, customer) => {
     for (let [k, v] of Object.entries(order.probes)){
       chems[k] = v
+      probeCountSum += v.probeCount
     }
     editCustomer = customer
     editOrder = order
@@ -111,7 +113,7 @@
 <div class="container">
   <div id="table-container">
     <div id="editor">
-      <NewOrder order={editOrder} customer={editCustomer} {managers} {cargos} {chems} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
+      <NewOrder order={editOrder} customer={editCustomer} {managers} {cargos} {chems} {probeCountSum} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
     </div>
     <div class="legend">
       <span>🧴 - пробники</span>

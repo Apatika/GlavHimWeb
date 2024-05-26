@@ -44,6 +44,7 @@
   export let managers = {}
   export let cargos = {}
   export let chems = {}
+  export let probeCountSum = 0
 
   const check = () => {
     if (customer.manager == null || customer.manager == ""){
@@ -124,6 +125,7 @@
 
   const update = () => {
     customer.adress = order.adress
+    probeCountSum = 0
     Object.keys(order.probes).forEach(key => {
       delete order.probes[key]
     })
@@ -167,6 +169,7 @@
     for (let k of Object.keys(chems)){
       chems[k].probeCount = 0
     }
+    probeCountSum = 0
     dispatch('message', {
       id: order.id,
       update: false
@@ -398,14 +401,15 @@
                     <span>{chem.name}</span>
                   </div>
                   <div class="probes-count">
-                    <button on:click={() => {if (chem.probeCount > 0) chem.probeCount--}}>-</button>
+                    <button on:click={() => {if (chem.probeCount > 0) {chem.probeCount--; probeCountSum--}}}>-</button>
                     <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
-                    <button on:click={() => chem.probeCount++}>+</button>
+                    <button on:click={() => {chem.probeCount++; probeCountSum++}}>+</button>
                   </div>
                 </div>
               {/each}
             </div>
             <button on:click={probesShow}>ПРОБНИКИ</button>
+            {#if probeCountSum != 0} <strong style="color: red;">Добавлены пробники</strong> {/if}
           </div>
         </div>
       </div>
