@@ -109,7 +109,7 @@ func (m *MongoDB) CheckClient(params ...string) (string, error) {
 	if len(params) < 1 || len(params) > 3 {
 		return "", fmt.Errorf("invalid number of parameters")
 	}
-	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Clients)
+	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Customers)
 	type id struct {
 		ID string `json:"id" bson:"_id"`
 	}
@@ -153,7 +153,7 @@ func (m *MongoDB) GetCities(reg string, cities interface{}) error {
 }
 
 func (m *MongoDB) GetClients(reg string, clients interface{}) error {
-	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Clients)
+	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Customers)
 	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "$or", Value: bson.A{bson.D{{Key: "surname", Value: bson.D{{Key: "$regex", Value: primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}},
 		bson.D{{Key: "name", Value: bson.D{{Key: "$regex", Value: primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}}}}},
 		options.Find().SetLimit(8))

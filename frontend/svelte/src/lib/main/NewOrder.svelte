@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte"
   const dispatch = createEventDispatcher()
 
-  export let client = {
+  export let customer = {
     id: null,
     type: '0',
     adress: null,
@@ -18,7 +18,7 @@
   }
   export let order = {
     id: null,
-    clientId: null,
+    customerId: null,
     payment: null,
     toadress: false,
     adress: {city: null, adress: null, terminal: "основной"},
@@ -30,9 +30,9 @@
   }
   const setInitial = () => {
     Object.keys(order).forEach(o => order[o] = null)
-    Object.keys(client).forEach(c => client[c] = null)
-    client.contact = [{name: null, tel: null}]
-    client.type = '0'
+    Object.keys(customer).forEach(c => customer[c] = null)
+    customer.contact = [{name: null, tel: null}]
+    customer.type = '0'
     order.toadress = false
     order.adress = {city: null, adress: null, terminal: "основной"}
     order.invoice = [null]
@@ -40,13 +40,13 @@
   }
 
   let cities = []
-  let clientList = []
+  let customerList = []
   export let managers = {}
   export let cargos = {}
   export let chems = {}
 
   const check = () => {
-    if (client.manager == null || client.manager == ""){
+    if (customer.manager == null || customer.manager == ""){
       alert("Менеджер не выбран")
       return false
     }
@@ -62,30 +62,30 @@
       alert("Адрес не заполнен")
       return false
     }
-    if (client.name == null || client.name == ""){
+    if (customer.name == null || customer.name == ""){
       alert("Имя не заполнено")
       return false
     }
-    if (client.contact[0].tel == null || client.contact[0].tel == ""){
+    if (customer.contact[0].tel == null || customer.contact[0].tel == ""){
       alert("Контакт не заполнен")
       return false
     }
-    if ((client.type == "0" || client.type == "2") && 
-        (client.surname == null || client.surname == "")){
+    if ((customer.type == "0" || customer.type == "2") && 
+        (customer.surname == null || customer.surname == "")){
       alert("ФИО заполнены не полностью")
       return false
     }
-    if ((client.type == "1" || client.type == "0") && (client.inn == null || client.inn == "")){
+    if ((customer.type == "1" || customer.type == "0") && (customer.inn == null || customer.inn == "")){
       alert("ИНН не заполнен")
       return false
     }
     return true
   }
 
-  const addContact = () => client.contact = client.contact.concat({name: "", tel: ""})
+  const addContact = () => customer.contact = customer.contact.concat({name: "", tel: ""})
   const removeContact = () => {
-    if (client.contact.length > 1){
-      client.contact = client.contact.slice(0, -1)
+    if (customer.contact.length > 1){
+      customer.contact = customer.contact.slice(0, -1)
     }
   }
   const addInvoice = () => order.invoice = order.invoice.concat(null)
@@ -97,11 +97,11 @@
 
   const push = () => {
     if (!check()) return
-    client.adress = order.adress
-    order.clientId = client.id
+    customer.adress = order.adress
+    order.customerId = customer.id
     fetch(`${window.location.origin}/orders`, {
       method: "POST",
-      body: JSON.stringify({client: client, order: order}),
+      body: JSON.stringify({customer: customer, order: order}),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
@@ -115,12 +115,12 @@
   }
 
   const update = () => {
-    client.adress = order.adress
+    customer.adress = order.adress
     if (Object.keys(order.probes).length == 0) order.probes = Object.assign({}, chems)
     order.status = "Изменен!"
     fetch(`${window.location.origin}/orders`, {
       method: "PUT",
-      body: JSON.stringify({client: client, order: order}),
+      body: JSON.stringify({customer: customer, order: order}),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
@@ -138,14 +138,14 @@
 
   const telInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
   const telFormat = () => {
-    for (let i = 0; i < (client.contact).length; ++i){
-      (client.contact)[i].tel = ((client.contact)[i].tel).replace(/[^0-9]/g, "")
+    for (let i = 0; i < (customer.contact).length; ++i){
+      (customer.contact)[i].tel = ((customer.contact)[i].tel).replace(/[^0-9]/g, "")
     }
   }
-  const innFormat = () => client.inn = (client.inn).replace(/[^0-9]/g, "")
+  const innFormat = () => customer.inn = (customer.inn).replace(/[^0-9]/g, "")
   const passportFormat = () => {
-    client.passportNum = (client.passportNum).replace(/[^0-9]/g, "")
-    client.passportSerial = (client.passportSerial).replace(/[^0-9]/g, "")
+    customer.passportNum = (customer.passportNum).replace(/[^0-9]/g, "")
+    customer.passportSerial = (customer.passportSerial).replace(/[^0-9]/g, "")
   }
 
   const onClose = (e) => {
@@ -166,21 +166,21 @@
     })
   }
 
-  const searchClient = (e) => {
+  const searchCustomer = (e) => {
     fetch(`${window.location.origin}/clients?client=${e.target.value}`).then(function(response) {
       return response.json();
     }).then((data) => {
       if (data.length == 0) throw new Error("storage empty")
-      clientList = data
+      customerList = data
     }).catch(() => {
       return
     })
   }
 
-  const getClient = (e) => {
-    for (let v of clientList){
+  const getCustomer = (e) => {
+    for (let v of customerList){
       if (e.target.value == v.id){
-        client = v
+        customer = v
         order.adress = v.adress
         return
       }
@@ -204,10 +204,10 @@
 <div id="container">
   {#if order.id == null}
     <div id="search">
-      <input list="clients-list" type="text" on:input={searchClient} on:change={getClient} placeholder="Поиск...">
+      <input list="customer-list" type="text" on:input={searchCustomer} on:change={getCustomer} placeholder="Поиск...">
       {#if order.id == null}
-        <datalist id="clients-list">
-          {#each clientList as cl}
+        <datalist id="customer-list">
+          {#each customerList as cl}
             <option value={cl.id}>{cl.surname} {cl.name} {cl.secondName}</option>
           {/each}
         </datalist>
@@ -219,25 +219,25 @@
     </div>
   {/if}
   <div id="main">
-    <div id="client-name">
-      <select bind:value={client.type}>
+    <div id="customer-name">
+      <select bind:value={customer.type}>
         <option value="0" selected>ИП</option>
         <option value="1">Юр.Лицо</option>
         <option value="2">Физ.Лицо</option>
       </select>
-      {#if client.type != "1"}
+      {#if customer.type != "1"}
         <div>
-          <input type="text" bind:value={client.surname} placeholder="Фамилия">
+          <input type="text" bind:value={customer.surname} placeholder="Фамилия">
         </div>
         <div>
-          <input type="text" bind:value={client.name} placeholder="Имя">
+          <input type="text" bind:value={customer.name} placeholder="Имя">
         </div>
         <div>
-          <input type="text" bind:value={client.secondName} placeholder="Отчество">
+          <input type="text" bind:value={customer.secondName} placeholder="Отчество">
         </div>
       {:else}
         <div>
-          <input type="text" id="name" bind:value={client.name} placeholder="Наименование компании">
+          <input type="text" id="name" bind:value={customer.name} placeholder="Наименование компании">
         </div>    
       {/if}
     </div>
@@ -261,7 +261,7 @@
           <div class="flex">
             <div class="lables">Менеджер:</div>
             <div>
-              <select bind:value={client.manager}>
+              <select bind:value={customer.manager}>
                 {#each Object.values(managers) as manager}
                   <option value={manager.name}>{manager.name}</option>
                 {/each}
@@ -270,19 +270,19 @@
           </div>
           <div class="flex">
             <div class="lables">
-              {#if client.type != "2"}
+              {#if customer.type != "2"}
                 ИНН: 
               {:else}
                 Паспорт: 
               {/if}
             </div>
             <div id="nums">
-              {#if client.type != "2"}
-                <input class="inn" type="text" bind:value={client.inn} on:keypress={telInput} on:input={innFormat} placeholder="ИНН">
+              {#if customer.type != "2"}
+                <input class="inn" type="text" bind:value={customer.inn} on:keypress={telInput} on:input={innFormat} placeholder="ИНН">
               {:else}
                 <div>
-                  <input type="text" bind:value={client.passportSerial} on:keypress={telInput} on:input={passportFormat} placeholder="Серия">
-                  <input type="text" bind:value={client.passportNum} on:keypress={telInput} on:input={passportFormat} placeholder="Номер">
+                  <input type="text" bind:value={customer.passportSerial} on:keypress={telInput} on:input={passportFormat} placeholder="Серия">
+                  <input type="text" bind:value={customer.passportNum} on:keypress={telInput} on:input={passportFormat} placeholder="Номер">
                 </div>
               {/if}
             </div>
@@ -290,7 +290,7 @@
           <div class="flex">
             <div class="lables">Контакт:</div>
             <div id="contact">
-              {#each client.contact as contact}
+              {#each customer.contact as contact}
                 <div>
                   <input type="text" bind:value={contact.name} placeholder="Контакт">
                   <input class="tel" type="text" bind:value={contact.tel} on:keypress={telInput} on:input={telFormat} placeholder="Телефон">
@@ -304,7 +304,7 @@
           <div class="flex">
             <div class="lables">Email:</div>
             <div>
-              <input type="text" bind:value={client.email} placeholder="Email">
+              <input type="text" bind:value={customer.email} placeholder="Email">
             </div>
           </div>
         </div>

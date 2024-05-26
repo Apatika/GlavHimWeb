@@ -33,7 +33,7 @@ type (
 		Orders    string `yaml:"orders"`
 		Chemistry string `yaml:"chems"`
 		Cargos    string `yaml:"cargos"`
-		Clients   string `yaml:"clients"`
+		Customers string `yaml:"customers"`
 		Users     string `yaml:"users"`
 		City      string `yaml:"city"`
 	}
@@ -56,7 +56,7 @@ var DefaultCfg Config = Config{
 			Orders:    "orders",
 			Chemistry: "chems",
 			Cargos:    "cargos",
-			Clients:   "clients",
+			Customers: "customers",
 			Users:     "users",
 			City:      "cities",
 		},

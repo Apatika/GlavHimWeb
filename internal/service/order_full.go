@@ -10,8 +10,8 @@ import (
 )
 
 type OrderFull struct {
-	Client Client `json:"client"`
-	Order  Order  `json:"order"`
+	Customer Customer `json:"customer"`
+	Order    Order    `json:"order"`
 }
 
 func NewOrderFull() OrderFull {
@@ -29,25 +29,25 @@ func (o *OrderFull) Push(raw []byte) error {
 	o.Order.CreationDate.Year, month, o.Order.CreationDate.Day = time.Now().Date()
 	o.Order.CreationDate.Month = month.String()
 	o.Order.ID = db.GetNewID()
-	if o.Client.ID == "" {
-		id, err := o.Client.Check()
+	if o.Customer.ID == "" {
+		id, err := o.Customer.Check()
 		if err != nil || id == "" {
-			o.Client.ID = db.GetNewID()
-			if err := o.Client.Push(); err != nil {
-				return fmt.Errorf("push client failed(%v)", err.Error())
+			o.Customer.ID = db.GetNewID()
+			if err := o.Customer.Push(); err != nil {
+				return fmt.Errorf("push customer failed(%v)", err.Error())
 			}
 		} else {
-			o.Client.ID = id
-			if err := o.Client.Update(); err != nil {
-				return fmt.Errorf("update client failed(%v)", err.Error())
+			o.Customer.ID = id
+			if err := o.Customer.Update(); err != nil {
+				return fmt.Errorf("update customer failed(%v)", err.Error())
 			}
 		}
 	} else {
-		if err := o.Client.Update(); err != nil {
-			return fmt.Errorf("update client failed(%v)", err.Error())
+		if err := o.Customer.Update(); err != nil {
+			return fmt.Errorf("update customer failed(%v)", err.Error())
 		}
 	}
-	o.Order.ClientID = o.Client.ID
+	o.Order.CustomerID = o.Customer.ID
 	if err := o.Order.Push(); err != nil {
 		return fmt.Errorf("push order failed(%v)", err.Error())
 	}
@@ -65,7 +65,7 @@ func (o *OrderFull) Update(raw []byte) error {
 		o.Order.ShipmentDate.Year, month, o.Order.ShipmentDate.Day = time.Now().Date()
 		o.Order.ShipmentDate.Month = month.String()
 	}
-	if err := o.Client.Update(); err != nil {
+	if err := o.Customer.Update(); err != nil {
 		return err
 	}
 	if err := o.Order.Update(); err != nil {

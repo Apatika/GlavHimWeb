@@ -5,39 +5,6 @@ import (
 	"glavhim-app/internal/storage"
 )
 
-const (
-	StatusInWork  = "Принят В Работу"
-	StatusShipped = "Отгружен"
-	StatusPecom   = "Забор ПЭК"
-	StatusCalled  = "Заказан Забор"
-	StatusStop    = "СТОП"
-	StatusCity    = "Развозка"
-	StatusEmpty   = "Нет Товара"
-	StatusChanged = "Изменен!"
-)
-
-type Pvd struct {
-	Weight float32 `json:"weight" bson:"weight"`
-	Count  int     `json:"count" bson:"count"`
-}
-
-type Date struct {
-	Day   int    `json:"day" bson:"day"`
-	Month string `json:"month" bson:"month"`
-	Year  int    `json:"year" bson:"year"`
-}
-
-type Contact struct {
-	Name string `json:"name" bson:"name"`
-	Tel  string `json:"tel" bson:"tel"`
-}
-
-type Adress struct {
-	City     string `json:"city" bson:"city"`
-	Adress   string `json:"adress" bson:"adress"`
-	Terminal string `json:"terminal" bson:"terminal"`
-}
-
 func GetCities(reg string) ([]City, error) {
 	var cities []City
 	db := storage.DB()
@@ -47,8 +14,8 @@ func GetCities(reg string) ([]City, error) {
 	return cities, nil
 }
 
-func GetClients(reg string) ([]Client, error) {
-	var clients []Client
+func GetClients(reg string) ([]Customer, error) {
+	var clients []Customer
 	db := storage.DB()
 	if err := db.GetClients(reg, &clients); err != nil {
 		return nil, err
@@ -64,8 +31,8 @@ func InWork() ([]OrderFull, error) {
 	}
 	var result []OrderFull
 	for _, v := range orders {
-		var client Client
-		if err := db.GetById(config.Cfg.DB.Coll.Clients, &client, v.ClientID); err != nil {
+		var client Customer
+		if err := db.GetById(config.Cfg.DB.Coll.Customers, &client, v.CustomerID); err != nil {
 			return nil, err
 		}
 		result = append(result, OrderFull{client, v})

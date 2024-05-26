@@ -18,14 +18,14 @@ func getCities(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(cities)
 }
 
-func getClients(w http.ResponseWriter, r *http.Request) {
+func getCustomers(w http.ResponseWriter, r *http.Request) {
 	reg := r.URL.Query().Get("client")
-	clients, err := service.GetClients(reg)
+	customers, err := service.GetClients(reg)
 	if err != nil {
 		errorResponse(w, fmt.Sprintf("get clients failed (%v)", err.Error()), http.StatusBadRequest)
 		return
 	}
-	json.NewEncoder(w).Encode(clients)
+	json.NewEncoder(w).Encode(customers)
 }
 
 func errorResponse(w http.ResponseWriter, errText string, code int) {

@@ -62,9 +62,9 @@
           {order.order.cargo}
         </div>
         <div>
-          {#if order.client.surname != ""}{order.client.surname} {/if}
-          {order.client.name}
-          {#if order.client.surname != ""} {order.client.secondName}{/if}          
+          {#if order.customer.surname != ""}{order.customer.surname} {/if}
+          {order.customer.name}
+          {#if order.customer.surname != ""} {order.customer.secondName}{/if}          
         </div>
         <div>
           <span>{order.order.adress.city}, </span>
@@ -85,9 +85,9 @@
           {order.order.cargo}
         </div>
         <div>
-          {#if order.client.surname != ""}{order.client.surname} {/if}
-          {order.client.name}
-          {#if order.client.surname != ""} {order.client.secondName}{/if}          
+          {#if order.customer.surname != ""}{order.customer.surname} {/if}
+          {order.customer.name}
+          {#if order.customer.surname != ""} {order.customer.secondName}{/if}          
         </div>
         <div>
           <span>{order.order.adress.city}, </span>
@@ -113,14 +113,14 @@
         <div class="item">
           <div class="label">Наименование:</div>
           <div class="value">
-            {#if order.client.surname != ""}{order.client.surname} {/if}
-            {order.client.name}
-            {#if order.client.surname != ""} {order.client.secondName}{/if}
+            {#if order.customer.surname != ""}{order.customer.surname} {/if}
+            {order.customer.name}
+            {#if order.customer.surname != ""} {order.customer.secondName}{/if}
           </div>
         </div>
         <div class="item">
           <div class="label">Менеджер:</div>
-          <div class="value">{order.client.manager}</div>
+          <div class="value">{order.customer.manager}</div>
         </div>
         <div class="item">
           <div class="label">Город:</div>
@@ -140,7 +140,7 @@
         <div class="item">
           <div class="label">Контактное лицо:</div>
           <div class="value">
-            {#each order.client.contact as contact}
+            {#each order.customer.contact as contact}
               <div>{contact.name} - {contact.tel}</div>
             {/each}
           </div>

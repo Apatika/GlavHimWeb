@@ -30,7 +30,7 @@ func New() *http.ServeMux {
 	mux.HandleFunc("PUT /orders/status", orderUpdate)
 	mux.HandleFunc("GET /inwork", wsHandler)
 	mux.HandleFunc("GET /cities", getCities)
-	mux.HandleFunc("GET /clients", getClients)
+	mux.HandleFunc("GET /clients", getCustomers)
 
 	return mux
 }

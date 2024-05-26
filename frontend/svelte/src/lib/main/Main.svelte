@@ -3,7 +3,7 @@
   const dispatch = createEventDispatcher()
   import NewOrder from "./NewOrder.svelte"
   
-  let editClient = {
+  let editCustomer = {
     id: null,
     type: '0',
     adress: null,
@@ -19,7 +19,7 @@
   }
   let editOrder = {
     id: "",
-    clientId: null,
+    customerId: null,
     payment: null,
     toadress: false,
     adress: {city: null, adress: null, terminal: "основной"},
@@ -119,8 +119,8 @@
     }
   }
 
-  const onEdit = (order, client) => {
-    editClient = client
+  const onEdit = (order, customer) => {
+    editCustomer = customer
     editOrder = order
     let target = document.querySelector('#editor')
     target.style.display = "block"
@@ -148,7 +148,7 @@
 <div class="container">
   <div id="table-container">
     <div id="editor">
-      <NewOrder order={editOrder} client={editClient} {managers} {cargos} {chems} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
+      <NewOrder order={editOrder} customer={editCustomer} {managers} {cargos} {chems} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
     </div>
     <div class="legend">
       <span>🧴 - пробники</span>
@@ -170,7 +170,7 @@
                 {/each}
               </div>
             </div>
-            <div class="order-item name" on:click={toggleFullOrder}><strong>{order.client.surname} {order.client.name}</strong> {order.client.secondName}</div>
+            <div class="order-item name" on:click={toggleFullOrder}><strong>{order.customer.surname} {order.customer.name}</strong> {order.customer.secondName}</div>
             <div class="order-item adress" on:click={toggleFullOrder}>
               <div><strong>{order.order.adress.city}</strong></div>
               {#if order.order.adress.adress != ""}
@@ -201,51 +201,51 @@
             </div>
           </div>
           <div class="full-order">
-            <div class="full-order-client">
+            <div class="full-order-customer">
               <div class="full-item">
                 <div class="full-label"><strong>Менеджер:</strong></div>
-                <div>{order.client.manager}</div>
+                <div>{order.customer.manager}</div>
               </div>
-              {#if order.client.surname != ""}
+              {#if order.customer.surname != ""}
                 <div class="full-item">
                   <div class="full-label"><strong>Фамилия:</strong></div>
-                  <div>{order.client.surname}</div>
+                  <div>{order.customer.surname}</div>
                 </div>
               {/if}
                 <div class="full-item">
                   <div class="full-label"><strong>Имя:</strong></div>
-                  <div>{order.client.name}</div>
+                  <div>{order.customer.name}</div>
                 </div>
-              {#if order.client.secondName != ""}
+              {#if order.customer.secondName != ""}
                 <div class="full-item">
                   <div class="full-label"><strong>Отчество</strong></div>
-                  <div>{order.client.secondName}</div>
+                  <div>{order.customer.secondName}</div>
                 </div>
               {/if}
-              {#if order.client.inn != ""}
+              {#if order.customer.inn != ""}
                 <div class="full-item">
                   <div class="full-label"><strong>ИНН:</strong></div>
-                  <div>{order.client.inn}</div>
+                  <div>{order.customer.inn}</div>
                 </div>
               {/if}
-              {#if order.client.passportSerial != ""}
+              {#if order.customer.passportSerial != ""}
                 <div class="full-item">
                   <div class="full-label"><strong>Паспорт:</strong></div>
-                  <div>{order.client.passportSerial} {order.client.passportNum}</div>
+                  <div>{order.customer.passportSerial} {order.customer.passportNum}</div>
                 </div>
               {/if}
                 <div class="full-item">
                   <div class="full-label"><strong>Контакты:</strong></div>
                   <div>
-                    {#each order.client.contact as contact}
+                    {#each order.customer.contact as contact}
                       <div>{contact.name} {contact.tel}</div>
                     {/each}
                   </div>
                 </div>
-              {#if order.client.email != ""}
+              {#if order.customer.email != ""}
                 <div class="full-item">
                   <div class="full-label"><strong>Email:</strong></div>
-                  <div>{order.client.email}</div>
+                  <div>{order.customer.email}</div>
                 </div>
               {/if}
             </div>
@@ -296,7 +296,7 @@
             </div>
             <div>
               <div>
-                <button class="edit" on:click={() => onEdit(order.order, order.client)}>Редактировать</button>
+                <button class="edit" on:click={() => onEdit(order.order, order.customer)}>Редактировать</button>
               </div>
               <div>
                 {#if order.order.payment} <span style="color: red; font-size: 14px;"><strong>ЗА НАШ СЧЕТ!!!</strong></span> {/if}
@@ -382,7 +382,7 @@
     width: 350px;
     font-size: small;
   }
-  .full-order-client{
+  .full-order-customer{
     width: 300px;
     font-size: small;
   }

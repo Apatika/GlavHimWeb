@@ -14,7 +14,7 @@ type Order struct {
 	Cargo        string               `json:"cargo" bson:"cargo"`
 	ToAdress     bool                 `json:"toadress" bson:"toadress"`
 	Adress       Adress               `json:"adress" bson:"adress"`
-	ClientID     string               `json:"clientId" bson:"client_id"`
+	CustomerID   string               `json:"customerId" bson:"customer_id"`
 	Invoice      []string             `json:"invoice" bson:"invoice"`
 	Comment      string               `json:"comment" bson:"comment"`
 	Probes       map[string]Chemistry `json:"probes" bson:"probes"`
