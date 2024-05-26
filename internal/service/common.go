@@ -54,21 +54,21 @@ func LoadCache() error {
 		return err
 	}
 	for _, v := range cargos {
-		storage.Cache.Update(config.Cfg.DB.Coll.Cargos, v.ID, v)
+		storage.Cache.Update(config.Cfg.DB.Coll.Cargos, v.ID, &v)
 	}
 	var chemistry []Chemistry
 	if err := db.GetAll(config.Cfg.DB.Coll.Chemistry, &chemistry); err != nil {
 		return err
 	}
 	for _, v := range chemistry {
-		storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, v.ID, v)
+		storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, v.ID, &v)
 	}
 	var users []User
 	if err := db.GetAll(config.Cfg.DB.Coll.Users, &users); err != nil {
 		return err
 	}
 	for _, v := range users {
-		storage.Cache.Update(config.Cfg.DB.Coll.Users, v.ID, v)
+		storage.Cache.Update(config.Cfg.DB.Coll.Users, v.ID, &v)
 	}
 	return nil
 }

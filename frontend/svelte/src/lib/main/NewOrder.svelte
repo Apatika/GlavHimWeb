@@ -99,6 +99,11 @@
     if (!check()) return
     customer.adress = order.adress
     order.customerId = customer.id
+    for (let [k, v] of Object.entries(chems)){
+      if (chems[k].probeCount != 0){
+        order.probes[k] = v
+      }
+    }
     fetch(`${window.location.origin}/orders`, {
       method: "POST",
       body: JSON.stringify({customer: customer, order: order}),
@@ -112,11 +117,21 @@
     }).catch((err) => {
       alert(err)
     })
+    for (let k of Object.keys(chems)){
+      chems[k].probeCount = 0
+    }
   }
 
   const update = () => {
     customer.adress = order.adress
-    if (Object.keys(order.probes).length == 0) order.probes = Object.assign({}, chems)
+    Object.keys(order.probes).forEach(key => {
+      delete order.probes[key]
+    })
+    for (let [k, v] of Object.entries(chems)){
+      if (chems[k].probeCount != 0){
+        order.probes[k] = v
+      }
+    }
     order.status = "Изменен!"
     fetch(`${window.location.origin}/orders`, {
       method: "PUT",
@@ -149,6 +164,9 @@
   }
 
   const onClose = (e) => {
+    for (let k of Object.keys(chems)){
+      chems[k].probeCount = 0
+    }
     dispatch('message', {
       id: order.id,
       update: false
@@ -167,7 +185,7 @@
   }
 
   const searchCustomer = (e) => {
-    fetch(`${window.location.origin}/clients?client=${e.target.value}`).then(function(response) {
+    fetch(`${window.location.origin}/customers?customer=${e.target.value}`).then(function(response) {
       return response.json();
     }).then((data) => {
       if (data.length == 0) throw new Error("storage empty")
@@ -201,9 +219,9 @@
 
 </script>
 
-<div id="container">
+<div class="container">
   {#if order.id == null}
-    <div id="search">
+    <div class="search-field">
       <input list="customer-list" type="text" on:input={searchCustomer} on:change={getCustomer} placeholder="Поиск...">
       {#if order.id == null}
         <datalist id="customer-list">
@@ -215,11 +233,11 @@
     </div>
   {:else}
     <div>
-      <button class="close" on:click={onClose}>Закрыть</button>
+      <button class="close-button" on:click={onClose}>Закрыть</button>
     </div>
   {/if}
-  <div id="main">
-    <div id="customer-name">
+  <div class="main">
+    <div class="customer-name">
       <select bind:value={customer.type}>
         <option value="0" selected>ИП</option>
         <option value="1">Юр.Лицо</option>
@@ -237,29 +255,15 @@
         </div>
       {:else}
         <div>
-          <input type="text" id="name" bind:value={customer.name} placeholder="Наименование компании">
+          <input class="name" type="text" bind:value={customer.name} placeholder="Наименование компании">
         </div>    
       {/if}
     </div>
     <div>
       <div class="underline">
-        <div class="lables">
-          <!--
+        <div class="lable">
           <div class="flex">
-            <div class="lables">ClientID:</div>
-            <div>{client.id}</div>
-          </div>
-          <div class="flex">
-            <div class="lables">OrderID:</div>
-            <div>{order.id}</div>
-          </div>
-          <div class="flex">
-            <div class="lables">OrderClientID:</div>
-            <div>{order.clientId}</div>
-          </div>
-          -->
-          <div class="flex">
-            <div class="lables">Менеджер:</div>
+            <div class="lable">Менеджер:</div>
             <div>
               <select bind:value={customer.manager}>
                 {#each Object.values(managers) as manager}
@@ -269,14 +273,14 @@
             </div>
           </div>
           <div class="flex">
-            <div class="lables">
+            <div class="lable">
               {#if customer.type != "2"}
                 ИНН: 
               {:else}
                 Паспорт: 
               {/if}
             </div>
-            <div id="nums">
+            <div class="nums">
               {#if customer.type != "2"}
                 <input class="inn" type="text" bind:value={customer.inn} on:keypress={telInput} on:input={innFormat} placeholder="ИНН">
               {:else}
@@ -288,8 +292,8 @@
             </div>
           </div>
           <div class="flex">
-            <div class="lables">Контакт:</div>
-            <div id="contact">
+            <div class="lable">Контакт:</div>
+            <div class="contact">
               {#each customer.contact as contact}
                 <div>
                   <input type="text" bind:value={contact.name} placeholder="Контакт">
@@ -302,7 +306,7 @@
             </div>
           </div>
           <div class="flex">
-            <div class="lables">Email:</div>
+            <div class="lable">Email:</div>
             <div>
               <input type="text" bind:value={customer.email} placeholder="Email">
             </div>
@@ -310,9 +314,9 @@
         </div>
       </div>
       <div class="underline">
-        <div class="lables">
+        <div class="lable">
           <div class="flex">
-            <div class="lables">ТК:</div>
+            <div class="lable">ТК:</div>
             <div>
               <select bind:value={order.cargo}>
                 <option value="город">город</option>
@@ -325,11 +329,11 @@
             </div>
           </div>
           <div class="flex">
-            <div class="lables">За Наш Счет:</div>
+            <div class="lable">За Наш Счет:</div>
             <input type="checkbox" bind:checked={order.payment}>
           </div>
           <div class="flex">
-            <div class="lables">Город:</div>
+            <div class="lable">Город:</div>
             <div>
               <input list="city-list" type="text" bind:value={order.adress.city} on:input={searchCity} placeholder="Город">
               {#if order.id == null}
@@ -342,26 +346,26 @@
             </div>
           </div>
           <div class="flex">
-            <div class="lables">До Адреса</div>
+            <div class="lable">До Адреса</div>
             <div>
               <input type="checkbox" bind:checked={order.toadress}>
             </div>
           </div>
           <div class="flex">
             {#if order.toadress}
-              <div class="lables">Адрес:</div>
+              <div class="lable">Адрес:</div>
               <div>
                 <input type="text" bind:value={order.adress.adress} placeholder="Адрес">
               </div>
             {:else}
-              <div class="lables">Терминал:</div>
+              <div class="lable">Терминал:</div>
               <div>
                 <input type="text" bind:value={order.adress.terminal} placeholder="Терминал">
               </div>
             {/if}
           </div>
           <div class="flex">
-            <div class="lables">Счет:</div>
+            <div class="lable">Счет:</div>
             <div>
               {#each order.invoice as invoice}
                 <div>
@@ -374,13 +378,13 @@
             </div>
           </div>
           <div class="flex">
-            <div class="lables">Крайняя дата</div>
+            <div class="lable">Крайняя дата</div>
             <div>
               <input type="date" bind:value={order.lastDate}>
             </div>
           </div>
           <div class="flex">
-            <div class="lables">Комментарий</div>
+            <div class="lable">Комментарий</div>
             <div>
               <textarea  rows="4" bind:value={order.comment} placeholder="Комментарий"></textarea>
             </div>
@@ -388,34 +392,18 @@
           <div>
             <div class="probes-container">
               <button on:click={probesClose}>закрыть</button>
-              {#if Object.keys(order.probes).length == 0}
-                {#each Object.values(chems).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
-                  <div class="probes">
-                    <div class="probes-name">
-                      <span>{chem.name}</span>
-                    </div>
-                    <div class="probes-count">
-                      <button on:click={() => {if (chem.probeCount > 0) chem.probeCount--}}>-</button>
-                      <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
-                      <button on:click={() => chem.probeCount++}>+</button>
-                    </div>
+              {#each Object.values(chems).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
+                <div class="probes">
+                  <div class="probes-name">
+                    <span>{chem.name}</span>
                   </div>
-                {/each}
-              {:else}
-                {#each Object.values(order.probes).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
-                  <div class="probes">
-                    <div class="probes-name">
-                      <span>{chem.name}</span>
-                    </div>
-                    <div class="probes-count">
-                      <button on:click={() => {if (chem.probeCount > 0) chem.probeCount--}}>-</button>
-                      <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
-                      <button on:click={() => chem.probeCount++}>+</button>
-                    </div>
+                  <div class="probes-count">
+                    <button on:click={() => {if (chem.probeCount > 0) chem.probeCount--}}>-</button>
+                    <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
+                    <button on:click={() => chem.probeCount++}>+</button>
                   </div>
-                {/each}
-              {/if}
-              
+                </div>
+              {/each}
             </div>
             <button on:click={probesShow}>ПРОБНИКИ</button>
           </div>
@@ -442,17 +430,25 @@
   button:active{
     box-shadow: none;
   }
-  #search{
+  input[type="text"], textarea{
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid red;
+    outline: none;
+    color: black;
+    font-size: 14px;
+  }
+  .container{
+    margin: 30px 0px 5px 15px;
+  }
+  .search-field{
     margin-left: 5px;
     margin-top: 10px;
   }
-  #search input{
+  .search-field input{
     width: 250px;
   }
-  #container{
-    margin: 30px 0px 5px 15px;
-  }
-  #main{
+  .main{
     padding: 5px;
   }
   .flex{
@@ -461,23 +457,23 @@
     border-image: linear-gradient(to right, transparent 0%, #778899 50%, transparent 85%) 1;
     padding: 2px 0px;
   }
-  .lables{
+  .flex div{
+    margin-bottom: 2px;
+  }
+  .lable{
     flex-basis: 35%;
     font-size: 14px;
   }
   .underline{
     border-bottom: 1px solid #778899;
   }
-  .flex div{
-    margin-bottom: 2px;
-  }
-  #contact input, #nums input{
+  .contact input, .nums input{
     width: 100px;
   }
-  #nums .inn {
+  .nums .inn {
     width: 110px;
   }
-  .close{
+  .close-button{
     position: fixed;
     right: 0;
     top: 0;

@@ -6,7 +6,6 @@ import (
 )
 
 type Cache struct {
-	auth      map[string]string
 	inWork    map[string]interface{}
 	chemistry map[string]interface{}
 	cargos    map[string]interface{}
@@ -16,7 +15,6 @@ type Cache struct {
 
 func New() *Cache {
 	return &Cache{
-		auth:      make(map[string]string),
 		inWork:    make(map[string]interface{}),
 		chemistry: make(map[string]interface{}),
 		cargos:    make(map[string]interface{}),

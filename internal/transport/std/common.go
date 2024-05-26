@@ -19,7 +19,7 @@ func getCities(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCustomers(w http.ResponseWriter, r *http.Request) {
-	reg := r.URL.Query().Get("client")
+	reg := r.URL.Query().Get("customer")
 	customers, err := service.GetCustomers(reg)
 	if err != nil {
 		errorResponse(w, fmt.Sprintf("get clients failed (%v)", err.Error()), http.StatusBadRequest)

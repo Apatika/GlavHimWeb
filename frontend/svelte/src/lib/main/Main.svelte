@@ -1,7 +1,9 @@
 <script>
+  import NewOrder from "./NewOrder.svelte"
+  import Order from "./Order.svelte"
+  import OrderFull from "./OrderFull.svelte"
   import { createEventDispatcher } from "svelte"
   const dispatch = createEventDispatcher()
-  import NewOrder from "./NewOrder.svelte"
   
   let editCustomer = {
     id: null,
@@ -36,90 +38,51 @@
   export let orders = {}
 
   const closeFullOrder = () => {
-    document.querySelectorAll('.full-order').forEach((elem) => {
+    document.querySelectorAll('#full-order').forEach((elem) => {
       elem.style.padding = null
       elem.style.height = '0px'
     })
-    document.querySelectorAll('.order').forEach((elem) => {
+    document.querySelectorAll('#order').forEach((elem) => {
       elem.style.transform = 'scale(1)'
       elem.style.boxShadow = 'none'
     })
   }
 
-  const changeStatus = (order, status) => {
-    closeFullOrder()
-    order.order.status = status
-    fetch(`${window.location.origin}/orders`, {
-      method: "PUT",
-      body: JSON.stringify(order),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    }).then(response => {
-      if (!response.ok) return response.text().then(text => {throw new Error(text)})
-    }).catch((err) => {
-      alert(err)
-    })
-  }
-
-  const getColor = (status) => {
-    switch (status) {
-      case "Принят В Работу":
-        return "#FFFF00"
-      case "СТОП":
-        return "#FF00FF"
-      case "Забор ПЭК":
-        return "#B0C4DE"
-      case "Заказан Забор":
-        return "#00FFFF"
-      case "Развозка":
-        return "#FFA500"
-      case "Нет Товара":
-        return "#FF0000"
-      case "Изменен!":
-        return "#00FF00"
-      case "В Маршрут":
-        return "#008B8B"
-      case "Передан":
-        return "green"
-      default:
-        return "white"
-    }
-  }
-
   const toggleFullOrder = (event) => {
-    let target = event.target.closest('.order').nextElementSibling
+    let parent = event.target.closest('#order')
+    let target = parent.nextElementSibling
     let height = "160px"
     if (window.screen.width < 1366) height = "300px"
     if (target.style.height != height) {
       closeFullOrder()
       target.style.padding = '15px'
       target.style.height = height
-      event.target.closest('.order').style.transform = 'scale(1.005)'
-      event.target.closest('.order').style.boxShadow = '0px 0px 10px black'
+      parent.style.transform = 'scale(1.005)'
+      parent.style.boxShadow = '0px 0px 10px black'
     }
     else {
       target.style.padding = null
       target.style.height = '0px'
-      event.target.closest('.order').style.transform = 'scale(1)'
-      event.target.closest('.order').style.boxShadow = 'none'
+      parent.style.transform = 'scale(1)'
+      parent.style.boxShadow = 'none'
     }
   }
 
   const dispatchEdit = (detail) => {
     closeFullOrder()
+    Object.keys(chems).forEach(key => chems[key].probeCount = 0)
     let target = document.querySelector('#editor')
     target.style.display = "none"
     document.body.style.pointerEvents = "all"
-    for (let k of Object.keys(chems)){
-      chems[k].probeCount = 0
-    }
     if (detail.update){
       dispatch('message', {routeId: detail.id})
     }
   }
 
   const onEdit = (order, customer) => {
+    for (let [k, v] of Object.entries(order.probes)){
+      chems[k] = v
+    }
     editCustomer = customer
     editOrder = order
     let target = document.querySelector('#editor')
@@ -159,149 +122,11 @@
     <div id="table">
       {#each Object.values(orders).sort(sortOrders) as order}
         <div>
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <!-- svelte-ignore a11y-no-static-element-interactions -->
-          <div class="order" style="background-color: {getColor(order.order.status)}">
-            <div class="order-item cargo" on:click={toggleFullOrder}>
-              <div><strong>{order.order.cargo}</strong></div>
-              <div class="additional">счет: 
-                {#each order.order.invoice as invoice}
-                  <span>{invoice} </span>
-                {/each}
-              </div>
-            </div>
-            <div class="order-item name" on:click={toggleFullOrder}><strong>{order.customer.surname} {order.customer.name}</strong> {order.customer.secondName}</div>
-            <div class="order-item adress" on:click={toggleFullOrder}>
-              <div><strong>{order.order.adress.city}</strong></div>
-              {#if order.order.adress.adress != ""}
-                <div>адрес: {order.order.adress.adress}</div>
-              {:else}
-                <div>терминал: {order.order.adress.terminal}</div>
-              {/if}
-            </div>
-            {#if order.order.lastDate != ""} <div class="last-date" on:click={toggleFullOrder}><strong>{order.order.lastDate}</strong></div> {/if}
-            {#if Object.keys(order.order.probes).length > 0} <div class="achtung" on:click={toggleFullOrder}><strong>🧴</strong></div> {/if}
-            {#if order.order.payment} <div class="achtung" id="payment-span" on:click={toggleFullOrder}><strong>💰</strong></div> {/if}
-            {#if order.order.comment != ""} <div class="achtung">💬</div> {/if}
-            <div class="order-item status" on:click={() => {return}}>
-              <select bind:value={order.order.status}
-                      on:change={(e) => {changeStatus(order, e.target.value); e.target.parentElement.parentElement.style.backgroundColor = getColor(e.target.value)}}>
-                <option value=""></option>
-                <option value="Принят В Работу">Принят В Работу</option>
-                <option value="Развозка">Развозка</option>
-                <option value="Забор ПЭК">Забор ПЭК</option>
-                <option value="Заказан Забор">Заказан Забор</option>
-                <option value="Нет Товара">Нет Товара</option>
-                <option value="СТОП">СТОП</option>
-                <option value="Отгружен">Отгружен</option>
-                <option value="Изменен!" disabled>Изменен!</option>
-                <option value="В Маршрут" disabled>В Маршрут</option>
-                <option value="Передан" disabled>Передан</option>
-              </select>
-            </div>
+          <div id="order">
+            <Order {order} on:message={(e) => toggleFullOrder(e.detail)} on:status={closeFullOrder}></Order>
           </div>
-          <div class="full-order">
-            <div class="full-order-customer">
-              <div class="full-item">
-                <div class="full-label"><strong>Менеджер:</strong></div>
-                <div>{order.customer.manager}</div>
-              </div>
-              {#if order.customer.surname != ""}
-                <div class="full-item">
-                  <div class="full-label"><strong>Фамилия:</strong></div>
-                  <div>{order.customer.surname}</div>
-                </div>
-              {/if}
-                <div class="full-item">
-                  <div class="full-label"><strong>Имя:</strong></div>
-                  <div>{order.customer.name}</div>
-                </div>
-              {#if order.customer.secondName != ""}
-                <div class="full-item">
-                  <div class="full-label"><strong>Отчество</strong></div>
-                  <div>{order.customer.secondName}</div>
-                </div>
-              {/if}
-              {#if order.customer.inn != ""}
-                <div class="full-item">
-                  <div class="full-label"><strong>ИНН:</strong></div>
-                  <div>{order.customer.inn}</div>
-                </div>
-              {/if}
-              {#if order.customer.passportSerial != ""}
-                <div class="full-item">
-                  <div class="full-label"><strong>Паспорт:</strong></div>
-                  <div>{order.customer.passportSerial} {order.customer.passportNum}</div>
-                </div>
-              {/if}
-                <div class="full-item">
-                  <div class="full-label"><strong>Контакты:</strong></div>
-                  <div>
-                    {#each order.customer.contact as contact}
-                      <div>{contact.name} {contact.tel}</div>
-                    {/each}
-                  </div>
-                </div>
-              {#if order.customer.email != ""}
-                <div class="full-item">
-                  <div class="full-label"><strong>Email:</strong></div>
-                  <div>{order.customer.email}</div>
-                </div>
-              {/if}
-            </div>
-            <div class="full-order-order">
-              <div class="full-item">
-                <div class="full-label"><strong>ТК:</strong></div>
-                <div>{order.order.cargo}</div>
-              </div>
-              <div class="full-item">
-                <div class="full-label"><strong>Город:</strong></div>
-                <div>{order.order.adress.city}</div>
-              </div>
-              {#if order.order.adress.adress != ""} 
-                <div class="full-item">
-                  <div class="full-label"><strong>Адрес:</strong></div>
-                  <div>{order.order.adress.adress}</div>
-                </div>
-              {:else}
-                <div class="full-item">
-                  <div class="full-label"><strong>Терминал:</strong></div>
-                  <div>{order.order.adress.terminal}</div>
-                </div>
-              {/if}
-              <div>
-                <div class="full-item">
-                  <div class="full-label"><strong>Счет:</strong></div>
-                  <div>
-                    {#each order.order.invoice as invoice}
-                      <span>{invoice} </span>
-                    {/each}
-                  </div>
-                </div>  
-              </div>
-              <div class="full-item">
-                <div class="full-label"><strong>Крайняя дата:</strong></div>
-                <div>{order.order.lastDate}</div>
-              </div>
-              <div class="full-item">
-                <div class="full-label"><strong>Комментарий:</strong></div>
-                <div>{order.order.comment}</div>
-              </div>
-            </div>
-            <div class="probes">
-              {#if Object.keys(order.order.probes).length > 0}<span><strong>ПРОБНИКИ</strong></span>{/if}
-              {#each Object.values(order.order.probes).filter(val => val.probeCount > 0).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
-                <div>{chem.name} - {(chem.probeValue * chem.probeCount) / 1000} л.</div>
-              {/each}
-            </div>
-            <div>
-              <div>
-                <button class="edit" on:click={() => onEdit(order.order, order.customer)}>Редактировать</button>
-              </div>
-              <div>
-                {#if order.order.payment} <span style="color: red; font-size: 14px;"><strong>ЗА НАШ СЧЕТ!!!</strong></span> {/if}
-              </div>
-            </div>
+          <div id="full-order">
+            <OrderFull {order} on:message={(e) => {onEdit(e.detail.order, e.detail.customer)}}></OrderFull>
           </div>
         </div>
       {:else}
@@ -320,107 +145,11 @@
   span{
     color: black;
   }
-  select{
-    height: 34px;
-    text-align: center;
-    background-color: transparent;
-    border: none;
-    color: black;
-    font-weight: bold;
-  }
   .container {
     display: flex;
   }
   .container div:not(:last-child) {
     align-items: stretch;
-  }
-  .cargo{
-    flex-basis: 15%;
-  }
-  .name{
-    flex-basis: 25%;
-  }
-  .order{
-    display: flex;
-    height: 40px;
-    color: black;
-    font-size: 14px;
-    border: 1px solid black;
-    border-radius: 5px;
-    background-color: white;
-    transition: all .1s linear;
-  }
-  .order-item{
-    padding: 5px 5px;
-    border-right: 1px solid black;
-    cursor: pointer;
-    line-height: 1;
-  }
-  .adress{
-    flex-basis: 15%;
-    flex-grow: 1;
-    border-right: none;
-  }
-  .status{
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-    cursor: pointer;
-  }
-  .status option:disabled{
-    display: none;
-  }
-  .full-order{
-    display: flex;
-    height: 0px;
-    border-radius: 5px;
-    background-color: #FFF5EE;
-    box-shadow: 0px -3px 3px 0px black inset;
-    transition: all .2s linear;
-    overflow: hidden;
-  }
-  .full-order-order{
-    width: 350px;
-    font-size: small;
-  }
-  .full-order-customer{
-    width: 300px;
-    font-size: small;
-  }
-  .achtung{
-    padding: 5px 0px;
-    width: 30px;
-    font-size: 18px;
-    text-shadow:
-    -1px -1px 0 black,
-    1px -1px 0 black,
-    -1px 1px 0 black,
-    1px 1px 0 black;
-  }
-  .last-date{
-    padding: 10px 0px;
-    font-size: 12px;
-    width: 75px;
-    color: #0000CD;
-    font-weight: bold;
-  }
-  .full-item{
-    display: flex;
-    word-break: break-word;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-  .full-label{
-    width: 100px;
-    min-width: 100px;
-  }
-  .edit{
-    float: right;
-    height: 30px;
-  }
-  .probes{
-    flex-grow: 1;
-    text-align: center;
-    font-size: small;
   }
   .legend{
     margin: 5px;
@@ -432,8 +161,16 @@
   .legend strong{
     color: #0000CD;
   }
-  #payment-span{
-    margin-right: 5px;
+  #order{
+    position: relative;
+  }
+  #full-order{
+    height: 0px;
+    border-radius: 5px;
+    background-color: #FFF5EE;
+    box-shadow: 0px -3px 3px 0px black inset;
+    transition: all .2s linear;
+    overflow: hidden;
   }
   #editor{
     display: none;
@@ -479,13 +216,6 @@
     border-radius: none;
   }
   @media (min-width:1365px) and (max-width:1600px){
-    .order{
-      font-size: 12px;
-    }
-    .full-label{
-      flex-basis: 30%;
-      min-width: 30%;
-    }
     #editor{
       width: 400px;
     }
@@ -500,32 +230,16 @@
     }
   }
   @media (max-width:1364px){
-    .adress, .achtung, #new-order, .last-date, .legend, .additional{
+    #new-order, .legend{
       display: none;
-    }
-    .full-order{
-      display: block;
-      overflow: auto;
-    }
-    .edit{
-      margin-bottom: 5px;
-    }
-    .name{
-      flex-grow: 1;
     }
     #table-container{
       width: 200px;
       margin: 10px 40px 10px 5px;
     }
-    .order-item, .status{
-      font-size: 9px;
-    }
     #editor{
       width: 300px;
       font-size: 7px;
-    }
-    .status select{
-      font-size: 9px;
     }
   }
 </style>

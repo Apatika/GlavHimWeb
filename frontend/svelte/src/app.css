@@ -16,14 +16,6 @@
   --background-main: #fdf5df;
   --border-main: #191970;
 }
-input[type="text"], textarea{
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid red;
-  outline: none;
-  color: black;
-  font-size: 14px;
-}
 input[type='checkbox']:checked {
   background-color: #023047;
 }
