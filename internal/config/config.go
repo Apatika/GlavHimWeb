@@ -69,28 +69,32 @@ var DefaultCfg Config = Config{
 }
 
 func New() {
+	log.Print("read config file")
 	buff, err := os.ReadFile("./config/config.yaml")
 	if err != nil {
-		log.Println(err)
 		if errors.Is(err, os.ErrNotExist) {
+			log.Printf("ERROR: config file not exist (%v)", err)
 			log.Print("create config file")
 			file, err := os.Create("./config/config.yaml")
 			if err != nil {
-				log.Panic("create config file error")
+				log.Panicf("ERROR: create config file failed (%v)", err)
 			}
+			log.Print("marshal default config")
 			config, err := yaml.Marshal(DefaultCfg)
 			if err != nil {
-				log.Panic("create config file error")
+				log.Panicf("ERROR: marshal default config failed (%v)", err)
 			}
 			buff = config
+			log.Print("write default config to config file")
 			_, err = file.Write(config)
 			if err != nil {
-				log.Panic("create config file error")
+				log.Panicf("ERROR: write config file failed (%v)", err)
 			}
 		}
 	}
+	log.Print("load config")
 	if err := yaml.Unmarshal(buff, &Cfg); err != nil {
-		log.Println(err)
+		log.Printf("ERROR: load config failed (%v)", err)
 		log.Print("load default config")
 		Cfg = DefaultCfg
 	}

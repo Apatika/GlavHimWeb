@@ -523,4 +523,21 @@
     text-align: center;
     transition: all .2s linear;
   }
+  @media (max-width:1364px){
+    .probes{
+      margin-bottom: 2px;
+    }
+    .probes-name{
+      font-size: 9px;
+      width: 100px;
+    }
+    .probes-count{
+      font-size: 9px;
+      width: 100px;
+    }
+    .probes-count-span{
+      width: 30px;
+    }
+  }
+
 </style>

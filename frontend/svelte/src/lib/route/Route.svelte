@@ -8,7 +8,6 @@
 
   const del = (order) => {
     changeStatus(order, "Развозка")
-
   }
 
   const changeStatus = (order, status) => {
@@ -211,13 +210,15 @@
   .route-num{
     width: 20px;
     background-color: #FFA500;
-    border: none;
+    border: 1px solid black;
     border-radius: 5px;
     text-align: center;
+    color: black;
   }
   .delivered-button{
+    margin-bottom: 3px;
     background-color: #FFA500;
-    border: none;
+    border: 1px solid black;
     border-radius: 5px;
     text-align: center;
     color: black;

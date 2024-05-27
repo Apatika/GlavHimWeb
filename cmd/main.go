@@ -18,26 +18,26 @@ var DB_URI string
 
 func main() {
 
-	log.SetFlags(log.Lshortfile | log.LstdFlags)
+	log.SetFlags(log.LstdFlags)
+	log.Print("open log file")
 	file, err := os.OpenFile("log.txt", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ERROR: open log file failed (%v)", err)
 	}
 	defer file.Close()
 	mw := io.MultiWriter(os.Stdout, file)
 	log.SetOutput(mw)
 
-	log.Println("load config")
 	config.New()
 
-	log.Println("get http handler")
+	log.Println("load http handler")
 	handler := handler.New()
 
 	storage.DB()
 
 	storage.CacheInit()
 	if err := service.LoadCache(); err != nil {
-		log.Fatalf("ERROR (load cache): %v", err)
+		log.Fatalf("ERROR: load cache failed (%v)", err)
 	}
 
 	log.Println("set server settings")

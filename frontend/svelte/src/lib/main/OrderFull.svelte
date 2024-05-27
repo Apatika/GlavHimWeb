@@ -100,7 +100,7 @@
       <div>{chem.name} - {(chem.probeValue * chem.probeCount) / 1000} л.</div>
     {/each}
   </div>
-  <div>
+  <div class="other">
     <div>
       <button class="edit-button" on:click={() => dispatch('message', {order: order.order, customer: order.customer})}>Редактировать</button>
     </div>
@@ -144,7 +144,11 @@
   @media (max-width:1364px){
     .container{
       display: block;
-      overflow: auto;
+      height: 90%;
+      width: 100%;
+    }
+    .other{
+      margin-bottom: 3px;
     }
   }
 

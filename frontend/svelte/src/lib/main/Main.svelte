@@ -172,7 +172,7 @@
     background-color: #FFF5EE;
     box-shadow: 0px -3px 3px 0px black inset;
     transition: all .2s linear;
-    overflow: hidden;
+    overflow: auto;
   }
   #editor{
     display: none;
@@ -235,13 +235,30 @@
     #new-order, .legend{
       display: none;
     }
+    #new-order{
+      position: absolute;
+      width: 100%;
+      height: 100vh;
+      z-index: 15;
+    }
     #table-container{
       width: 200px;
       margin: 10px 40px 10px 5px;
     }
     #editor{
-      width: 300px;
+      height: 100vh;
+      width: 100%;
       font-size: 7px;
+    }
+    #full-order{
+      box-shadow: none;
+    }
+    #new-order-expand{
+      position: fixed;
+      display: block;
+      bottom: 0;
+      width: 100%;
+      z-index: 20;
     }
   }
 </style>
