@@ -7,6 +7,7 @@ import (
 	"glavhim-app/internal/service"
 	"glavhim-app/internal/storage"
 	handler "glavhim-app/internal/transport"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -23,7 +24,8 @@ func main() {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	log.SetOutput(file)
+	mw := io.MultiWriter(os.Stdout, file)
+	log.SetOutput(mw)
 
 	log.Println("load config")
 	config.New()
