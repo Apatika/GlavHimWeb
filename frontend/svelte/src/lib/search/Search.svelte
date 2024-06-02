@@ -154,7 +154,7 @@
   background-color: #FFF5EE;
   box-shadow: 0px -3px 3px 0px black inset;
   transition: all .2s linear;
-  overflow: auto;
+  overflow: hidden;
 }
 #options{
   margin-bottom: 5px;
@@ -174,6 +174,7 @@ select, input{
 @media (max-width:1364px){
   .full-order{
     box-shadow: none;
+    overflow: auto;
   }
 }
 

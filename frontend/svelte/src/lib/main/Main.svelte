@@ -172,7 +172,7 @@
     background-color: #FFF5EE;
     box-shadow: 0px -3px 3px 0px black inset;
     transition: all .2s linear;
-    overflow: auto;
+    overflow: hidden;
   }
   #editor{
     display: none;
@@ -252,6 +252,7 @@
     }
     .full-order{
       box-shadow: none;
+      overflow: auto;
     }
     #new-order-expand{
       position: fixed;
