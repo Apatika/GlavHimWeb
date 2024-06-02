@@ -1,7 +1,7 @@
 <script>
   import NewOrder from "./NewOrder.svelte"
-  import Order from "./Order.svelte"
-  import OrderFull from "./OrderFull.svelte"
+  import Order from "../Order.svelte"
+  import OrderFull from "../OrderFull.svelte"
   import { createEventDispatcher } from "svelte"
   const dispatch = createEventDispatcher()
   
@@ -39,18 +39,18 @@
   export let orders = {}
 
   const closeFullOrder = () => {
-    document.querySelectorAll('#full-order').forEach((elem) => {
+    document.querySelectorAll('.full-order').forEach((elem) => {
       elem.style.padding = null
       elem.style.height = '0px'
     })
-    document.querySelectorAll('#order').forEach((elem) => {
+    document.querySelectorAll('.order').forEach((elem) => {
       elem.style.transform = 'scale(1)'
       elem.style.boxShadow = 'none'
     })
   }
 
   const toggleFullOrder = (event) => {
-    let parent = event.target.closest('#order')
+    let parent = event.target.closest('.order')
     let target = parent.nextElementSibling
     let height = "160px"
     if (window.screen.width < 1366) height = "300px"
@@ -124,10 +124,10 @@
     <div id="table">
       {#each Object.values(orders).sort(sortOrders) as order}
         <div>
-          <div id="order">
+          <div class="order">
             <Order {order} on:message={(e) => toggleFullOrder(e.detail)} on:status={closeFullOrder}></Order>
           </div>
-          <div id="full-order">
+          <div class="full-order">
             <OrderFull {order} on:message={(e) => {onEdit(e.detail.order, e.detail.customer)}}></OrderFull>
           </div>
         </div>
@@ -163,10 +163,10 @@
   .legend strong{
     color: #0000CD;
   }
-  #order{
+  .order{
     position: relative;
   }
-  #full-order{
+  .full-order{
     height: 0px;
     border-radius: 5px;
     background-color: #FFF5EE;
@@ -250,7 +250,7 @@
       width: 100%;
       font-size: 7px;
     }
-    #full-order{
+    .full-order{
       box-shadow: none;
     }
     #new-order-expand{

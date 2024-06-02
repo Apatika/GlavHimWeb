@@ -3,6 +3,7 @@
   const dispatch = createEventDispatcher()
 
   export let order = {}
+  export let isSearch = false
 
 </script>
 
@@ -101,9 +102,11 @@
     {/each}
   </div>
   <div class="other">
-    <div>
-      <button class="edit-button" on:click={() => dispatch('message', {order: order.order, customer: order.customer})}>Редактировать</button>
-    </div>
+    {#if !isSearch}
+      <div>
+        <button class="edit-button" on:click={() => dispatch('message', {order: order.order, customer: order.customer})}>Редактировать</button>
+      </div>
+    {/if}
     <div>
       {#if order.order.payment} <span style="color: red; font-size: 14px;"><strong>ЗА НАШ СЧЕТ!!!</strong></span> {/if}
     </div>

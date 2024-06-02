@@ -2,6 +2,7 @@
   import Main from "./lib/main/Main.svelte";
   import Data from "./lib/data/Data.svelte";
   import Route from "./lib/route/Route.svelte";
+  import Search from "./lib/search/Search.svelte";
 
   let managers = {}
   let cargos = {}
@@ -102,6 +103,7 @@
   <button name='main' on:click={change}>Главная</button>
   <button name='data' on:click={change}>База Данных</button>
   <button name='route' on:click={change}>Маршрут</button>
+  <button name='search' on:click={change}>Поиск Заказов</button>
 </div>
 <div class="mobile-nav">
   <button name='main' on:click={change}>Главная</button>
@@ -116,6 +118,9 @@
   </div>
   <div class="page" id="route">
     <Route {orders}></Route>
+  </div>
+  <div class="page" id="search">
+    <Search></Search>
   </div>
 </div>
 <button id="menu-button" on:click={mobileMenu}>меню</button>

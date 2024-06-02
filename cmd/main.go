@@ -33,7 +33,7 @@ func main() {
 	log.Println("load http handler")
 	handler := handler.New()
 
-	storage.DB()
+	storage.NewDB()
 
 	storage.CacheInit()
 	if err := service.LoadCache(); err != nil {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"glavhim-app/internal/config"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -69,6 +70,30 @@ func (m *MongoDB) GetById(collName string, obj interface{}, id string) error {
 	return nil
 }
 
+func (m *MongoDB) GetOrdersByStatus(obj interface{}, status string) error {
+	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
+	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "status", Value: status}})
+	if err != nil {
+		return err
+	}
+	if err = cursor.All(context.TODO(), obj); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MongoDB) GetOrdersByNotStatus(obj interface{}, status string) error {
+	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
+	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "status", Value: bson.D{{Key: "$ne", Value: status}}}})
+	if err != nil {
+		return err
+	}
+	if err = cursor.All(context.TODO(), obj); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *MongoDB) Add(collName string, obj interface{}) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(collName)
 	if _, err := coll.InsertOne(context.TODO(), obj); err != nil {
@@ -88,18 +113,6 @@ func (m *MongoDB) Update(collName string, obj interface{}, id string) error {
 func (m *MongoDB) Delete(collName string, id string) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(collName)
 	if _, err := coll.DeleteOne(context.TODO(), bson.M{"_id": id}); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MongoDB) GetInWorkOrders(obj interface{}) error {
-	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
-	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "status", Value: bson.D{{Key: "$ne", Value: "Отгружен"}}}})
-	if err != nil {
-		return err
-	}
-	if err = cursor.All(context.TODO(), obj); err != nil {
 		return err
 	}
 	return nil
@@ -161,6 +174,33 @@ func (m *MongoDB) GetCustomers(reg string, clients interface{}) error {
 		return err
 	}
 	if err = cursor.All(context.TODO(), clients); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MongoDB) SearchOrders(id string, payment bool, month string, limit int64, obj interface{}) error {
+	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
+	year := time.Now().Year()
+	var cursor *mongo.Cursor
+	var err error
+	if payment {
+		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "payment", Value: true}, {Key: "creation_date.year", Value: year}, {Key: "creation_date.month", Value: month}})
+		if err != nil {
+			return err
+		}
+	} else if id != "" {
+		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "customer_id", Value: id}})
+		if err != nil {
+			return err
+		}
+	} else {
+		cursor, err = coll.Find(context.TODO(), bson.D{}, options.Find().SetSort(bson.M{"$natural": -1}).SetLimit(limit))
+		if err != nil {
+			return err
+		}
+	}
+	if err = cursor.All(context.TODO(), obj); err != nil {
 		return err
 	}
 	return nil

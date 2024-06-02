@@ -23,8 +23,7 @@ type Customer struct {
 }
 
 func (c *Customer) Push() error {
-	db := storage.DB()
-	if err := db.Add(config.Cfg.DB.Coll.Customers, c); err != nil {
+	if err := storage.DB.Add(config.Cfg.DB.Coll.Customers, c); err != nil {
 		return fmt.Errorf("write client to db failed(%v)", err.Error())
 	}
 	log.Printf("create client (id: %v)", c.ID)
@@ -32,8 +31,7 @@ func (c *Customer) Push() error {
 }
 
 func (c *Customer) Update() error {
-	db := storage.DB()
-	if err := db.Update(config.Cfg.DB.Coll.Customers, c, c.ID); err != nil {
+	if err := storage.DB.Update(config.Cfg.DB.Coll.Customers, c, c.ID); err != nil {
 		return fmt.Errorf("update client failed(%v)", err.Error())
 	}
 	log.Printf("update client (id: %v)", c.ID)
@@ -41,25 +39,23 @@ func (c *Customer) Update() error {
 }
 
 func (c *Customer) Delete() error {
-	db := storage.DB()
-	if err := db.Delete(config.Cfg.DB.Coll.Customers, c.ID); err != nil {
+	if err := storage.DB.Delete(config.Cfg.DB.Coll.Customers, c.ID); err != nil {
 		return fmt.Errorf("delete client from db failed (%v)", err.Error())
 	}
-	storage.Cache.Delete(config.Cfg.DB.Coll.Customers, c.ID)
+	go storage.Cache.Delete(config.Cfg.DB.Coll.Customers, c.ID)
 	log.Printf("delete client (name: %v)", c.Name)
 	return nil
 }
 
 func (c *Customer) Check() (string, error) {
-	db := storage.DB()
 	var id string
 	var err error
 	if c.Inn != "" {
-		id, err = db.CheckClient(c.Inn)
+		id, err = storage.DB.CheckClient(c.Inn)
 	} else if c.PassportNum != "" {
-		id, err = db.CheckClient(c.PassportNum, c.PassportSerial)
+		id, err = storage.DB.CheckClient(c.PassportNum, c.PassportSerial)
 	} else if c.Surname != "" {
-		id, err = db.CheckClient(c.Surname, c.Name, c.SecondName)
+		id, err = storage.DB.CheckClient(c.Surname, c.Name, c.SecondName)
 	} else {
 		return "", nil
 	}

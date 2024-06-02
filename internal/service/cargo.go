@@ -22,40 +22,37 @@ func (c *Cargo) GetAll() map[string]interface{} {
 
 func (c *Cargo) Push(raw []byte) error {
 	json.Unmarshal(raw, c)
-	db := storage.DB()
-	c.ID = db.GetNewID()
-	if err := db.CheckName(c.Name, config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
+	c.ID = storage.DB.GetNewID()
+	if err := storage.DB.CheckName(c.Name, config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
 		return fmt.Errorf("write cargo to db failed(%v)", err.Error())
 	}
-	if err := db.Add(config.Cfg.DB.Coll.Cargos, c); err != nil {
+	if err := storage.DB.Add(config.Cfg.DB.Coll.Cargos, c); err != nil {
 		return fmt.Errorf("write cargo to db failed(%v)", err.Error())
 	}
-	storage.Cache.Update(config.Cfg.DB.Coll.Cargos, c.ID, c)
+	go storage.Cache.Update(config.Cfg.DB.Coll.Cargos, c.ID, c)
 	log.Printf("create cargo (id: %v)", c.ID)
 	return nil
 }
 
 func (c *Cargo) Update(raw []byte) error {
 	json.Unmarshal(raw, c)
-	db := storage.DB()
-	if err := db.CheckName(c.Name, config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
+	if err := storage.DB.CheckName(c.Name, config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
 		return fmt.Errorf("update cargo failed(%v)", err.Error())
 	}
-	if err := db.Update(config.Cfg.DB.Coll.Cargos, c, c.ID); err != nil {
+	if err := storage.DB.Update(config.Cfg.DB.Coll.Cargos, c, c.ID); err != nil {
 		return fmt.Errorf("update cargo failed(%v)", err.Error())
 	}
-	storage.Cache.Update(config.Cfg.DB.Coll.Cargos, c.ID, c)
+	go storage.Cache.Update(config.Cfg.DB.Coll.Cargos, c.ID, c)
 	log.Printf("update cargo (id: %v)", c.ID)
 	return nil
 }
 
 func (c *Cargo) Delete(raw []byte) error {
 	json.Unmarshal(raw, c)
-	db := storage.DB()
-	if err := db.Delete(config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
+	if err := storage.DB.Delete(config.Cfg.DB.Coll.Cargos, c.ID); err != nil {
 		return fmt.Errorf("delete cargo from db failed (%v)", err.Error())
 	}
-	storage.Cache.Delete(config.Cfg.DB.Coll.Cargos, c.ID)
+	go storage.Cache.Delete(config.Cfg.DB.Coll.Cargos, c.ID)
 	log.Printf("delete cargo (name: %v)", c.Name)
 	return nil
 }

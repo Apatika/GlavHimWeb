@@ -22,40 +22,37 @@ func (c *Chemistry) GetAll() map[string]interface{} {
 
 func (c *Chemistry) Push(raw []byte) error {
 	json.Unmarshal(raw, c)
-	db := storage.DB()
-	c.ID = db.GetNewID()
-	if err := db.CheckName(c.Name, config.Cfg.DB.Coll.Chemistry, c.ID); err != nil {
+	c.ID = storage.DB.GetNewID()
+	if err := storage.DB.CheckName(c.Name, config.Cfg.DB.Coll.Chemistry, c.ID); err != nil {
 		return fmt.Errorf("write chemistry to db failed(%v)", err.Error())
 	}
-	if err := db.Add(config.Cfg.DB.Coll.Chemistry, c); err != nil {
+	if err := storage.DB.Add(config.Cfg.DB.Coll.Chemistry, c); err != nil {
 		return fmt.Errorf("write chemistry to db failed(%v)", err.Error())
 	}
-	storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, c.ID, c)
+	go storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, c.ID, c)
 	log.Printf("create chemistry (id: %v)", c.ID)
 	return nil
 }
 
 func (c *Chemistry) Update(raw []byte) error {
 	json.Unmarshal(raw, c)
-	db := storage.DB()
-	if err := db.CheckName(c.Name, config.Cfg.DB.Coll.Chemistry, c.ID); err != nil {
+	if err := storage.DB.CheckName(c.Name, config.Cfg.DB.Coll.Chemistry, c.ID); err != nil {
 		return fmt.Errorf("update chemistry failed(%v)", err.Error())
 	}
-	if err := db.Update(config.Cfg.DB.Coll.Chemistry, c, c.ID); err != nil {
+	if err := storage.DB.Update(config.Cfg.DB.Coll.Chemistry, c, c.ID); err != nil {
 		return fmt.Errorf("update chemistry failed(%v)", err.Error())
 	}
-	storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, c.ID, c)
+	go storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, c.ID, c)
 	log.Printf("update chemistry (id: %v)", c.ID)
 	return nil
 }
 
 func (c *Chemistry) Delete(raw []byte) error {
 	json.Unmarshal(raw, c)
-	db := storage.DB()
-	if err := db.Delete(config.Cfg.DB.Coll.Chemistry, c.ID); err != nil {
+	if err := storage.DB.Delete(config.Cfg.DB.Coll.Chemistry, c.ID); err != nil {
 		return fmt.Errorf("delete chemistry from db failed (%v)", err.Error())
 	}
-	storage.Cache.Delete(config.Cfg.DB.Coll.Chemistry, c.ID)
+	go storage.Cache.Delete(config.Cfg.DB.Coll.Chemistry, c.ID)
 	log.Printf("delete chemistry (name: %v)", c.Name)
 	return nil
 }

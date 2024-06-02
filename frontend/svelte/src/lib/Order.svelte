@@ -3,6 +3,7 @@
   const dispatch = createEventDispatcher()
 
   export let order = {}
+  export let isSearch = false
 
   const getColor = (status) => {
     let style = "background-color: "
@@ -59,7 +60,7 @@
       {/each}
     </div>
   </div>
-  <div class="item name"><strong>{order.customer.surname} {order.customer.name}</strong> {order.customer.secondName}</div>
+  <div class="item name">{#if order.customer.surname != "" && order.customer.inn != ""}ИП {/if}<strong>{order.customer.surname} {order.customer.name}</strong> {order.customer.secondName}</div>
   <div class="item adress">
     <div><strong>{order.order.adress.city}</strong></div>
     {#if order.order.adress.adress != ""}
@@ -72,22 +73,24 @@
   {#if Object.keys(order.order.probes).length > 0} <div class="achtung"><strong>🧴</strong></div> {/if}
   {#if order.order.payment} <div class="achtung" id="payment-span"><strong>💰</strong></div> {/if}
   {#if order.order.comment != ""} <div class="achtung">💬</div> {/if}
-  <div class="item status">
-    <select bind:value={order.order.status}
-            on:change={(e) => {changeStatus(e, order, e.target.value)}}>
-      <option value=""></option>
-      <option value="Принят В Работу">Принят В Работу</option>
-      <option value="Развозка">Развозка</option>
-      <option value="Забор ПЭК">Забор ПЭК</option>
-      <option value="Заказан Забор">Заказан Забор</option>
-      <option value="Нет Товара">Нет Товара</option>
-      <option value="СТОП">СТОП</option>
-      <option value="Отгружен">Отгружен</option>
-      <option value="Изменен!" disabled>Изменен!</option>
-      <option value="В Маршрут" disabled>В Маршрут</option>
-      <option value="Передан" disabled>Передан</option>
-    </select>
-  </div>
+  {#if !isSearch}
+    <div class="item status">
+      <select bind:value={order.order.status}
+              on:change={(e) => {changeStatus(e, order, e.target.value)}}>
+        <option value=""></option>
+        <option value="Принят В Работу">Принят В Работу</option>
+        <option value="Развозка">Развозка</option>
+        <option value="Забор ПЭК">Забор ПЭК</option>
+        <option value="Заказан Забор">Заказан Забор</option>
+        <option value="Нет Товара">Нет Товара</option>
+        <option value="СТОП">СТОП</option>
+        <option value="Отгружен">Отгружен</option>
+        <option value="Изменен!" disabled>Изменен!</option>
+        <option value="В Маршрут" disabled>В Маршрут</option>
+        <option value="Передан" disabled>Передан</option>
+      </select>
+    </div>
+  {/if}
 </div>
 
 <style>

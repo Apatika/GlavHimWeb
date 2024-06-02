@@ -23,16 +23,15 @@ func (o *OrderFull) GetAll() map[string]interface{} {
 }
 
 func (o *OrderFull) Push(raw []byte) error {
-	db := storage.DB()
 	json.Unmarshal(raw, o)
 	var month time.Month
 	o.Order.CreationDate.Year, month, o.Order.CreationDate.Day = time.Now().Date()
 	o.Order.CreationDate.Month = month.String()
-	o.Order.ID = db.GetNewID()
+	o.Order.ID = storage.DB.GetNewID()
 	if o.Customer.ID == "" {
 		id, err := o.Customer.Check()
 		if err != nil || id == "" {
-			o.Customer.ID = db.GetNewID()
+			o.Customer.ID = storage.DB.GetNewID()
 			if err := o.Customer.Push(); err != nil {
 				return fmt.Errorf("push customer failed(%v)", err.Error())
 			}
@@ -51,7 +50,7 @@ func (o *OrderFull) Push(raw []byte) error {
 	if err := o.Order.Push(); err != nil {
 		return fmt.Errorf("push order failed(%v)", err.Error())
 	}
-	storage.Cache.Update(config.Cfg.DB.Coll.Orders, o.Order.ID, o)
+	go storage.Cache.Update(config.Cfg.DB.Coll.Orders, o.Order.ID, o)
 	return nil
 }
 
@@ -72,10 +71,10 @@ func (o *OrderFull) Update(raw []byte) error {
 		return err
 	}
 	if o.Order.Status == StatusShipped {
-		storage.Cache.Delete(config.Cfg.DB.Coll.Orders, o.Order.ID)
+		go storage.Cache.Delete(config.Cfg.DB.Coll.Orders, o.Order.ID)
 		log.Printf("update status ID: %v, status: %v", o.Order.ID, o.Order.Status)
 	} else {
-		storage.Cache.Update(config.Cfg.DB.Coll.Orders, o.Order.ID, o)
+		go storage.Cache.Update(config.Cfg.DB.Coll.Orders, o.Order.ID, o)
 	}
 	return nil
 }

@@ -25,8 +25,7 @@ type Order struct {
 }
 
 func (o *Order) Push() error {
-	db := storage.DB()
-	if err := db.Add(config.Cfg.DB.Coll.Orders, o); err != nil {
+	if err := storage.DB.Add(config.Cfg.DB.Coll.Orders, o); err != nil {
 		return fmt.Errorf("write order to db failed(%v)", err.Error())
 	}
 	log.Printf("create order (id: %v)", o.ID)
@@ -34,8 +33,7 @@ func (o *Order) Push() error {
 }
 
 func (o *Order) Update() error {
-	db := storage.DB()
-	if err := db.Update(config.Cfg.DB.Coll.Orders, o, o.ID); err != nil {
+	if err := storage.DB.Update(config.Cfg.DB.Coll.Orders, o, o.ID); err != nil {
 		return fmt.Errorf("update order failed(%v)", err.Error())
 	}
 	log.Printf("update order (id: %v)", o.ID)
@@ -43,11 +41,10 @@ func (o *Order) Update() error {
 }
 
 func (o *Order) Delete() error {
-	db := storage.DB()
-	if err := db.Delete(config.Cfg.DB.Coll.Orders, o.ID); err != nil {
+	if err := storage.DB.Delete(config.Cfg.DB.Coll.Orders, o.ID); err != nil {
 		return fmt.Errorf("delete order from db failed (%v)", err.Error())
 	}
-	storage.Cache.Delete(config.Cfg.DB.Coll.Orders, o.ID)
+	go storage.Cache.Delete(config.Cfg.DB.Coll.Orders, o.ID)
 	log.Printf("delete order (id: %v)", o.ID)
 	return nil
 }

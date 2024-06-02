@@ -7,8 +7,7 @@ import (
 
 func GetCities(reg string) ([]City, error) {
 	var cities []City
-	db := storage.DB()
-	if err := db.GetCities(reg, &cities); err != nil {
+	if err := storage.DB.GetCities(reg, &cities); err != nil {
 		return nil, err
 	}
 	return cities, nil
@@ -16,8 +15,7 @@ func GetCities(reg string) ([]City, error) {
 
 func GetCustomers(reg string) ([]Customer, error) {
 	var clients []Customer
-	db := storage.DB()
-	if err := db.GetCustomers(reg, &clients); err != nil {
+	if err := storage.DB.GetCustomers(reg, &clients); err != nil {
 		return nil, err
 	}
 	return clients, nil
@@ -25,14 +23,13 @@ func GetCustomers(reg string) ([]Customer, error) {
 
 func InWork() ([]OrderFull, error) {
 	var orders []Order
-	db := storage.DB()
-	if err := db.GetInWorkOrders(&orders); err != nil {
+	if err := storage.DB.GetOrdersByNotStatus(&orders, "Отгружен"); err != nil {
 		return nil, err
 	}
 	var result []OrderFull
 	for _, v := range orders {
 		var client Customer
-		if err := db.GetById(config.Cfg.DB.Coll.Customers, &client, v.CustomerID); err != nil {
+		if err := storage.DB.GetById(config.Cfg.DB.Coll.Customers, &client, v.CustomerID); err != nil {
 			return nil, err
 		}
 		result = append(result, OrderFull{client, v})
@@ -41,7 +38,6 @@ func InWork() ([]OrderFull, error) {
 }
 
 func LoadCache() error {
-	db := storage.DB()
 	orders, err := InWork()
 	if err != nil {
 		return err
@@ -50,25 +46,41 @@ func LoadCache() error {
 		storage.Cache.Update(config.Cfg.DB.Coll.Orders, v.Order.ID, &v)
 	}
 	var cargos []Cargo
-	if err := db.GetAll(config.Cfg.DB.Coll.Cargos, &cargos); err != nil {
+	if err := storage.DB.GetAll(config.Cfg.DB.Coll.Cargos, &cargos); err != nil {
 		return err
 	}
 	for _, v := range cargos {
 		storage.Cache.Update(config.Cfg.DB.Coll.Cargos, v.ID, &v)
 	}
 	var chemistry []Chemistry
-	if err := db.GetAll(config.Cfg.DB.Coll.Chemistry, &chemistry); err != nil {
+	if err := storage.DB.GetAll(config.Cfg.DB.Coll.Chemistry, &chemistry); err != nil {
 		return err
 	}
 	for _, v := range chemistry {
 		storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, v.ID, &v)
 	}
 	var users []User
-	if err := db.GetAll(config.Cfg.DB.Coll.Users, &users); err != nil {
+	if err := storage.DB.GetAll(config.Cfg.DB.Coll.Users, &users); err != nil {
 		return err
 	}
 	for _, v := range users {
 		storage.Cache.Update(config.Cfg.DB.Coll.Users, v.ID, &v)
 	}
 	return nil
+}
+
+func SearchOrders(id string, payment bool, month string, limit int64) ([]OrderFull, error) {
+	var orders []Order
+	if err := storage.DB.SearchOrders(id, payment, month, limit, &orders); err != nil {
+		return nil, err
+	}
+	var result []OrderFull
+	for _, v := range orders {
+		var client Customer
+		if err := storage.DB.GetById(config.Cfg.DB.Coll.Customers, &client, v.CustomerID); err != nil {
+			return nil, err
+		}
+		result = append(result, OrderFull{client, v})
+	}
+	return result, nil
 }
