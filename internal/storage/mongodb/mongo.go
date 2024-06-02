@@ -185,17 +185,17 @@ func (m *MongoDB) SearchOrders(id string, payment bool, month string, limit int6
 	var cursor *mongo.Cursor
 	var err error
 	if payment {
-		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "payment", Value: true}, {Key: "creation_date.year", Value: year}, {Key: "creation_date.month", Value: month}})
+		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "payment", Value: true}, {Key: "creation_date.year", Value: year}, {Key: "creation_date.month", Value: month}, {Key: "status", Value: "Отгружен"}})
 		if err != nil {
 			return err
 		}
 	} else if id != "" {
-		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "customer_id", Value: id}})
+		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "customer_id", Value: id}, {Key: "status", Value: "Отгружен"}})
 		if err != nil {
 			return err
 		}
 	} else {
-		cursor, err = coll.Find(context.TODO(), bson.D{}, options.Find().SetSort(bson.M{"$natural": -1}).SetLimit(limit))
+		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "status", Value: "Отгружен"}}, options.Find().SetSort(bson.M{"$natural": -1}).SetLimit(limit))
 		if err != nil {
 			return err
 		}

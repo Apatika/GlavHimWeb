@@ -26,6 +26,8 @@
         return style + "#008B8B"
       case "Передан":
         return style + "green"
+      case "Отгружен":
+        return style + "lime"
       default:
         return style + "white"
     }

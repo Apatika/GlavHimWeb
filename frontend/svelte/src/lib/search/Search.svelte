@@ -11,6 +11,14 @@
   let customerList = []
 
   const find = () => {
+    if (option == "id" && id == "") {
+      alert("выбери клиента")
+      return
+    }
+    if (option == "last" && (limit <= 0 || limit > 100)) {
+      alert("значение должно быть от 0 до 100")
+      return
+    }
     fetch(`${window.location.origin}/search?id=${id}&payment=${payment}&month=${month}&limit=${limit}`).then(function(response) {
       if (response.status != 200) throw new Error(response.statusText)
       return response.json()
