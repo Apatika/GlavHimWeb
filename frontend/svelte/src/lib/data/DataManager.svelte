@@ -83,7 +83,10 @@
   }
   
   const select = (id) => {
-    user = structuredClone(userDefault)
+    user.id = null
+    user.name = null
+    user.tel = null
+    user.email = null
     if (id == ""){
       return
     }

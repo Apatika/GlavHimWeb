@@ -3,7 +3,7 @@ package service
 import "glavhim-app/internal/config"
 
 type IDBPage interface {
-	GetAll() map[string]interface{}
+	GetAll() (map[string]interface{}, error)
 	Push(raw []byte) error
 	Update(raw []byte) error
 	Delete(raw []byte) error

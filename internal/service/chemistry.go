@@ -16,8 +16,17 @@ type Chemistry struct {
 	ProbeCount int    `json:"probeCount" bson:"probeCount"`
 }
 
-func (c *Chemistry) GetAll() map[string]interface{} {
-	return storage.Cache.Get(config.Cfg.DB.Coll.Chemistry)
+func (c *Chemistry) GetAll() (map[string]interface{}, error) {
+	var chemistry []Chemistry
+	result := make(map[string]interface{}, 1)
+	if err := storage.DB.GetAll(config.Cfg.DB.Coll.Chemistry, &chemistry); err != nil {
+		return nil, err
+	}
+	//костыль, можно убрать, если переделать фронтенд под массивы
+	for _, v := range chemistry {
+		result[v.ID] = v
+	}
+	return result, nil
 }
 
 func (c *Chemistry) Push(raw []byte) error {
@@ -29,7 +38,6 @@ func (c *Chemistry) Push(raw []byte) error {
 	if err := storage.DB.Add(config.Cfg.DB.Coll.Chemistry, c); err != nil {
 		return fmt.Errorf("write chemistry to db failed(%v)", err.Error())
 	}
-	go storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, c.ID, c)
 	log.Printf("create chemistry (id: %v)", c.ID)
 	return nil
 }
@@ -42,7 +50,6 @@ func (c *Chemistry) Update(raw []byte) error {
 	if err := storage.DB.Update(config.Cfg.DB.Coll.Chemistry, c, c.ID); err != nil {
 		return fmt.Errorf("update chemistry failed(%v)", err.Error())
 	}
-	go storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, c.ID, c)
 	log.Printf("update chemistry (id: %v)", c.ID)
 	return nil
 }
@@ -52,7 +59,6 @@ func (c *Chemistry) Delete(raw []byte) error {
 	if err := storage.DB.Delete(config.Cfg.DB.Coll.Chemistry, c.ID); err != nil {
 		return fmt.Errorf("delete chemistry from db failed (%v)", err.Error())
 	}
-	go storage.Cache.Delete(config.Cfg.DB.Coll.Chemistry, c.ID)
 	log.Printf("delete chemistry (name: %v)", c.Name)
 	return nil
 }

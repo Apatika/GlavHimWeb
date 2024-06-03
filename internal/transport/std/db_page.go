@@ -9,7 +9,11 @@ import (
 
 func dbPageGet(w http.ResponseWriter, r *http.Request) {
 	path := r.PathValue(pathVar)
-	data := service.GetStruct(path).GetAll()
+	data, err := service.GetStruct(path).GetAll()
+	if err != nil {
+		errorResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	json.NewEncoder(w).Encode(data)
 }
 

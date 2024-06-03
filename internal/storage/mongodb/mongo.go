@@ -52,7 +52,7 @@ func (m *MongoDB) CheckName(name string, collName string, id string) error {
 
 func (m *MongoDB) GetAll(collName string, obj interface{}) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(collName)
-	cursor, err := coll.Find(context.TODO(), bson.D{})
+	cursor, err := coll.Find(context.TODO(), bson.M{})
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func (m *MongoDB) GetAll(collName string, obj interface{}) error {
 
 func (m *MongoDB) GetById(collName string, obj interface{}, id string) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(collName)
-	if err := coll.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(obj); err != nil {
+	if err := coll.FindOne(context.TODO(), bson.M{"_id": id}).Decode(obj); err != nil {
 		return err
 	}
 	return nil
@@ -72,7 +72,7 @@ func (m *MongoDB) GetById(collName string, obj interface{}, id string) error {
 
 func (m *MongoDB) GetOrdersByStatus(obj interface{}, status string) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
-	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "status", Value: status}})
+	cursor, err := coll.Find(context.TODO(), bson.M{"status": status})
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (m *MongoDB) GetOrdersByStatus(obj interface{}, status string) error {
 
 func (m *MongoDB) GetOrdersByNotStatus(obj interface{}, status string) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
-	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "status", Value: bson.D{{Key: "$ne", Value: status}}}})
+	cursor, err := coll.Find(context.TODO(), bson.M{"status": bson.M{"$ne": status}})
 	if err != nil {
 		return err
 	}
@@ -132,17 +132,17 @@ func (m *MongoDB) CheckClient(params ...string) (string, error) {
 	case 1:
 		err = coll.FindOne(
 			context.TODO(),
-			bson.D{{Key: "inn", Value: params[0]}},
+			bson.M{"inn": params[0]},
 		).Decode(&find)
 	case 2:
 		err = coll.FindOne(
 			context.TODO(),
-			bson.D{{Key: "passport_num", Value: params[0]}, {Key: "passport_serial", Value: params[1]}},
+			bson.M{"passport_num": params[0], "passport_serial": params[1]},
 		).Decode(&find)
 	case 3:
 		err = coll.FindOne(
 			context.TODO(),
-			bson.D{{Key: "surname", Value: params[0]}, {Key: "name", Value: params[1]}, {Key: "second_name", Value: params[2]}},
+			bson.M{"surname": params[0], "name": params[1], "second_name": params[2]},
 		).Decode(&find)
 	}
 	if err != nil {
@@ -153,8 +153,7 @@ func (m *MongoDB) CheckClient(params ...string) (string, error) {
 
 func (m *MongoDB) GetCities(reg string, cities interface{}) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.City)
-	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "city", Value: bson.D{{Key: "$regex",
-		Value: primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}},
+	cursor, err := coll.Find(context.TODO(), bson.M{"city": bson.M{"$regex": primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}},
 		options.Find().SetLimit(8))
 	if err != nil {
 		return err
@@ -167,8 +166,9 @@ func (m *MongoDB) GetCities(reg string, cities interface{}) error {
 
 func (m *MongoDB) GetCustomers(reg string, clients interface{}) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Customers)
-	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "$or", Value: bson.A{bson.D{{Key: "surname", Value: bson.D{{Key: "$regex", Value: primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}},
-		bson.D{{Key: "name", Value: bson.D{{Key: "$regex", Value: primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}}}}},
+	cursor, err := coll.Find(context.TODO(),
+		bson.M{"$or": bson.A{bson.M{"surname": bson.M{"$regex": primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}},
+			bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v).*$", reg), Options: "i"}}}}},
 		options.Find().SetLimit(8))
 	if err != nil {
 		return err
@@ -179,23 +179,24 @@ func (m *MongoDB) GetCustomers(reg string, clients interface{}) error {
 	return nil
 }
 
+// TODO: джоинить клиента к заказу одним запросом
 func (m *MongoDB) SearchOrders(id string, payment bool, month string, limit int64, obj interface{}) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
 	year := time.Now().Year()
 	var cursor *mongo.Cursor
 	var err error
 	if payment {
-		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "payment", Value: true}, {Key: "creation_date.year", Value: year}, {Key: "creation_date.month", Value: month}, {Key: "status", Value: "Отгружен"}})
+		cursor, err = coll.Find(context.TODO(), bson.M{"payment": true, "creation_date.year": year, "creation_date.month": month, "status": "Отгружен"})
 		if err != nil {
 			return err
 		}
 	} else if id != "" {
-		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "customer_id", Value: id}, {Key: "status", Value: "Отгружен"}})
+		cursor, err = coll.Find(context.TODO(), bson.M{"customer_id": id, "status": "Отгружен"})
 		if err != nil {
 			return err
 		}
 	} else {
-		cursor, err = coll.Find(context.TODO(), bson.D{{Key: "status", Value: "Отгружен"}}, options.Find().SetSort(bson.M{"$natural": -1}).SetLimit(limit))
+		cursor, err = coll.Find(context.TODO(), bson.M{"status": "Отгружен"}, options.Find().SetSort(bson.M{"$natural": -1}).SetLimit(limit))
 		if err != nil {
 			return err
 		}

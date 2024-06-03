@@ -80,7 +80,10 @@
   }
 
   const select = (id) => {
-    chem = structuredClone(chemDefault)
+    chem.id = null
+    chem.name = null
+    chem.sellValue = null
+    chem.probeValue = null
     if (id == ""){
       return
     }

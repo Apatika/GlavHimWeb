@@ -28,7 +28,6 @@
     }
   }
   socket.onerror = (error) => {
-    alert(`[error]`)
   }
 
   const getManagers = () => {

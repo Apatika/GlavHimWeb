@@ -15,8 +15,17 @@ type User struct {
 	Email string `json:"email" bson:"email"`
 }
 
-func (u *User) GetAll() map[string]interface{} {
-	return storage.Cache.Get(config.Cfg.DB.Coll.Users)
+func (u *User) GetAll() (map[string]interface{}, error) {
+	var users []User
+	result := make(map[string]interface{}, 1)
+	if err := storage.DB.GetAll(config.Cfg.DB.Coll.Users, &users); err != nil {
+		return nil, err
+	}
+	//костыль, можно убрать, если переделать фронтенд под массивы
+	for _, v := range users {
+		result[v.ID] = v
+	}
+	return result, nil
 }
 
 func (u *User) Push(raw []byte) error {
@@ -28,7 +37,6 @@ func (u *User) Push(raw []byte) error {
 	if err := storage.DB.Add(config.Cfg.DB.Coll.Users, u); err != nil {
 		return fmt.Errorf("write user to db failed(%v)", err.Error())
 	}
-	go storage.Cache.Update(config.Cfg.DB.Coll.Users, u.ID, u)
 	log.Printf("create user (id: %v)", u.ID)
 	return nil
 }
@@ -41,7 +49,6 @@ func (u *User) Update(raw []byte) error {
 	if err := storage.DB.Update(config.Cfg.DB.Coll.Users, u, u.ID); err != nil {
 		return fmt.Errorf("update user failed(%v)", err.Error())
 	}
-	go storage.Cache.Update(config.Cfg.DB.Coll.Users, u.ID, u)
 	log.Printf("update user (id: %v)", u.ID)
 	return nil
 }
@@ -51,7 +58,6 @@ func (u *User) Delete(raw []byte) error {
 	if err := storage.DB.Delete(config.Cfg.DB.Coll.Users, u.ID); err != nil {
 		return fmt.Errorf("delete user from db failed (%v)", err.Error())
 	}
-	go storage.Cache.Delete(config.Cfg.DB.Coll.Users, u.ID)
 	log.Printf("delete user (name: %v)", u.Name)
 	return nil
 }

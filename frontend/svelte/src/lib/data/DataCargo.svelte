@@ -84,7 +84,11 @@
   }
 
   const select = (id) => {
-    cargo = structuredClone(cargoDefault)
+    cargo.id = null
+    cargo.name = null
+    cargo.uri = null
+    cargo.mainTel = null
+    cargo.managerTel = null
     if (id == ""){
       return
     }

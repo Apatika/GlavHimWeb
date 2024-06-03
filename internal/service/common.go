@@ -45,27 +45,6 @@ func LoadCache() error {
 	for _, v := range orders {
 		storage.Cache.Update(config.Cfg.DB.Coll.Orders, v.Order.ID, &v)
 	}
-	var cargos []Cargo
-	if err := storage.DB.GetAll(config.Cfg.DB.Coll.Cargos, &cargos); err != nil {
-		return err
-	}
-	for _, v := range cargos {
-		storage.Cache.Update(config.Cfg.DB.Coll.Cargos, v.ID, &v)
-	}
-	var chemistry []Chemistry
-	if err := storage.DB.GetAll(config.Cfg.DB.Coll.Chemistry, &chemistry); err != nil {
-		return err
-	}
-	for _, v := range chemistry {
-		storage.Cache.Update(config.Cfg.DB.Coll.Chemistry, v.ID, &v)
-	}
-	var users []User
-	if err := storage.DB.GetAll(config.Cfg.DB.Coll.Users, &users); err != nil {
-		return err
-	}
-	for _, v := range users {
-		storage.Cache.Update(config.Cfg.DB.Coll.Users, v.ID, &v)
-	}
 	return nil
 }
 
