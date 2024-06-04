@@ -2,20 +2,6 @@
   import { createEventDispatcher } from "svelte"
   const dispatch = createEventDispatcher()
 
-  export let customer = {
-    id: null,
-    type: '0',
-    adress: null,
-    name: null,
-    surname: null,
-    secondName: null,
-    manager: null,
-    inn: null,
-    passportSerial: null,
-    passportNum: null,
-    contact: [{name: null, tel: null}],
-    email: null,
-  }
   export let order = {
     id: null,
     customerId: null,
@@ -27,16 +13,30 @@
     lastDate: null,
     comment: null,
     probes: {},
+    customer: {
+      id: null,
+      type: '0',
+      adress: null,
+      name: null,
+      surname: null,
+      secondName: null,
+      manager: null,
+      inn: null,
+      passportSerial: null,
+      passportNum: null,
+      contact: [{name: null, tel: null}],
+      email: null,
+    }
   }
   const setInitial = () => {
-    Object.keys(order).forEach(o => order[o] = null)
-    Object.keys(customer).forEach(c => customer[c] = null)
-    customer.contact = [{name: null, tel: null}]
-    customer.type = '0'
+    Object.keys(order).forEach(o => {if (o != "customer") order[o] = null})
+    Object.keys(order.customer).forEach(c => order.customer[c] = null)
+    order.customer.contact = [{name: null, tel: null}]
+    order.customer.type = '0'
     order.toadress = false
     order.adress = {city: null, adress: null, terminal: "основной"}
     order.invoice = [null]
-    order.probes = []
+    order.probes = {}
   }
 
   let cities = []
@@ -47,7 +47,7 @@
   export let probeCountSum = 0
 
   const check = () => {
-    if (customer.manager == null || customer.manager == ""){
+    if (order.customer.manager == null || order.customer.manager == ""){
       alert("Менеджер не выбран")
       return false
     }
@@ -63,30 +63,30 @@
       alert("Адрес не заполнен")
       return false
     }
-    if (customer.name == null || customer.name == ""){
+    if (order.customer.name == null || order.customer.name == ""){
       alert("Имя не заполнено")
       return false
     }
-    if (customer.contact[0].tel == null || customer.contact[0].tel == ""){
+    if (order.customer.contact[0].tel == null || order.customer.contact[0].tel == ""){
       alert("Контакт не заполнен")
       return false
     }
-    if ((customer.type == "0" || customer.type == "2") && 
-        (customer.surname == null || customer.surname == "")){
+    if ((order.customer.type == "0" || order.customer.type == "2") && 
+        (order.customer.surname == null || order.customer.surname == "")){
       alert("ФИО заполнены не полностью")
       return false
     }
-    if ((customer.type == "1" || customer.type == "0") && (customer.inn == null || customer.inn == "")){
+    if ((order.customer.type == "1" || order.customer.type == "0") && (order.customer.inn == null || order.customer.inn == "")){
       alert("ИНН не заполнен")
       return false
     }
     return true
   }
 
-  const addContact = () => customer.contact = customer.contact.concat({name: "", tel: ""})
+  const addContact = () => order.customer.contact = order.customer.contact.concat({name: "", tel: ""})
   const removeContact = () => {
-    if (customer.contact.length > 1){
-      customer.contact = customer.contact.slice(0, -1)
+    if (order.customer.contact.length > 1){
+      order.customer.contact = order.customer.contact.slice(0, -1)
     }
   }
   const addInvoice = () => order.invoice = order.invoice.concat(null)
@@ -98,8 +98,8 @@
 
   const push = () => {
     if (!check()) return
-    customer.adress = order.adress
-    order.customerId = customer.id
+    order.customer.adress = order.adress
+    order.customerId = order.customer.id
     for (let [k, v] of Object.entries(chems)){
       if (chems[k].probeCount != 0){
         order.probes[k] = v
@@ -107,7 +107,7 @@
     }
     fetch(`${window.location.origin}/orders`, {
       method: "POST",
-      body: JSON.stringify({customer: customer, order: order}),
+      body: JSON.stringify(order),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
@@ -124,7 +124,7 @@
   }
 
   const update = () => {
-    customer.adress = order.adress
+    order.customer.adress = order.adress
     probeCountSum = 0
     Object.keys(order.probes).forEach(key => {
       delete order.probes[key]
@@ -137,7 +137,7 @@
     order.status = "Изменен!"
     fetch(`${window.location.origin}/orders`, {
       method: "PUT",
-      body: JSON.stringify({customer: customer, order: order}),
+      body: JSON.stringify(order),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
@@ -155,14 +155,17 @@
 
   const telInput = (event) => {if (!(event.key).match(/[0-9]/i)) event.preventDefault()}
   const telFormat = () => {
-    for (let i = 0; i < (customer.contact).length; ++i){
-      (customer.contact)[i].tel = ((customer.contact)[i].tel).replace(/[^0-9]/g, "")
+    for (let i = 0; i < (order.customer.contact).length; ++i){
+      (order.customer.contact)[i].tel = ((order.customer.contact)[i].tel).replace(/[^0-9]/g, "")
     }
   }
-  const innFormat = () => customer.inn = (customer.inn).replace(/[^0-9]/g, "")
+  const innFormat = () => order.customer.inn = (order.customer.inn).replace(/[^0-9]/g, "")
   const passportFormat = () => {
-    customer.passportNum = (customer.passportNum).replace(/[^0-9]/g, "")
-    customer.passportSerial = (customer.passportSerial).replace(/[^0-9]/g, "")
+    try{
+      order.customer.passportNum = (order.customer.passportNum).replace(/[^0-9]/g, "")
+      order.customer.passportSerial = (order.customer.passportSerial).replace(/[^0-9]/g, "")
+    }
+    catch(err){}
   }
 
   const onClose = (e) => {
@@ -241,24 +244,24 @@
   {/if}
   <div class="main">
     <div class="customer-name">
-      <select bind:value={customer.type}>
+      <select bind:value={order.customer.type}>
         <option value="0" selected>ИП</option>
         <option value="1">Юр.Лицо</option>
         <option value="2">Физ.Лицо</option>
       </select>
-      {#if customer.type != "1"}
+      {#if order.customer.type != "1"}
         <div>
-          <input type="text" bind:value={customer.surname} placeholder="Фамилия">
+          <input type="text" bind:value={order.customer.surname} placeholder="Фамилия">
         </div>
         <div>
-          <input type="text" bind:value={customer.name} placeholder="Имя">
+          <input type="text" bind:value={order.customer.name} placeholder="Имя">
         </div>
         <div>
-          <input type="text" bind:value={customer.secondName} placeholder="Отчество">
+          <input type="text" bind:value={order.customer.secondName} placeholder="Отчество">
         </div>
       {:else}
         <div>
-          <input class="name" type="text" bind:value={customer.name} placeholder="Наименование компании">
+          <input class="name" type="text" bind:value={order.customer.name} placeholder="Наименование компании">
         </div>    
       {/if}
     </div>
@@ -268,7 +271,7 @@
           <div class="flex">
             <div class="lable">Менеджер:</div>
             <div>
-              <select bind:value={customer.manager}>
+              <select bind:value={order.customer.manager}>
                 {#each Object.values(managers) as manager}
                   <option value={manager.name}>{manager.name}</option>
                 {/each}
@@ -277,19 +280,19 @@
           </div>
           <div class="flex">
             <div class="lable">
-              {#if customer.type != "2"}
+              {#if order.customer.type != "2"}
                 ИНН: 
               {:else}
                 Паспорт: 
               {/if}
             </div>
             <div class="nums">
-              {#if customer.type != "2"}
-                <input class="inn" type="text" bind:value={customer.inn} on:keypress={telInput} on:input={innFormat} placeholder="ИНН">
+              {#if order.customer.type != "2"}
+                <input class="inn" type="text" bind:value={order.customer.inn} on:keypress={telInput} on:input={innFormat} placeholder="ИНН">
               {:else}
                 <div>
-                  <input type="text" bind:value={customer.passportSerial} on:keypress={telInput} on:input={passportFormat} placeholder="Серия">
-                  <input type="text" bind:value={customer.passportNum} on:keypress={telInput} on:input={passportFormat} placeholder="Номер">
+                  <input type="text" bind:value={order.customer.passportSerial} on:keypress={telInput} on:input={passportFormat} placeholder="Серия">
+                  <input type="text" bind:value={order.customer.passportNum} on:keypress={telInput} on:input={passportFormat} placeholder="Номер">
                 </div>
               {/if}
             </div>
@@ -297,7 +300,7 @@
           <div class="flex">
             <div class="lable">Контакт:</div>
             <div class="contact">
-              {#each customer.contact as contact}
+              {#each order.customer.contact as contact}
                 <div>
                   <input type="text" bind:value={contact.name} placeholder="Контакт">
                   <input class="tel" type="text" bind:value={contact.tel} on:keypress={telInput} on:input={telFormat} placeholder="Телефон">
@@ -311,7 +314,7 @@
           <div class="flex">
             <div class="lable">Email:</div>
             <div>
-              <input type="text" bind:value={customer.email} placeholder="Email">
+              <input type="text" bind:value={order.customer.email} placeholder="Email">
             </div>
           </div>
         </div>

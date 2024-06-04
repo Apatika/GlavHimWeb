@@ -59,28 +59,28 @@
   <div class="order">
     <div class="item">
       <div class="label"><strong>ТК:</strong></div>
-      <div>{order.order.cargo}</div>
+      <div>{order.cargo}</div>
     </div>
     <div class="item">
       <div class="label"><strong>Город:</strong></div>
-      <div>{order.order.adress.city}</div>
+      <div>{order.adress.city}</div>
     </div>
-    {#if order.order.adress.adress != ""} 
+    {#if order.adress.adress != ""} 
       <div class="item">
         <div class="label"><strong>Адрес:</strong></div>
-        <div>{order.order.adress.adress}</div>
+        <div>{order.adress.adress}</div>
       </div>
     {:else}
       <div class="item">
         <div class="label"><strong>Терминал:</strong></div>
-        <div>{order.order.adress.terminal}</div>
+        <div>{order.adress.terminal}</div>
       </div>
     {/if}
     <div>
       <div class="item">
         <div class="label"><strong>Счет:</strong></div>
         <div>
-          {#each order.order.invoice as invoice}
+          {#each order.invoice as invoice}
             <span>{invoice} </span>
           {/each}
         </div>
@@ -88,27 +88,27 @@
     </div>
     <div class="item">
       <div class="label"><strong>Крайняя дата:</strong></div>
-      <div>{order.order.lastDate}</div>
+      <div>{order.lastDate}</div>
     </div>
     <div class="item">
       <div class="label"><strong>Комментарий:</strong></div>
-      <div>{order.order.comment}</div>
+      <div>{order.comment}</div>
     </div>
   </div>
   <div class="probes">
-    {#if Object.keys(order.order.probes).length > 0}<span><strong>ПРОБНИКИ</strong></span>{/if}
-    {#each Object.values(order.order.probes).filter(val => val.probeCount > 0).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
+    {#if Object.keys(order.probes).length > 0}<span><strong>ПРОБНИКИ</strong></span>{/if}
+    {#each Object.values(order.probes).filter(val => val.probeCount > 0).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
       <div>{chem.name} - {(chem.probeValue * chem.probeCount) / 1000} л.</div>
     {/each}
   </div>
   <div class="other">
     {#if !isSearch}
       <div>
-        <button class="edit-button" on:click={() => dispatch('message', {order: order.order, customer: order.customer})}>Редактировать</button>
+        <button class="edit-button" on:click={() => dispatch('message', {order: order, customer: order.customer})}>Редактировать</button>
       </div>
     {/if}
     <div>
-      {#if order.order.payment} <span style="color: red; font-size: 14px;"><strong>ЗА НАШ СЧЕТ!!!</strong></span> {/if}
+      {#if order.payment} <span style="color: red; font-size: 14px;"><strong>ЗА НАШ СЧЕТ!!!</strong></span> {/if}
     </div>
   </div>
 </div>

@@ -5,20 +5,6 @@
   import { createEventDispatcher } from "svelte"
   const dispatch = createEventDispatcher()
   
-  let editCustomer = {
-    id: null,
-    type: '0',
-    adress: null,
-    name: null,
-    surname: null,
-    secondName: null,
-    manager: null,
-    inn: null,
-    passportSerial: null,
-    passportNum: null,
-    contact: [{name: null, tel: null}],
-    email: null,
-  }
   let editOrder = {
     id: "",
     customerId: null,
@@ -30,6 +16,20 @@
     lastDate: null,
     comment: null,
     probes: {},
+    customer: {
+      id: null,
+      type: '0',
+      adress: null,
+      name: null,
+      surname: null,
+      secondName: null,
+      manager: null,
+      inn: null,
+      passportSerial: null,
+      passportNum: null,
+      contact: [{name: null, tel: null}],
+      email: null,
+    }
   }
 
   let probeCountSum = 0
@@ -85,7 +85,6 @@
       chems[k] = v
       probeCountSum += v.probeCount
     }
-    editCustomer = customer
     editOrder = order
     let target = document.querySelector('#editor')
     target.style.display = "block"
@@ -94,7 +93,7 @@
   }
 
   const sortOrders = (a, b) => {
-    return a.order.status > b.order.status ? -1 : (a.order.status < b.order.status ? 1 : (a.order.cargo < b.order.cargo ? -1 : 1))
+    return a.status > b.status ? -1 : (a.status < b.status ? 1 : (a.cargo < b.cargo ? -1 : 1))
   }
 
   const toggleNewOrder = (e) => {
@@ -113,7 +112,7 @@
 <div class="container">
   <div id="table-container">
     <div id="editor">
-      <NewOrder order={editOrder} customer={editCustomer} {managers} {cargos} {chems} {probeCountSum} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
+      <NewOrder order={editOrder} {managers} {cargos} {chems} {probeCountSum} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
     </div>
     <div class="legend">
       <span>🧴 - пробники</span>

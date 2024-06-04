@@ -5,9 +5,9 @@ import (
 )
 
 type ICache interface {
-	Get(field string) map[string]interface{}
-	Update(field, key string, data interface{})
-	Delete(field, key string)
+	Get(key string) interface{}
+	Update(key string, data interface{})
+	Delete(key string)
 }
 
 var Cache ICache

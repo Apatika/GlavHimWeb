@@ -18,6 +18,7 @@ type IDataBase interface {
 	GetCities(reg string, cities interface{}) error
 	GetCustomers(reg string, clients interface{}) error
 	SearchOrders(id string, payment bool, month string, limit int64, obj interface{}) error
+	InWorkOrders(obj interface{}) error
 }
 
 var DB IDataBase

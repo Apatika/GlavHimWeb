@@ -35,7 +35,7 @@
 
   const changeStatus = (e, order, status) => {
     e.target.closest('.order').style.backgroundColor = getColor(e.target.value)
-    order.order.status = status
+    order.status = status
     fetch(`${window.location.origin}/orders`, {
       method: "PUT",
       body: JSON.stringify(order),
@@ -53,31 +53,31 @@
 </script>
 
 <button class="toggle-button" on:click={e => dispatch('message', e)}></button>
-<div class="order" style={getColor(order.order.status)}>
+<div class="order" style={getColor(order.status)}>
   <div class="item cargo">
-    <div><strong>{order.order.cargo}</strong></div>
+    <div><strong>{order.cargo}</strong></div>
     <div class="additional">счет: 
-      {#each order.order.invoice as invoice}
+      {#each order.invoice as invoice}
         <span>{invoice} </span>
       {/each}
     </div>
   </div>
   <div class="item name">{#if order.customer.surname != "" && order.customer.inn != ""}ИП {/if}<strong>{order.customer.surname} {order.customer.name}</strong> {order.customer.secondName}</div>
   <div class="item adress">
-    <div><strong>{order.order.adress.city}</strong></div>
-    {#if order.order.adress.adress != ""}
-      <div>адрес: {order.order.adress.adress}</div>
+    <div><strong>{order.adress.city}</strong></div>
+    {#if order.adress.adress != ""}
+      <div>адрес: {order.adress.adress}</div>
     {:else}
-      <div>терминал: {order.order.adress.terminal}</div>
+      <div>терминал: {order.adress.terminal}</div>
     {/if}
   </div>
-  {#if order.order.lastDate != ""} <div class="last-date"><strong>{order.order.lastDate}</strong></div> {/if}
-  {#if Object.keys(order.order.probes).length > 0} <div class="achtung"><strong>🧴</strong></div> {/if}
-  {#if order.order.payment} <div class="achtung" id="payment-span"><strong>💰</strong></div> {/if}
-  {#if order.order.comment != ""} <div class="achtung">💬</div> {/if}
+  {#if order.lastDate != ""} <div class="last-date"><strong>{order.lastDate}</strong></div> {/if}
+  {#if Object.keys(order.probes).length > 0} <div class="achtung"><strong>🧴</strong></div> {/if}
+  {#if order.payment} <div class="achtung" id="payment-span"><strong>💰</strong></div> {/if}
+  {#if order.comment != ""} <div class="achtung">💬</div> {/if}
   {#if !isSearch}
     <div class="item status">
-      <select bind:value={order.order.status}
+      <select bind:value={order.status}
               on:change={(e) => {changeStatus(e, order, e.target.value)}}>
         <option value=""></option>
         <option value="Принят В Работу">Принят В Работу</option>

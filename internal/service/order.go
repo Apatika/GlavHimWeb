@@ -1,10 +1,12 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"glavhim-app/internal/config"
 	"glavhim-app/internal/storage"
 	"log"
+	"time"
 )
 
 type Order struct {
@@ -22,21 +24,70 @@ type Order struct {
 	ShipmentDate Date                 `json:"shipmentDate" bson:"shipment_date"`
 	Status       string               `json:"status" bson:"status"`
 	RouteNum     string               `json:"routeNum" bson:"routeNum"`
+	Customer     *Customer            `json:"customer" bson:"customer,omitempty"`
 }
 
-func (o *Order) Push() error {
+func InWorkToCache() error {
+	var orders []Order
+	if err := storage.DB.InWorkOrders(&orders); err != nil {
+		return err
+	}
+	storage.Cache.Update(config.Cfg.DB.Coll.Orders, orders)
+	return nil
+}
+
+func (o *Order) Push(raw []byte) error {
+	json.Unmarshal(raw, o)
+	var month time.Month
+	o.CreationDate.Year, month, o.CreationDate.Day = time.Now().Date()
+	o.CreationDate.Month = month.String()
+	o.ID = storage.DB.GetNewID()
+	if o.Customer.ID == "" {
+		id, err := o.Customer.Check()
+		if err != nil || id == "" {
+			o.Customer.ID = storage.DB.GetNewID()
+			if err := o.Customer.Push(); err != nil {
+				return fmt.Errorf("push customer failed(%v)", err.Error())
+			}
+		} else {
+			o.Customer.ID = id
+			if err := o.Customer.Update(); err != nil {
+				return fmt.Errorf("update customer failed(%v)", err.Error())
+			}
+		}
+	} else {
+		if err := o.Customer.Update(); err != nil {
+			return fmt.Errorf("update customer failed(%v)", err.Error())
+		}
+	}
+	o.CustomerID = o.Customer.ID
+	o.Customer = nil
 	if err := storage.DB.Add(config.Cfg.DB.Coll.Orders, o); err != nil {
 		return fmt.Errorf("write order to db failed(%v)", err.Error())
 	}
 	log.Printf("create order (id: %v)", o.ID)
+	InWorkToCache()
 	return nil
 }
 
-func (o *Order) Update() error {
+func (o *Order) Update(raw []byte) error {
+	json.Unmarshal(raw, o)
+	if o.ID == "" {
+		return fmt.Errorf("zero order id")
+	}
+	if o.Status == StatusShipped {
+		var month time.Month
+		o.ShipmentDate.Year, month, o.ShipmentDate.Day = time.Now().Date()
+		o.ShipmentDate.Month = month.String()
+	}
+	if err := o.Customer.Update(); err != nil {
+		return err
+	}
 	if err := storage.DB.Update(config.Cfg.DB.Coll.Orders, o, o.ID); err != nil {
 		return fmt.Errorf("update order failed(%v)", err.Error())
 	}
 	log.Printf("update order (id: %v)", o.ID)
+	InWorkToCache()
 	return nil
 }
 
@@ -44,7 +95,6 @@ func (o *Order) Delete() error {
 	if err := storage.DB.Delete(config.Cfg.DB.Coll.Orders, o.ID); err != nil {
 		return fmt.Errorf("delete order from db failed (%v)", err.Error())
 	}
-	go storage.Cache.Delete(config.Cfg.DB.Coll.Orders, o.ID)
 	log.Printf("delete order (id: %v)", o.ID)
 	return nil
 }

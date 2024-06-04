@@ -11,7 +11,7 @@
   }
 
   const changeStatus = (order, status) => {
-    order.order.status = status
+    order.status = status
     fetch(`${window.location.origin}/orders`, {
       method: "PUT",
       body: JSON.stringify(order),
@@ -26,12 +26,12 @@
   }
 
   const update = (o) => {
-    let char = o.order.routeNum[0]
+    let char = o.routeNum[0]
     if (char >= '0' && char <= '9'){
-      o.order.routeNum = char
+      o.routeNum = char
     }
     else {
-      o.order.routeNum = ""
+      o.routeNum = ""
       return
     }
     document.activeElement.blur()
@@ -49,17 +49,19 @@
   }
 
   const delivered = (id) => {
-    changeStatus(orders[id], 'Передан')
+    for (let v of Object.values(orders)){
+      if (v.id == id) changeStatus(v, 'Передан')
+    }
   }
 
 </script>
 
 <div class="container">
   <div id="all-routes">
-    {#each Object.values(orders).filter(val => val.order.status == "Развозка") as order}
+    {#each Object.values(orders).filter(val => val.status == "Развозка") as order}
       <div class="route">
         <div>
-          {order.order.cargo}
+          {order.cargo}
         </div>
         <div>
           {#if order.customer.surname != ""}{order.customer.surname} {/if}
@@ -67,11 +69,11 @@
           {#if order.customer.surname != ""} {order.customer.secondName}{/if}          
         </div>
         <div>
-          <span>{order.order.adress.city}, </span>
-          {#if order.order.adress.adress != ""}
-            {order.order.adress.adress}
+          <span>{order.adress.city}, </span>
+          {#if order.adress.adress != ""}
+            {order.adress.adress}
           {:else}
-            {order.order.adress.terminal}
+            {order.adress.terminal}
           {/if}
         </div>
         <button class="toggle" on:click={(e) => add(e, order)}>></button>
@@ -79,10 +81,10 @@
     {/each}
   </div>
   <div id="selected-routes">
-    {#each Object.values(orders).filter(val => val.order.status == "В Маршрут") as order}
+    {#each Object.values(orders).filter(val => val.status == "В Маршрут") as order}
       <div class="route selected">
         <div>
-          {order.order.cargo}
+          {order.cargo}
         </div>
         <div>
           {#if order.customer.surname != ""}{order.customer.surname} {/if}
@@ -90,11 +92,11 @@
           {#if order.customer.surname != ""} {order.customer.secondName}{/if}          
         </div>
         <div>
-          <span>{order.order.adress.city}, </span>
-          {#if order.order.adress.adress != ""}
-            {order.order.adress.adress}
+          <span>{order.adress.city}, </span>
+          {#if order.adress.adress != ""}
+            {order.adress.adress}
           {:else}
-            {order.order.adress.terminal}
+            {order.adress.terminal}
           {/if}
         </div>
         <div class="move">
@@ -104,11 +106,11 @@
     {/each}
   </div>
   <div id="info">
-    {#each Object.values(orders).filter(val => val.order.status == "В Маршрут").sort((a, b) => {return a.order.routeNum > b.order.routeNum ? 1 : (a.order.routeNum == b.order.routeNum ? 0 : -1)}) as order}
+    {#each Object.values(orders).filter(val => val.status == "В Маршрут").sort((a, b) => {return a.routeNum > b.routeNum ? 1 : (a.routeNum == b.routeNum ? 0 : -1)}) as order}
       <div class="info">
         <div class="item">
           <div class="label">Способ доставки:</div>
-          <div class="value">{order.order.cargo}</div>
+          <div class="value">{order.cargo}</div>
         </div>
         <div class="item">
           <div class="label">Наименование:</div>
@@ -124,17 +126,17 @@
         </div>
         <div class="item">
           <div class="label">Город:</div>
-          <div class="value">{order.order.adress.city}</div>
+          <div class="value">{order.adress.city}</div>
         </div>
-        {#if order.order.adress.adress != ""}
+        {#if order.adress.adress != ""}
           <div class="item">
             <div class="label">Адрес:</div>
-            <div class="value">{order.order.adress.adress}</div>
+            <div class="value">{order.adress.adress}</div>
           </div>
         {:else}
           <div class="item">
             <div class="label">Терминал:</div>
-            <div class="value">{order.order.adress.terminal}</div>
+            <div class="value">{order.adress.terminal}</div>
           </div>
         {/if}
         <div class="item">
@@ -145,22 +147,22 @@
             {/each}
           </div>
         </div>
-        {#if order.order.comment != ""}
+        {#if order.comment != ""}
           <div class="item">
             <div class="label">Комментарий:</div>
-            <div class="value">{order.order.comment}</div>
+            <div class="value">{order.comment}</div>
           </div>
         {/if}
         <div class="item">
-          {#if order.order.payment}
+          {#if order.payment}
             <div class="item">
               <div class="label" style="color: red;"><strong>ЗА НАШ СЧЕТ</strong></div>
               <div class="value"></div>
             </div>
           {/if}
         </div>
-        <button class="delivered-button" on:click={() => delivered(order.order.id)}>передан</button>
-        <input class="route-num" type="text" bind:value={order.order.routeNum} on:input={() => update(order)}>
+        <button class="delivered-button" on:click={() => delivered(order.id)}>передан</button>
+        <input class="route-num" type="text" bind:value={order.routeNum} on:input={() => update(order)}>
       </div>
     {/each}
   </div>

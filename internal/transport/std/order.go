@@ -9,7 +9,7 @@ import (
 
 func orderPush(w http.ResponseWriter, r *http.Request) {
 	defer clients.Update()
-	order := service.NewOrderFull()
+	var order service.Order
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		errorResponse(w, fmt.Sprintf("decode order failed (%v)", err.Error()), http.StatusInternalServerError)
@@ -23,7 +23,7 @@ func orderPush(w http.ResponseWriter, r *http.Request) {
 
 func orderUpdate(w http.ResponseWriter, r *http.Request) {
 	defer clients.Update()
-	order := service.NewOrderFull()
+	var order service.Order
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		errorResponse(w, fmt.Sprintf("decode order failed (%v)", err.Error()), http.StatusInternalServerError)

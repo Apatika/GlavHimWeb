@@ -32,7 +32,7 @@
   }
 
   const sortOrders = (a, b) => {
-    return a.order.status > b.order.status ? -1 : (a.order.status < b.order.status ? 1 : (a.order.cargo < b.order.cargo ? -1 : 1))
+    return a.status > b.status ? -1 : (a.status < b.status ? 1 : (a.cargo < b.cargo ? -1 : 1))
   }
 
   const closeFullOrder = () => {

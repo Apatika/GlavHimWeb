@@ -42,7 +42,6 @@ func (c *Customer) Delete() error {
 	if err := storage.DB.Delete(config.Cfg.DB.Coll.Customers, c.ID); err != nil {
 		return fmt.Errorf("delete client from db failed (%v)", err.Error())
 	}
-	go storage.Cache.Delete(config.Cfg.DB.Coll.Customers, c.ID)
 	log.Printf("delete client (name: %v)", c.Name)
 	return nil
 }

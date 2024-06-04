@@ -179,29 +179,100 @@ func (m *MongoDB) GetCustomers(reg string, clients interface{}) error {
 	return nil
 }
 
-// TODO: джоинить клиента к заказу одним запросом
 func (m *MongoDB) SearchOrders(id string, payment bool, month string, limit int64, obj interface{}) error {
 	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
 	year := time.Now().Year()
 	var cursor *mongo.Cursor
 	var err error
 	if payment {
-		cursor, err = coll.Find(context.TODO(), bson.M{"payment": true, "creation_date.year": year, "creation_date.month": month, "status": "Отгружен"})
+		cursor, err = coll.Aggregate(context.TODO(), []bson.M{
+			{
+				"$lookup": bson.M{
+					"from":         config.Cfg.DB.Coll.Customers,
+					"localField":   "customer_id",
+					"foreignField": "_id",
+					"as":           "customer",
+				},
+			},
+			{
+				"$match": bson.M{
+					"payment":             true,
+					"creation_date.year":  year,
+					"creation_date.month": month,
+					"status":              "Отгружен",
+				},
+			},
+			{"$unwind": "$customer"}})
 		if err != nil {
 			return err
 		}
 	} else if id != "" {
-		cursor, err = coll.Find(context.TODO(), bson.M{"customer_id": id, "status": "Отгружен"})
+		cursor, err = coll.Aggregate(context.TODO(), []bson.M{
+			{
+				"$lookup": bson.M{
+					"from":         config.Cfg.DB.Coll.Customers,
+					"localField":   "customer_id",
+					"foreignField": "_id",
+					"as":           "customer",
+				},
+			},
+			{
+				"$match": bson.M{
+					"customer_id": id,
+					"status":      "Отгружен",
+				},
+			},
+			{"$unwind": "$customer"}})
 		if err != nil {
 			return err
 		}
 	} else {
-		cursor, err = coll.Find(context.TODO(), bson.M{"status": "Отгружен"}, options.Find().SetSort(bson.M{"$natural": -1}).SetLimit(limit))
+		cursor, err = coll.Aggregate(context.TODO(), []bson.M{
+			{
+				"$lookup": bson.M{
+					"from":         config.Cfg.DB.Coll.Customers,
+					"localField":   "customer_id",
+					"foreignField": "_id",
+					"as":           "customer",
+				},
+			},
+			{"$match": bson.M{"status": "Отгружен"}},
+			{"$unwind": "$customer"},
+			{"$sort": bson.M{"_id": 1}},
+			{"$limit": limit}})
 		if err != nil {
 			return err
 		}
 	}
 	if err = cursor.All(context.TODO(), obj); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MongoDB) InWorkOrders(obj interface{}) error {
+	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Orders)
+	cursor, err := coll.Aggregate(context.TODO(), []bson.M{
+		{
+			"$lookup": bson.M{
+				"from":         config.Cfg.DB.Coll.Customers,
+				"localField":   "customer_id",
+				"foreignField": "_id",
+				"as":           "customer",
+			},
+		},
+		{
+			"$match": bson.M{
+				"status": bson.M{
+					"$ne": "Отгружен",
+				},
+			},
+		},
+		{"$unwind": "$customer"}})
+	if err != nil {
+		return err
+	}
+	if err := cursor.All(context.TODO(), obj); err != nil {
 		return err
 	}
 	return nil

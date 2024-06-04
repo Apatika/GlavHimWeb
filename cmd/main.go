@@ -36,7 +36,7 @@ func main() {
 	storage.NewDB()
 
 	storage.CacheInit()
-	if err := service.LoadCache(); err != nil {
+	if err := service.InWorkToCache(); err != nil {
 		log.Fatalf("ERROR: load cache failed (%v)", err)
 	}
 
