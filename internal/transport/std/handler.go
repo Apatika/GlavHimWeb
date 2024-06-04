@@ -60,8 +60,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	ch <- struct{}{}
 	for {
 		<-ch
-		order := service.NewOrderFull()
-		data := order.GetAll()
+		data := service.GetInWorkOrders()
 		if err := conn.WriteJSON(data); err != nil {
 			clients.DeleteChan(id)
 			conn.Close()

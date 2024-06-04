@@ -36,6 +36,10 @@ func InWorkToCache() error {
 	return nil
 }
 
+func GetInWorkOrders() interface{} {
+	return storage.Cache.Get(config.Cfg.DB.Coll.Orders)
+}
+
 func (o *Order) Push(raw []byte) error {
 	json.Unmarshal(raw, o)
 	var month time.Month
