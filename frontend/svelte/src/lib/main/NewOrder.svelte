@@ -209,7 +209,7 @@
   const getCustomer = (e) => {
     for (let v of customerList){
       if (e.target.value == v.id){
-        customer = v
+        order.customer = v
         order.adress = v.adress
         return
       }
