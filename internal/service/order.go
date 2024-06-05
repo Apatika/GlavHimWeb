@@ -11,7 +11,7 @@ import (
 
 type Order struct {
 	ID           string               `json:"id" bson:"_id"`
-	CreationDate Date                 `json:"creationDate" bson:"creation_date"`
+	CreationDate string               `json:"creationDate" bson:"creation_date"`
 	LastDate     string               `json:"lastDate" bson:"last_date"`
 	Cargo        string               `json:"cargo" bson:"cargo"`
 	ToAdress     bool                 `json:"toadress" bson:"toadress"`
@@ -21,7 +21,7 @@ type Order struct {
 	Comment      string               `json:"comment" bson:"comment"`
 	Probes       map[string]Chemistry `json:"probes" bson:"probes"`
 	Payment      bool                 `json:"payment" bson:"payment"`
-	ShipmentDate Date                 `json:"shipmentDate" bson:"shipment_date"`
+	ShipmentDate string               `json:"shipmentDate" bson:"shipment_date"`
 	Status       string               `json:"status" bson:"status"`
 	RouteNum     string               `json:"routeNum" bson:"routeNum"`
 	Customer     *Customer            `json:"customer" bson:"customer,omitempty"`
@@ -42,9 +42,7 @@ func GetInWorkOrders() interface{} {
 
 func (o *Order) Push(raw []byte) error {
 	json.Unmarshal(raw, o)
-	var month time.Month
-	o.CreationDate.Year, month, o.CreationDate.Day = time.Now().Date()
-	o.CreationDate.Month = month.String()
+	o.CreationDate = time.Now().Format(time.DateTime)
 	o.ID = storage.DB.GetNewID()
 	if o.Customer.ID == "" {
 		id, err := o.Customer.Check()
@@ -80,13 +78,12 @@ func (o *Order) Update(raw []byte) error {
 		return fmt.Errorf("zero order id")
 	}
 	if o.Status == StatusShipped {
-		var month time.Month
-		o.ShipmentDate.Year, month, o.ShipmentDate.Day = time.Now().Date()
-		o.ShipmentDate.Month = month.String()
+		o.ShipmentDate = time.Now().Format(time.DateTime)
 	}
 	if err := o.Customer.Update(); err != nil {
 		return err
 	}
+	o.Customer = nil
 	if err := storage.DB.Update(config.Cfg.DB.Coll.Orders, o, o.ID); err != nil {
 		return fmt.Errorf("update order failed(%v)", err.Error())
 	}

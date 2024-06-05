@@ -57,115 +57,117 @@
 </script>
 
 <div class="container">
-  <div id="all-routes">
-    {#each Object.values(orders).filter(val => val.status == "Развозка") as order}
-      <div class="route">
-        <div>
-          {order.cargo}
-        </div>
-        <div>
-          {#if order.customer.surname != ""}{order.customer.surname} {/if}
-          {order.customer.name}
-          {#if order.customer.surname != ""} {order.customer.secondName}{/if}          
-        </div>
-        <div>
-          <span>{order.adress.city}, </span>
-          {#if order.adress.adress != ""}
-            {order.adress.adress}
-          {:else}
-            {order.adress.terminal}
-          {/if}
-        </div>
-        <button class="toggle" on:click={(e) => add(e, order)}>></button>
-      </div>
-    {/each}
-  </div>
-  <div id="selected-routes">
-    {#each Object.values(orders).filter(val => val.status == "В Маршрут") as order}
-      <div class="route selected">
-        <div>
-          {order.cargo}
-        </div>
-        <div>
-          {#if order.customer.surname != ""}{order.customer.surname} {/if}
-          {order.customer.name}
-          {#if order.customer.surname != ""} {order.customer.secondName}{/if}          
-        </div>
-        <div>
-          <span>{order.adress.city}, </span>
-          {#if order.adress.adress != ""}
-            {order.adress.adress}
-          {:else}
-            {order.adress.terminal}
-          {/if}
-        </div>
-        <div class="move">
-          <button on:click={() => del(order)}>X</button>
-        </div>
-      </div>
-    {/each}
-  </div>
-  <div id="info">
-    {#each Object.values(orders).filter(val => val.status == "В Маршрут").sort((a, b) => {return a.routeNum > b.routeNum ? 1 : (a.routeNum == b.routeNum ? 0 : -1)}) as order}
-      <div class="info">
-        <div class="item">
-          <div class="label">Способ доставки:</div>
-          <div class="value">{order.cargo}</div>
-        </div>
-        <div class="item">
-          <div class="label">Наименование:</div>
-          <div class="value">
+  {#if orders != null}
+    <div id="all-routes">
+      {#each Object.values(orders).filter(val => val.status == "Развозка") as order}
+        <div class="route">
+          <div>
+            {order.cargo}
+          </div>
+          <div>
             {#if order.customer.surname != ""}{order.customer.surname} {/if}
             {order.customer.name}
-            {#if order.customer.surname != ""} {order.customer.secondName}{/if}
+            {#if order.customer.surname != ""} {order.customer.secondName}{/if}          
+          </div>
+          <div>
+            <span>{order.adress.city}, </span>
+            {#if order.adress.adress != ""}
+              {order.adress.adress}
+            {:else}
+              {order.adress.terminal}
+            {/if}
+          </div>
+          <button class="toggle" on:click={(e) => add(e, order)}>></button>
+        </div>
+      {/each}
+    </div>
+    <div id="selected-routes">
+      {#each Object.values(orders).filter(val => val.status == "В Маршрут") as order}
+        <div class="route selected">
+          <div>
+            {order.cargo}
+          </div>
+          <div>
+            {#if order.customer.surname != ""}{order.customer.surname} {/if}
+            {order.customer.name}
+            {#if order.customer.surname != ""} {order.customer.secondName}{/if}          
+          </div>
+          <div>
+            <span>{order.adress.city}, </span>
+            {#if order.adress.adress != ""}
+              {order.adress.adress}
+            {:else}
+              {order.adress.terminal}
+            {/if}
+          </div>
+          <div class="move">
+            <button on:click={() => del(order)}>X</button>
           </div>
         </div>
-        <div class="item">
-          <div class="label">Менеджер:</div>
-          <div class="value">{order.customer.manager}</div>
-        </div>
-        <div class="item">
-          <div class="label">Город:</div>
-          <div class="value">{order.adress.city}</div>
-        </div>
-        {#if order.adress.adress != ""}
+      {/each}
+    </div>
+    <div id="info">
+      {#each Object.values(orders).filter(val => val.status == "В Маршрут").sort((a, b) => {return a.routeNum > b.routeNum ? 1 : (a.routeNum == b.routeNum ? 0 : -1)}) as order}
+        <div class="info">
           <div class="item">
-            <div class="label">Адрес:</div>
-            <div class="value">{order.adress.adress}</div>
+            <div class="label">Способ доставки:</div>
+            <div class="value">{order.cargo}</div>
           </div>
-        {:else}
           <div class="item">
-            <div class="label">Терминал:</div>
-            <div class="value">{order.adress.terminal}</div>
+            <div class="label">Наименование:</div>
+            <div class="value">
+              {#if order.customer.surname != ""}{order.customer.surname} {/if}
+              {order.customer.name}
+              {#if order.customer.surname != ""} {order.customer.secondName}{/if}
+            </div>
           </div>
-        {/if}
-        <div class="item">
-          <div class="label">Контактное лицо:</div>
-          <div class="value">
-            {#each order.customer.contact as contact}
-              <div>{contact.name} - {contact.tel}</div>
-            {/each}
-          </div>
-        </div>
-        {#if order.comment != ""}
           <div class="item">
-            <div class="label">Комментарий:</div>
-            <div class="value">{order.comment}</div>
+            <div class="label">Менеджер:</div>
+            <div class="value">{order.customer.manager}</div>
           </div>
-        {/if}
-        <div class="item">
-          {#if order.payment}
+          <div class="item">
+            <div class="label">Город:</div>
+            <div class="value">{order.adress.city}</div>
+          </div>
+          {#if order.adress.adress != ""}
             <div class="item">
-              <div class="label" style="color: red;"><strong>ЗА НАШ СЧЕТ</strong></div>
-              <div class="value"></div>
+              <div class="label">Адрес:</div>
+              <div class="value">{order.adress.adress}</div>
+            </div>
+          {:else}
+            <div class="item">
+              <div class="label">Терминал:</div>
+              <div class="value">{order.adress.terminal}</div>
             </div>
           {/if}
+          <div class="item">
+            <div class="label">Контактное лицо:</div>
+            <div class="value">
+              {#each order.customer.contact as contact}
+                <div>{contact.name} - {contact.tel}</div>
+              {/each}
+            </div>
+          </div>
+          {#if order.comment != ""}
+            <div class="item">
+              <div class="label">Комментарий:</div>
+              <div class="value">{order.comment}</div>
+            </div>
+          {/if}
+          <div class="item">
+            {#if order.payment}
+              <div class="item">
+                <div class="label" style="color: red;"><strong>ЗА НАШ СЧЕТ</strong></div>
+                <div class="value"></div>
+              </div>
+            {/if}
+          </div>
+          <button class="delivered-button" on:click={() => delivered(order.id)}>передан</button>
+          <input class="route-num" type="text" bind:value={order.routeNum} on:input={() => update(order)}>
         </div>
-        <button class="delivered-button" on:click={() => delivered(order.id)}>передан</button>
-        <input class="route-num" type="text" bind:value={order.routeNum} on:input={() => update(order)}>
-      </div>
-    {/each}
-  </div>
+      {/each}
+    </div>
+  {/if}
 </div>
 
 <style>

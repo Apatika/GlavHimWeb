@@ -6,7 +6,7 @@
     id: null,
     customerId: null,
     payment: null,
-    toadress: false,
+    toadress: true,
     adress: {city: null, adress: null, terminal: "основной"},
     invoice: [null],
     cargo: null,
@@ -80,6 +80,9 @@
       alert("ИНН не заполнен")
       return false
     }
+    if (order.cargo == "город" || order.cargo == "забрать заказ" || order.cargo == "самовывоз") {
+      order.payment = false
+    }
     return true
   }
 
@@ -100,6 +103,7 @@
     if (!check()) return
     order.customer.adress = order.adress
     order.customerId = order.customer.id
+    probeCountSum = 0
     for (let [k, v] of Object.entries(chems)){
       if (chems[k].probeCount != 0){
         order.probes[k] = v
@@ -124,6 +128,7 @@
   }
 
   const update = () => {
+    if (!check()) return
     order.customer.adress = order.adress
     probeCountSum = 0
     Object.keys(order.probes).forEach(key => {
@@ -221,6 +226,21 @@
     let target = e.target.closest('.probes-container')
     target.style.height = '0px'
     target.style.padding = '0px'
+  }
+
+  const cargoChange = (e) => {
+    let value = e.target.value
+    if (value == "город" || value == "забрать заказ" || value == "самовывоз") {
+      order.toadress = true
+    }
+    else {
+      order.toadress = false
+    }
+    if (value == "самовывоз") {
+      order.adress.adress = "Склад"
+    } else {
+      order.adress.adress = ""
+    }
   }
 
 </script>
@@ -324,7 +344,7 @@
           <div class="flex">
             <div class="lable">ТК:</div>
             <div>
-              <select bind:value={order.cargo}>
+              <select bind:value={order.cargo} on:change={cargoChange}>
                 <option value="город">город</option>
                 <option value="самовывоз">самовывоз</option>
                 <option value="забрать заказ">забрать заказ</option>

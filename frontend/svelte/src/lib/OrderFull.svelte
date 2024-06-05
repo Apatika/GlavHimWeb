@@ -94,6 +94,16 @@
       <div class="label"><strong>Комментарий:</strong></div>
       <div>{order.comment}</div>
     </div>
+    <div class="item">
+      <div class="label"><strong>Создан:</strong></div>
+      <div>{order.creationDate}</div>
+    </div>
+    {#if order.shipmentDate != ""}
+      <div class="item">
+        <div class="label"><strong>Отгружен:</strong></div>
+        <div>{order.shipmentDate}</div>
+      </div>
+    {/if}
   </div>
   <div class="probes">
     {#if Object.keys(order.probes).length > 0}<span><strong>ПРОБНИКИ</strong></span>{/if}

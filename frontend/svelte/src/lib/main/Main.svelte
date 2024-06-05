@@ -121,18 +121,20 @@
       <span><strong>2024-05-17</strong> - крайняя дата</span>
     </div>
     <div id="table">
-      {#each Object.values(orders).sort(sortOrders) as order}
-        <div>
-          <div class="order">
-            <Order {order} on:message={(e) => toggleFullOrder(e.detail)} on:status={closeFullOrder}></Order>
+      {#if orders != null}
+        {#each Object.values(orders).sort(sortOrders) as order}
+          <div>
+            <div class="order">
+              <Order {order} on:message={(e) => toggleFullOrder(e.detail)} on:status={closeFullOrder}></Order>
+            </div>
+            <div class="full-order">
+              <OrderFull {order} on:message={(e) => {onEdit(e.detail.order, e.detail.customer)}}></OrderFull>
+            </div>
           </div>
-          <div class="full-order">
-            <OrderFull {order} on:message={(e) => {onEdit(e.detail.order, e.detail.customer)}}></OrderFull>
-          </div>
-        </div>
+          {/each}
       {:else}
         <span>Нет заказов</span>
-      {/each}
+      {/if}
     </div>
   </div>
   <div id="new-order">

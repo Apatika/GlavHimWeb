@@ -99,18 +99,18 @@
     </select>
     {#if option == "payment"}
       <select id="month" bind:value={month}>
-        <option value="January">Январь</option>
-        <option value="February">Февраль</option>
-        <option value="March">Март</option>
-        <option value="April">Апрель</option>
-        <option value="May">Май</option>
-        <option value="June">Июнь</option>
-        <option value="July">Июль</option>
-        <option value="August">Август</option>
-        <option value="September">Сентябрь</option>
-        <option value="October">Октябрь</option>
-        <option value="November">Ноябрь</option>
-        <option value="December">Декабрь</option>
+        <option value="01">Январь</option>
+        <option value="02">Февраль</option>
+        <option value="03">Март</option>
+        <option value="04">Апрель</option>
+        <option value="05">Май</option>
+        <option value="06">Июнь</option>
+        <option value="07">Июль</option>
+        <option value="08">Август</option>
+        <option value="09">Сентябрь</option>
+        <option value="10">Октябрь</option>
+        <option value="11">Ноябрь</option>
+        <option value="12">Декабрь</option>
       </select>
     {/if}
     {#if option == "id"}

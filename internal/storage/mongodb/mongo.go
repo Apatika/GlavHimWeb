@@ -196,10 +196,9 @@ func (m *MongoDB) SearchOrders(id string, payment bool, month string, limit int6
 			},
 			{
 				"$match": bson.M{
-					"payment":             true,
-					"creation_date.year":  year,
-					"creation_date.month": month,
-					"status":              "Отгружен",
+					"payment":       true,
+					"creation_date": bson.M{"$regex": primitive.Regex{Pattern: fmt.Sprintf("^.*?(%v-%v).*$", year, month), Options: "i"}},
+					"status":        "Отгружен",
 				},
 			},
 			{"$unwind": "$customer"}})
