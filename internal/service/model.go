@@ -16,12 +16,6 @@ type Pvd struct {
 	Count  int     `json:"count" bson:"count"`
 }
 
-type Date struct {
-	Day   int    `json:"day" bson:"day"`
-	Month string `json:"month" bson:"month"`
-	Year  int    `json:"year" bson:"year"`
-}
-
 type Contact struct {
 	Name string `json:"name" bson:"name"`
 	Tel  string `json:"tel" bson:"tel"`
