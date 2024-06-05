@@ -5,6 +5,27 @@
   export let order = {}
   export let isSearch = false
 
+  const changeStatus = (order, status) => {
+    order.status = status
+    fetch(`${window.location.origin}/orders`, {
+      method: "PUT",
+      body: JSON.stringify(order),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    }).then(response => {
+      if (!response.ok) return response.text().then(text => {throw new Error(text)})
+
+    }).catch((err) => {
+      alert(err)
+    })
+  }
+
+  const backToWork = (e, data) => {
+    changeStatus(data, "")
+    e.target.closest('.item').remove()
+  }
+
 </script>
 
 <div class="container">
@@ -115,6 +136,10 @@
     {#if !isSearch}
       <div>
         <button class="edit-button" on:click={() => dispatch('message', {order: order, customer: order.customer})}>Редактировать</button>
+      </div>
+    {:else}
+      <div>
+        <button class="edit-button" on:click={(e) => backToWork(e, order)}>Вернуть В Работу</button>
       </div>
     {/if}
     <div>

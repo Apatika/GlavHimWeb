@@ -128,7 +128,7 @@
   </div>
   <div id="table">
     {#each Object.values(orders).sort(sortOrders) as order}
-      <div>
+      <div class="item">
         <div class="order">
           <Order {order} isSearch={true} on:message={(e) => toggleFullOrder(e.detail)}></Order>
         </div>
