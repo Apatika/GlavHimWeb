@@ -15,6 +15,7 @@
     cargo: null,
     lastDate: null,
     comment: null,
+    content: null,
     probes: {},
     customer: {
       id: null,

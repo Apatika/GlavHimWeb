@@ -12,8 +12,6 @@
         return style + "#FFFF00"
       case "СТОП":
         return style + "#FF00FF"
-      case "Забор ПЭК":
-        return style + "#B0C4DE"
       case "Заказан Забор":
         return style + "#00FFFF"
       case "Развозка":
@@ -21,7 +19,7 @@
       case "Нет Товара":
         return style + "#FF0000"
       case "Изменен!":
-        return style + "#00FF00"
+        return style + "#B0C4DE"
       case "В Маршрут":
         return style + "#008B8B"
       case "Передан":
@@ -82,7 +80,6 @@
         <option value=""></option>
         <option value="Принят В Работу">Принят В Работу</option>
         <option value="Развозка">Развозка</option>
-        <option value="Забор ПЭК">Забор ПЭК</option>
         <option value="Заказан Забор">Заказан Забор</option>
         <option value="Нет Товара">Нет Товара</option>
         <option value="СТОП">СТОП</option>

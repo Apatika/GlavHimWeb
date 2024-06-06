@@ -12,6 +12,7 @@
     cargo: null,
     lastDate: null,
     comment: null,
+    content: null,
     probes: {},
     customer: {
       id: null,
@@ -243,6 +244,17 @@
     }
   }
 
+  const loadFile = (e) => {
+    const file = e.target.files[0]
+    const reader = new FileReader()
+    reader.onload = () => {
+      let result = new DOMParser().parseFromString(reader.result, "text/html")
+      let tables = result.querySelectorAll('table')
+      order.content = tables[3].outerHTML + tables[4].outerHTML
+    }
+    if (file) reader.readAsText(file)
+  }
+
 </script>
 
 <div class="container">
@@ -433,6 +445,12 @@
             </div>
             <button on:click={probesShow}>ПРОБНИКИ</button>
             {#if probeCountSum != 0} <strong style="color: red;">Добавлены пробники</strong> {/if}
+            <div class="flex">
+              <div class="lable">Загрузить счет:</div>
+              <div>
+                <input type="file" on:change={loadFile} accept="text/html">
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 <script>
+  import Content from "./Content.svelte"
   import { createEventDispatcher } from "svelte"
   const dispatch = createEventDispatcher()
 
@@ -26,9 +27,19 @@
     e.target.closest('.item').remove()
   }
 
+  const showContent = e => {
+    let children = e.target.closest('.container').children
+    children[0].style.display = "block"
+    document.body.style.pointerEvents = "none"
+    children[0].style.pointerEvents = "all"
+  }
+
 </script>
 
 <div class="container">
+  <div class="content">
+    <Content {order}></Content>
+  </div>
   <div class="customer">
     <div class="item">
       <div class="label"><strong>Менеджер:</strong></div>
@@ -143,6 +154,9 @@
       </div>
     {/if}
     <div>
+      <button class="edit-button" on:click={showContent}>Заказ</button>
+    </div>
+    <div>
       {#if order.payment} <span style="color: red; font-size: 14px;"><strong>ЗА НАШ СЧЕТ!!!</strong></span> {/if}
     </div>
   </div>
@@ -177,6 +191,9 @@
   .probes{
     flex-grow: 1;
     text-align: center;
+  }
+  .content{
+    display: none;
   }
   @media (min-width:1365px) and (max-width:1600px){}
   @media (max-width:1364px){

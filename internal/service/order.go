@@ -25,6 +25,7 @@ type Order struct {
 	Status       string               `json:"status" bson:"status"`
 	RouteNum     string               `json:"routeNum" bson:"routeNum"`
 	Customer     *Customer            `json:"customer" bson:"customer,omitempty"`
+	Content      string               `json:"content" bson:"content"`
 }
 
 func InWorkToCache() error {
@@ -79,6 +80,8 @@ func (o *Order) Update(raw []byte) error {
 	}
 	if o.Status == StatusShipped {
 		o.ShipmentDate = time.Now().Format(time.DateTime)
+	} else {
+		o.ShipmentDate = ""
 	}
 	if err := o.Customer.Update(); err != nil {
 		return err
