@@ -16,7 +16,7 @@
       }
     }).then(response => {
       if (!response.ok) return response.text().then(text => {throw new Error(text)})
-
+      dispatch('message', "")
     }).catch((err) => {
       alert(err)
     })
@@ -24,7 +24,6 @@
 
   const backToWork = (e, data) => {
     changeStatus(data, "")
-    e.target.closest('.item').remove()
   }
 
   const showContent = e => {

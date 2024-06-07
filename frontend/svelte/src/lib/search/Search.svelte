@@ -124,7 +124,7 @@
     {#if option == "last"}
       <input id="limit-input" type="text" bind:value={limit}>
     {/if}
-    <button on:click={find}>Показать</button>
+    <button id="find-button" on:click={find}>Показать</button>
   </div>
   <div id="table">
     {#each Object.values(orders).sort(sortOrders) as order}
@@ -133,7 +133,7 @@
           <Order {order} isSearch={true} on:message={(e) => toggleFullOrder(e.detail)}></Order>
         </div>
         <div class="full-order">
-          <OrderFull {order} isSearch={true}></OrderFull>
+          <OrderFull {order} isSearch={true} on:message={() => document.getElementById("find-button").click()}></OrderFull>
         </div>
       </div>
     {/each}
