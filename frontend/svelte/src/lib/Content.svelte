@@ -9,11 +9,12 @@
 
 </script>
 
-<div class="container">
-  <div class="name">
+<div class="container print">
+  <div class="buttons">
+    <button on:click={() => window.print()}>печать</button>
     <button class="close" on:click={close}>закрыть</button>
   </div>
-  <div>
+  <div class="name">
     <strong>
       <span>{#if order.customer.surname != ""}{order.customer.surname}{/if} </span>
       <span>{order.customer.name} </span>
@@ -30,6 +31,14 @@
       <strong>Комментарий: </strong>{order.comment}
     </div>
   {/if}
+  {#if Object.keys(order.probes).length > 0}
+    <div class="probes">
+      <span><strong>ПРОБНИКИ</strong></span>
+      {#each Object.values(order.probes).filter(val => val.probeCount > 0).sort((a, b) => {return a.name == b.name ? 0 : (a.name > b.name ? 1 : -1)}) as chem}
+        <div>{chem.name} - {(chem.probeValue * chem.probeCount) / 1000} л.</div>
+      {/each}
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -40,7 +49,7 @@
     height: 90%;
     left: 50%;
     top: 50%;
-    padding: 5px;
+    padding: 15px;
     transform: translate(-50%, -50%);
     border: 1px solid black;
     border-radius: 5px;
@@ -49,20 +58,36 @@
     box-shadow: 0px 0px 10px 0px black;
     z-index: 5;
   }
-  .name{
-    margin-left: 5px;
-    margin-bottom: 5px;
+  .name, .comment, .probes{
+    margin: 5px 15px;
+  }
+  .comment{
+    border-bottom: 1px solid black;
   }
   .content{
     border: 1px solid black;
     border-radius: 10px;
     padding: 5px;
   }
-  .comment{
-    margin-top: 5px;
-  }
   .close{
     float: right;
+  }
+  @media print{
+    :global(body){
+      visibility: hidden;
+    }
+    .print{
+      visibility: visible;
+      overflow:visible;
+      box-shadow: none;
+      border: none;
+      transform: none;
+      left: 0;
+      top: 0;
+    }
+    .buttons{
+      visibility: hidden;
+    }
   }
   
 </style>

@@ -63,7 +63,9 @@
   <div class="item name">{#if order.customer.surname != "" && order.customer.inn != ""}ИП {/if}<strong>{order.customer.surname} {order.customer.name}</strong> {order.customer.secondName}</div>
   <div class="item adress">
     <div><strong>{order.adress.city}</strong></div>
-    {#if order.adress.adress != ""}
+    {#if order.cargo == "самовывоз"}
+      <div>склад</div>
+    {:else if order.adress.adress != ""}
       <div>адрес: {order.adress.adress}</div>
     {:else}
       <div>терминал: {order.adress.terminal}</div>
