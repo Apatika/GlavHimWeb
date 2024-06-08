@@ -31,6 +31,12 @@
       <strong>Комментарий: </strong>{order.comment}
     </div>
   {/if}
+  {#if order.payment}
+    <div class="other"><strong>ЗА НАШ СЧЕТ!!!</strong></div>
+  {/if}
+  {#if order.catalog}
+    <div class="other"><strong>КАТАЛОГ!!!</strong> {order.catalogCount}шт.</div>
+  {/if}
   {#if Object.keys(order.probes).length > 0}
     <div class="probes">
       <span><strong>ПРОБНИКИ</strong></span>
@@ -58,7 +64,7 @@
     box-shadow: 0px 0px 10px 0px black;
     z-index: 5;
   }
-  .name, .comment, .probes{
+  .name, .comment, .probes, .other{
     margin: 5px 15px;
   }
   .comment{

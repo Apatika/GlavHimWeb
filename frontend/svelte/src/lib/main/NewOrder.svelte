@@ -6,6 +6,8 @@
     id: null,
     customerId: null,
     payment: null,
+    catalog: null,
+    catalogCount: null,
     toadress: true,
     adress: {city: null, adress: null, terminal: "основной"},
     invoice: [null],
@@ -419,15 +421,22 @@
             </div>
           </div>
           <div class="flex">
-            <div class="lable">Крайняя дата</div>
+            <div class="lable">Крайняя дата:</div>
             <div>
               <input type="date" bind:value={order.lastDate}>
             </div>
           </div>
           <div class="flex">
-            <div class="lable">Комментарий</div>
+            <div class="lable">Комментарий:</div>
             <div>
               <textarea  rows="4" bind:value={order.comment} placeholder="Комментарий"></textarea>
+            </div>
+          </div>
+          <div class="flex">
+            <div class="lable">Каталог:</div>
+            <div>
+              <input type="checkbox" bind:checked={order.catalog}>
+              {#if order.catalog}<input class="catalog-count" type="text" bind:value={order.catalogCount} placeholder="кол-во">{/if}
             </div>
           </div>
           <div>
@@ -566,6 +575,10 @@
     overflow: auto;
     text-align: center;
     transition: all .2s linear;
+  }
+  .catalog-count{
+    width: 50px;
+    text-align: center;
   }
   @media (max-width:1364px){
     .probes{

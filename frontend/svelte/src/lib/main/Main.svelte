@@ -119,6 +119,7 @@
       <span>🧴 - пробники</span>
       <span>💰 - за наш счет</span>
       <span>💬 - комментарий</span>
+      <span>📕 - каталог</span>
       <span><strong>2024-05-17</strong> - крайняя дата</span>
     </div>
     <div id="table">

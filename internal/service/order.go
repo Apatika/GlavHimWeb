@@ -21,6 +21,8 @@ type Order struct {
 	Comment      string               `json:"comment" bson:"comment"`
 	Probes       map[string]Chemistry `json:"probes" bson:"probes"`
 	Payment      bool                 `json:"payment" bson:"payment"`
+	Catalog      bool                 `json:"catalog" bson:"catalog"`
+	CatalogCount string               `json:"catalogCount" bson:"catalog_count"`
 	ShipmentDate string               `json:"shipmentDate" bson:"shipment_date"`
 	Status       string               `json:"status" bson:"status"`
 	RouteNum     string               `json:"routeNum" bson:"routeNum"`

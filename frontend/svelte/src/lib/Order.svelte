@@ -75,6 +75,7 @@
   {#if Object.keys(order.probes).length > 0} <div class="achtung"><strong>🧴</strong></div> {/if}
   {#if order.payment} <div class="achtung" id="payment-span"><strong>💰</strong></div> {/if}
   {#if order.comment != ""} <div class="achtung">💬</div> {/if}
+  {#if order.catalog} <div class="achtung"><strong>📕</strong></div> {/if}
   {#if !isSearch}
     <div class="item status">
       <select bind:value={order.status}
