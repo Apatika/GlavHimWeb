@@ -23,7 +23,7 @@
   </div>
   {#if order.content != ""}
     <div class="content">
-      {@html (order.content + "<style>table:first-of-type td{border-bottom: 1px solid black;}</style>")}
+      {@html (order.content + "<style>table:nth-child(odd) td{border-bottom: 1px solid black;}table:not(:first-child){border-top: 2px solid black}table:nth-child(even){border-top: none}</style>")}
     </div>
   {/if}
   {#if order.comment != ""}

@@ -245,14 +245,17 @@
   }
 
   const loadFile = (e) => {
-    const file = e.target.files[0]
-    const reader = new FileReader()
-    reader.onload = () => {
-      let result = new DOMParser().parseFromString(reader.result, "text/html")
-      let tables = result.querySelectorAll('table')
-      order.content = tables[3].outerHTML + tables[4].outerHTML
+    const files = e.target.files
+    if (files.length != 0) order.content = ""
+    for (let file of files){
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => {
+        let result = new DOMParser().parseFromString(reader.result, "text/html")
+        let tables = result.querySelectorAll('table')
+        order.content += tables[3].outerHTML + tables[4].outerHTML
+      }
     }
-    if (file) reader.readAsText(file)
   }
 
 </script>
@@ -448,7 +451,7 @@
             <div class="flex">
               <div class="lable">Загрузить счет:</div>
               <div>
-                <input type="file" on:change={loadFile} accept="text/html">
+                <input type="file" on:change={loadFile} accept="text/html" multiple>
               </div>
             </div>
           </div>
