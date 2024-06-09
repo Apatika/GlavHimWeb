@@ -32,7 +32,7 @@
     </div>
   {/if}
   {#if order.payment}
-    <div class="other"><strong>ЗА НАШ СЧЕТ!!!</strong></div>
+    <div class="other payment"><strong>ЗА НАШ СЧЕТ!!!</strong></div>
   {/if}
   {#if order.catalog}
     <div class="other"><strong>КАТАЛОГ!!!</strong> {order.catalogCount}шт.</div>
@@ -76,6 +76,9 @@
     padding: 5px;
   }
   .close{
+    float: right;
+  }
+  .payment{
     float: right;
   }
   @media print{

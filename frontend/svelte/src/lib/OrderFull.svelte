@@ -184,15 +184,18 @@
     min-width: 100px;
   }
   .edit-button{
-    float: right;
     height: 30px;
   }
   .probes{
-    flex-grow: 1;
+    width: 400px;
     text-align: center;
   }
   .content{
     display: none;
+  }
+  .other{
+    flex-grow: 1;
+    text-align: right;
   }
   @media (min-width:1365px) and (max-width:1600px){}
   @media (max-width:1364px){
