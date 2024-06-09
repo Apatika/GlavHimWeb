@@ -9,7 +9,7 @@
     catalog: null,
     catalogCount: null,
     toadress: true,
-    adress: {city: null, adress: null, terminal: "основной"},
+    adress: {city: "Санкт-Петербург", adress: null, terminal: "основной"},
     invoice: [null],
     cargo: null,
     lastDate: null,
@@ -36,8 +36,9 @@
     Object.keys(order.customer).forEach(c => order.customer[c] = null)
     order.customer.contact = [{name: null, tel: null}]
     order.customer.type = '0'
+    order.cargo = "город"
     order.toadress = false
-    order.adress = {city: null, adress: null, terminal: "основной"}
+    order.adress = {city: "Санкт-Петербург", adress: null, terminal: "основной"}
     order.invoice = [null]
     order.probes = {}
   }
@@ -235,9 +236,11 @@
     let value = e.target.value
     if (value == "город" || value == "забрать заказ" || value == "самовывоз") {
       order.toadress = true
+      order.adress.city = "Санкт-Петербург"
     }
     else {
       order.toadress = false
+      order.adress.city = ""
     }
     if (value == "самовывоз") {
       order.adress.adress = "Склад"
