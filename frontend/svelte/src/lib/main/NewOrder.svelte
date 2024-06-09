@@ -96,12 +96,6 @@
       order.customer.contact = order.customer.contact.slice(0, -1)
     }
   }
-  const addInvoice = () => order.invoice = order.invoice.concat(null)
-  const removeInvoice = () => {
-    if (order.invoice.length > 1){
-      order.invoice = order.invoice.slice(0, -1)
-    }
-  }
 
   const push = () => {
     if (!check()) return
@@ -251,8 +245,13 @@
 
   const loadFile = (e) => {
     const files = e.target.files
-    if (files.length != 0) order.content = ""
+    if (files.length != 0) {
+      order.content = ""
+      order.invoice = []
+    }
     for (let file of files){
+      const num = /\d+/.exec(file.name)[0]
+      order.invoice.push(num)
       const reader = new FileReader()
       reader.readAsText(file)
       reader.onload = () => {
@@ -411,16 +410,9 @@
             {/if}
           </div>
           <div class="flex">
-            <div class="lable">Счет:</div>
+            <div class="lable">Cчет:</div>
             <div>
-              {#each order.invoice as invoice}
-                <div>
-                  <input type="text" bind:value={invoice} placeholder="Счет">
-                </div>
-              {/each}
-              <button class="add-del-button" on:click={addInvoice}>+</button>
-              <button class="add-del-button" on:click={removeInvoice}>-</button>
-              <span class="add-del">добавить/удалить</span>
+              <input type="file" on:change={loadFile} size="60" accept="text/html" multiple>
             </div>
           </div>
           <div class="flex">
@@ -430,16 +422,16 @@
             </div>
           </div>
           <div class="flex">
-            <div class="lable">Комментарий:</div>
-            <div>
-              <textarea  rows="4" bind:value={order.comment} placeholder="Комментарий"></textarea>
-            </div>
-          </div>
-          <div class="flex">
             <div class="lable">Каталог:</div>
             <div>
               <input type="checkbox" bind:checked={order.catalog}>
               {#if order.catalog}<input class="catalog-count" type="text" bind:value={order.catalogCount} placeholder="кол-во">{/if}
+            </div>
+          </div>
+          <div class="flex">
+            <div class="lable">Комментарий:</div>
+            <div>
+              <textarea  rows="4" bind:value={order.comment} placeholder="Комментарий"></textarea>
             </div>
           </div>
           <div>
@@ -460,12 +452,6 @@
             </div>
             <button on:click={probesShow}>ПРОБНИКИ</button>
             {#if probeCountSum != 0} <strong style="color: red;">Добавлены пробники</strong> {/if}
-            <div class="flex">
-              <div class="lable">Загрузить счет:</div>
-              <div>
-                <input type="file" on:change={loadFile} accept="text/html" multiple>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -497,6 +483,9 @@
     outline: none;
     color: black;
     font-size: 14px;
+  }
+  input[type="file"]{
+    width: 200px;
   }
   .container{
     margin: 30px 0px 5px 15px;
