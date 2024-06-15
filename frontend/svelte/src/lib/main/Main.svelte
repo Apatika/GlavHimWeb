@@ -33,7 +33,6 @@
     }
   }
 
-  let probeCountSum = 0
   export let managers = {}
   export let cargos = {}
   export let chems = {}
@@ -82,9 +81,9 @@
   }
 
   const onEdit = (order, customer) => {
+    Object.keys(chems).forEach(key => chems[key].probeCount = 0)
     for (let [k, v] of Object.entries(order.probes)){
-      chems[k] = v
-      probeCountSum += v.probeCount
+      chems[k] = structuredClone(v)
     }
     editOrder = order
     let target = document.querySelector('#editor')
@@ -113,7 +112,7 @@
 <div class="container">
   <div id="table-container">
     <div id="editor">
-      <NewOrder order={editOrder} {managers} {cargos} {chems} {probeCountSum} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
+      <NewOrder order={editOrder} {managers} {cargos} {chems} on:message={(e) => dispatchEdit(e.detail)}></NewOrder>
     </div>
     <div class="legend">
       <span>🧴 - пробники</span>

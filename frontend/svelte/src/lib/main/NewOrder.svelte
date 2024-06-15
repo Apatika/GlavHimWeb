@@ -45,10 +45,15 @@
 
   let cities = []
   let customerList = []
+  let probeCountSum = 0
   export let managers = {}
   export let cargos = {}
   export let chems = {}
-  export let probeCountSum = 0
+  $: {
+    probeCountSum = 0
+    Object.keys(chems).forEach(key => probeCountSum += chems[key].probeCount)
+  }
+
 
   const check = () => {
     if (order.customer.manager == null || order.customer.manager == ""){
@@ -101,7 +106,6 @@
     if (!check()) return
     order.customer.adress = order.adress
     order.customerId = order.customer.id
-    probeCountSum = 0
     for (let [k, v] of Object.entries(chems)){
       if (chems[k].probeCount != 0){
         order.probes[k] = v
@@ -128,7 +132,6 @@
   const update = () => {
     if (!check()) return
     order.customer.adress = order.adress
-    probeCountSum = 0
     Object.keys(order.probes).forEach(key => {
       delete order.probes[key]
     })
@@ -175,7 +178,6 @@
     for (let k of Object.keys(chems)){
       chems[k].probeCount = 0
     }
-    probeCountSum = 0
     dispatch('message', {
       id: order.id,
       update: false
@@ -443,15 +445,15 @@
                     <span>{chem.name}</span>
                   </div>
                   <div class="probes-count">
-                    <button on:click={() => {if (chem.probeCount > 0) {chem.probeCount--; probeCountSum--}}}>-</button>
+                    <button on:click={() => {if (chem.probeCount > 0) {chem.probeCount--}}}>-</button>
                     <span class="probes-count-span">{(chem.probeValue * chem.probeCount) / 1000} л</span>
-                    <button on:click={() => {chem.probeCount++; probeCountSum++}}>+</button>
+                    <button on:click={() => {chem.probeCount++}}>+</button>
                   </div>
                 </div>
               {/each}
             </div>
             <button on:click={probesShow}>ПРОБНИКИ</button>
-            {#if probeCountSum != 0} <strong style="color: red;">Добавлены пробники</strong> {/if}
+            {#if probeCountSum != 0} <strong style="color: red;">Добавлены пробники</strong> {probeCountSum}шт.{/if}
           </div>
         </div>
       </div>

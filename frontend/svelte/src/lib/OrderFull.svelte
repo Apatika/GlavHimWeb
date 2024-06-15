@@ -26,6 +26,9 @@
     changeStatus(data, "")
   }
 
+  // /(?<=\d\t\t)[^\t]*\t\d{1,3}/g товар кол-во
+  // /(?<=ИНН )\d{10,12}/g инн
+  // /(?<=Всего к оплате:	)[^,]*/ сумма
   const showContent = e => {
     let children = e.target.closest('.container').children
     children[0].style.display = "block"

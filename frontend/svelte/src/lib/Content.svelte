@@ -20,6 +20,7 @@
       <span>{order.customer.name} </span>
       <span>{#if order.customer.surname != ""}{order.customer.secondName}{/if}</span>
     </strong>
+    <span class="cargo"><strong>{order.cargo}</strong></span>
   </div>
   {#if order.content != ""}
     <div class="content">
@@ -67,6 +68,9 @@
   .name, .comment, .probes, .other{
     margin: 5px 15px;
   }
+  .name{
+    color: red;
+  }
   .comment{
     border-bottom: 1px solid black;
   }
@@ -80,6 +84,10 @@
   }
   .payment{
     float: right;
+  }
+  .cargo{
+    float: right;
+    color: blue;
   }
   @media print{
     :global(body){
@@ -96,6 +104,9 @@
     }
     .buttons{
       visibility: hidden;
+    }
+    .name, .cargo{
+      color: black;
     }
   }
   
