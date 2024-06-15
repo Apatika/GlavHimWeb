@@ -11,11 +11,6 @@ const (
 	StatusChanged = "Изменен!"
 )
 
-type Pvd struct {
-	Weight float32 `json:"weight" bson:"weight"`
-	Count  int     `json:"count" bson:"count"`
-}
-
 type Contact struct {
 	Name string `json:"name" bson:"name"`
 	Tel  string `json:"tel" bson:"tel"`

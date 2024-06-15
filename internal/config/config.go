@@ -36,6 +36,7 @@ type (
 		Customers string `yaml:"customers"`
 		Users     string `yaml:"users"`
 		City      string `yaml:"city"`
+		Pvd       string `yaml:"pvd"`
 	}
 
 	frontend struct {
@@ -61,6 +62,7 @@ var DefaultCfg Config = Config{
 			Customers: "customers",
 			Users:     "users",
 			City:      "cities",
+			Pvd:       "pvd",
 		},
 	},
 	Frontend: frontend{

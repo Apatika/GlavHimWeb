@@ -31,6 +31,8 @@ func New() *http.ServeMux {
 	mux.HandleFunc("GET /cities", getCities)
 	mux.HandleFunc("GET /customers", getCustomers)
 	mux.HandleFunc("GET /search", searchOrders)
+	mux.HandleFunc("GET /pvd", getPvd)
+	mux.HandleFunc("POST /pvd", addPvd)
 
 	return mux
 }

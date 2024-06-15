@@ -3,17 +3,20 @@
   import Data from "./lib/data/Data.svelte";
   import Route from "./lib/route/Route.svelte";
   import Search from "./lib/search/Search.svelte";
+  import Pvd from "./lib/pvd/Pvd.svelte";
 
   let managers = {}
   let cargos = {}
   let chems = {}
   let orders = {}
+  let pvd = []
 
   window.onload = () => {
     document.querySelector('#main').style.display = 'block'
     getManagers()
     getCargos()
     getChems()
+    getPvd()
   }
 
   let socket = new WebSocket(`ws://${window.location.host}/inwork`);
@@ -28,6 +31,17 @@
     }
   }
   socket.onerror = (error) => {
+  }
+
+  const getPvd = () => {
+    fetch(`${window.location.origin}/pvd`).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      if (data.length == 0) throw new Error("storage empty")
+      pvd = data
+    }).catch(function(err) {
+      alert(err)
+    })
   }
 
   const getManagers = () => {
@@ -103,6 +117,7 @@
   <button name='data' on:click={change}>База Данных</button>
   <button name='route' on:click={change}>Маршрут</button>
   <button name='search' on:click={change}>Поиск Заказов</button>
+  <button name='pvd' on:click={change}>Пленка</button>
 </div>
 <div class="mobile-nav">
   <button name='main' on:click={change}>Главная</button>
@@ -120,6 +135,9 @@
   </div>
   <div class="page" id="search">
     <Search></Search>
+  </div>
+  <div class="page" id="pvd">
+    <Pvd {pvd}></Pvd>
   </div>
 </div>
 <button id="menu-button" on:click={mobileMenu}>меню</button>
