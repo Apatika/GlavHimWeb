@@ -13,6 +13,7 @@ type IDataBase interface {
 	Add(collName string, obj interface{}) error
 	Update(collName string, obj interface{}, id string) error
 	Delete(collName string, id string) error
+	RestorePvd(pvds map[float64]int)
 	GetNewID() string
 	CheckClient(params ...string) (string, error)
 	GetCities(reg string, cities interface{}) error

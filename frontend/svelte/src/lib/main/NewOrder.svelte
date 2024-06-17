@@ -173,16 +173,6 @@
     catch(err){}
   }
 
-  const onClose = (e) => {
-    for (let k of Object.keys(chems)){
-      chems[k].probeCount = 0
-    }
-    dispatch('message', {
-      id: order.id,
-      update: false
-    })
-  }
-
   const searchCity = (e) => {
     fetch(`${window.location.origin}/cities?city=${e.target.value}`).then(function(response) {
       return response.json();
@@ -279,7 +269,7 @@
     </div>
   {:else}
     <div>
-      <button class="close-button" on:click={onClose}>Закрыть</button>
+      <button class="close-button" on:click={() => dispatch('message', {id: order.id, update: false})}>Закрыть</button>
     </div>
   {/if}
   <div class="main">

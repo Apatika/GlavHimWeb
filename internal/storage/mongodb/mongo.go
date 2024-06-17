@@ -118,6 +118,15 @@ func (m *MongoDB) Delete(collName string, id string) error {
 	return nil
 }
 
+func (m *MongoDB) RestorePvd(pvds map[float64]int) {
+	coll := m.Client.Database(config.Cfg.AppName).Collection(config.Cfg.DB.Coll.Pvd)
+	for key, val := range pvds {
+		if _, err := coll.UpdateOne(context.TODO(), bson.M{"weight": key}, bson.M{"$inc": bson.M{"count": val}}); err != nil {
+			log.Printf("ERROR: update pvd with weight %v failed. Count %v", key, val)
+		}
+	}
+}
+
 func (m *MongoDB) CheckClient(params ...string) (string, error) {
 	if len(params) < 1 || len(params) > 3 {
 		return "", fmt.Errorf("invalid number of parameters")

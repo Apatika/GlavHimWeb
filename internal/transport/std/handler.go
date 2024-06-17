@@ -27,6 +27,7 @@ func New() *http.ServeMux {
 	mux.HandleFunc(fmt.Sprintf("DELETE /db/{%v}", pathVar), dbPageDelete)
 	mux.HandleFunc("POST /orders", orderPush)
 	mux.HandleFunc("PUT /orders", orderUpdate)
+	mux.HandleFunc("DELETE /orders", orderDelete)
 	mux.HandleFunc("GET /inwork", wsHandler)
 	mux.HandleFunc("GET /cities", getCities)
 	mux.HandleFunc("GET /customers", getCustomers)

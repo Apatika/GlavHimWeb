@@ -20,6 +20,7 @@ type Order struct {
 	Invoice      []string             `json:"invoice" bson:"invoice"`
 	Comment      string               `json:"comment" bson:"comment"`
 	Probes       map[string]Chemistry `json:"probes" bson:"probes"`
+	Pvd          map[string]Pvd       `json:"pvd" bson:"pvd"`
 	Payment      bool                 `json:"payment" bson:"payment"`
 	Catalog      bool                 `json:"catalog" bson:"catalog"`
 	CatalogCount string               `json:"catalogCount" bson:"catalog_count"`
@@ -97,10 +98,16 @@ func (o *Order) Update(raw []byte) error {
 	return nil
 }
 
-func (o *Order) Delete() error {
+func (o *Order) Delete(raw []byte) error {
+	json.Unmarshal(raw, o)
 	if err := storage.DB.Delete(config.Cfg.DB.Coll.Orders, o.ID); err != nil {
 		return fmt.Errorf("delete order from db failed (%v)", err.Error())
 	}
+	pvds := make(map[float64]int)
+	for _, val := range o.Pvd {
+		pvds[val.Weight] = val.Count
+	}
+	storage.DB.RestorePvd(pvds)
 	log.Printf("delete order (id: %v)", o.ID)
 	return nil
 }
