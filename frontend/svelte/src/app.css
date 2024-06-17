@@ -17,11 +17,11 @@
   --border-main: #191970;
 }
 input[type='checkbox']:checked {
-  background-color: #023047;
+  background-color: rgb(0, 0, 0, 0.1);;
 }
 input[type='checkbox']:checked:after {
   content: '\2713';
-  color:white;
+  color: rgb(229, 245, 15);
 }
 input[type='checkbox']{
   text-align: center;
@@ -30,7 +30,7 @@ input[type='checkbox']{
   height: 20px !important;
   appearance:none;
   border-radius:10%;
-  border: 1px solid #191970;
+  border: 1px solid red;
   box-shadow: none;
   font-size: 1em;
 }

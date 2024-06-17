@@ -127,6 +127,9 @@
     cursor: pointer;
     line-height: 1;
   }
+  .item:last-child{
+    border-right: none;
+  }
   .adress{
     flex-basis: 15%;
     flex-grow: 1;

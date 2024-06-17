@@ -468,18 +468,27 @@
     box-shadow: none;
   }
   input[type="text"], textarea{
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.1);
     border: none;
+    border-radius: 3px;
     border-bottom: 1px solid red;
     outline: none;
-    color: black;
+    color: rgb(229, 245, 15);
     font-size: 14px;
+  }
+  input::placeholder, textarea::placeholder{
+    color: lightgray;
   }
   input[type="file"]{
     width: 200px;
   }
+  select{
+    color: rgb(229, 245, 15);
+    border-bottom: 1px solid red;
+  }
   .container{
     margin: 30px 0px 5px 15px;
+    color: white;
   }
   .search-field{
     margin-left: 5px;

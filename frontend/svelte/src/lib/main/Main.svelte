@@ -193,10 +193,8 @@
   }
   #new-order{
     width: 370px;
-    background-color: #FFF5EE;
-    border: 1px solid black;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px 0px black;
+    border-radius: 2px;
+    background-color: rgba(0, 0, 0, 0.3)
   }
   #new-order-title {
     text-align: center;
@@ -208,7 +206,6 @@
   }
   #table{
     border-radius: 5px;
-    box-shadow: 0px 0px 10px 0px black, 0px 0px 10px 0px black inset;
   }
   #new-order-expand{
     display: none;

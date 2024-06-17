@@ -151,13 +151,10 @@
     margin-top: 1px;
     font-size: 18px;
     height: 40px;
-    border-top: 1px solid var(--background-main);
-    border-radius: 5px;
-    background-color: var(--border-main);
-    box-shadow: 0px 0px 10px 2px black;
+    background-color: rgba(0, 0, 255, 0.2);
   }
   button:hover{
-    box-shadow: 0px 0px 10px 2px black, 0px 0px 2px 0px white inset;
+    background-color: rgba(0, 0, 255, 0.3);
   }
   button:active{
     box-shadow: 0px 0px 10px 0px black inset;
@@ -169,6 +166,7 @@
     display: flex;
     flex-direction: column;
     width: 150px;
+    background-color: rgba(0, 0, 0, 0.3);
   }
   .mobile-nav{
     display: none;
