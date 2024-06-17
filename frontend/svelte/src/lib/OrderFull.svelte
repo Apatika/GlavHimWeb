@@ -22,10 +22,6 @@
     })
   }
 
-  const backToWork = (e, data) => {
-    changeStatus(data, "")
-  }
-
   // /(?<=\d\t\t)[^\t]*\t\d{1,3}/g товар кол-во
   // /(?<=ИНН )\d{10,12}/g инн
   // /(?<=Всего к оплате:	)[^,]*/ сумма
@@ -152,7 +148,7 @@
       </div>
     {:else}
       <div>
-        <button class="edit-button" on:click={(e) => backToWork(e, order)}>Вернуть В Работу</button>
+        <button class="edit-button" on:click={() => changeStatus(order, "")}>Вернуть В Работу</button>
       </div>
     {/if}
     <div>

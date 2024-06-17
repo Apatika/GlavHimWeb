@@ -54,18 +54,6 @@
     Object.keys(chems).forEach(key => probeCountSum += chems[key].probeCount)
   }
 
-  /*const getChems = () => {
-    fetch(`${window.location.origin}/db/chems`).then(function(response) {
-      if (response.status != 200) throw new Error(response.statusText)
-      return response.json();
-    }).then((data) => {
-      chems = data
-    }).catch(function(err) {
-      alert(err);
-    })
-  }
-  getChems()*/
-
   const check = () => {
     if (order.customer.manager == null || order.customer.manager == ""){
       alert("Менеджер не выбран")
